@@ -1,18 +1,19 @@
-{ "name": "eskimo"
-, "description": "A 2D game library for HTML5 canvas games"
-, "version": "0.0.1"
-, "url": "http://github.com/paytonrules/eskimo"
-, "author": "Eric Smith <paytonrules@gmail.com>"
-, "main": "./lib/index.js"
-, "devDependencies": {
-    "jsdom": "latest"
-  , "glob": "latest"
-  }
-, "dependencies": {
-    "jquery": "latest"
-  , "underscore": "latest"
-, "repository": {
-    "type" : "git"
-  , "url" : "https://github.com/paytonrules/eskimo.git"
-  }
+{
+  "author": "Eric Smith <paytonrules@gmail.com> (paytonrules.github.com)",
+  "name": "eskimo",
+  "description": "Eskimo is a client-side framework for 2D games in JavaScript",
+  "version": "0.0.0",
+  "homepage": "github.com/paytonrules/Eskimo",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/paytonrules/Eskimo.git"
+  },
+  "scripts": {
+    "test": "spec"
+  },
+  "engines": {
+    "node": "~v0.4.9"
+  },
+  "dependencies": {},
+  "devDependencies": {}
 }
