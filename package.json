@@ -1,19 +1,26 @@
 {
-  "author": "Eric Smith <paytonrules@gmail.com> (paytonrules.github.com)",
+  "author": "Eric Smith <paytonrules@gmail.com>",
   "name": "eskimo",
-  "description": "Eskimo is a client-side framework for 2D games in JavaScript",
+  "description": "A client-side framework for 2D games in JavaScript",
   "version": "0.0.0",
-  "homepage": "github.com/paytonrules/Eskimo",
+  "homepage": "github.com/paytonrules/eskimo",
   "repository": {
     "type": "git",
     "url": "git://github.com/paytonrules/Eskimo.git"
   },
+  "main": "lib/game/main.js",
   "scripts": {
-    "test": "spec"
+    "test": "jessie spec"
   },
   "engines": {
     "node": "~v0.4.9"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "underscore": "latest",
+    "jquery": "latest"
+  },
+  "devDependencies": {
+    "jessie": "latest",
+    "jsdom": "latest"
+  }
 }
