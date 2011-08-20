@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "jessie": "latest",
-    "jsdom": "latest"
+    "jsdom": "latest",
+    "glob": "latest"
   }
 }
