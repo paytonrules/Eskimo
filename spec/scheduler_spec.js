@@ -23,7 +23,7 @@ describe("Eskimo#scheduler", function() {
   };
   
   beforeEach( function() {
-    Eskimo = require('specHelper').Eskimo;
+    Eskimo = require('spec_helper').Eskimo;
     counter = new CallCounterUpTo(2);
   });
 

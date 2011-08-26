@@ -37,7 +37,7 @@ describe("Eskimo", function() {
   }
 
   beforeEach(function() {
-    Eskimo = require("specHelper").Eskimo;
+    Eskimo = require("spec_helper").Eskimo;
     domCanvas = {getContext: function() {}}; 
     canvas = [domCanvas];
   });

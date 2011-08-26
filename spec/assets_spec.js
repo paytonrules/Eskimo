@@ -11,7 +11,7 @@ describe("Eskimo.Assets", function() {
       };
     })();
 
-    var Assets = require("specHelper").Eskimo.Assets;
+    var Assets = require("spec_helper").Eskimo.Assets;
     assets = new Assets(spiedJQuery);
 
     this.addMatchers( {

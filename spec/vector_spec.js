@@ -2,7 +2,7 @@ describe("Eskimo.Vector", function() {
   var Eskimo;
 
   beforeEach(function() {
-    Eskimo = require("specHelper").Eskimo;
+    Eskimo = require("spec_helper").Eskimo;
   });
 
   it("creates a 2d vector", function() {

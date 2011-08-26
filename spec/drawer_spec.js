@@ -9,7 +9,7 @@ describe("Drawer", function() {
   };
   
   beforeEach( function() {
-    Eskimo = require('specHelper').Eskimo;
+    Eskimo = require('spec_helper').Eskimo;
     drawer = new Eskimo.Drawer(screen);
     imageList = [];
   });

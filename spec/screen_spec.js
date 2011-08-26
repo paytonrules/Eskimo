@@ -59,7 +59,7 @@ describe("Eskimo Screen", function() {
       };
     }());
 
-    Eskimo = require("specHelper").Eskimo;
+    Eskimo = require("spec_helper").Eskimo;
     context = new Context();
     screen = new Eskimo.Screen(canvas, assets);
 

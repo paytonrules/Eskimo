@@ -31,7 +31,7 @@ describe('Eskimo#loop', function() {
   };
 
   beforeEach( function() {
-    Eskimo = require("specHelper").Eskimo;
+    Eskimo = require("spec_helper").Eskimo;
     scheduler = new MockScheduler();
   });
 
