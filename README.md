@@ -20,9 +20,18 @@ Eskimo is at version -0.200 at this time, because it is far from finished.  The 
 
   * Sounds
   * Sprite Sheets
+  * Generators to get started 
   * A "keystate" so that your game doesn't need to think about input.
   * Particles
   * All kinds of awesomeness I haven't thought of yet
+
+#### Using ####
+
+Directions are to come. At the moment, git/clone, read code, learn JavaScript, get smarter. Send me messages saying I suck.
+
+#### Why Eskimo? #####
+
+My youngest son is named Quinn, this framework is nicknamed after our nickname for him ("The Mighty Quinn").
 
 #### Contributing #### 
 

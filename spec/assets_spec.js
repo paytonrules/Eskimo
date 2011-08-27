@@ -2,7 +2,19 @@ describe("Eskimo.Assets", function() {
   var assets, spiedJQuery;
 
   beforeEach(function() {
-    $ = require("jquery");
+    var html5 = require('html5'),
+        dom = require('jsdom').jsdom(null, null, {parser: html5}),
+        define = require('../node_modules/jsdom/lib/jsdom/level2/html').define,
+        window = dom.createWindow(),
+        $ = require("jquery").create(window);
+
+    define("HTMLAudioElement", {
+      tagName: 'AUDIO',
+      attributes: [
+        'src'
+      ]
+    });
+
     spiedJQuery = (function () {
       var original = $;
       return function(selector, context) {
@@ -56,5 +68,25 @@ describe("Eskimo.Assets", function() {
     } ).toThrow({name: "Eskimo.AssetAlreadyExists",
                  message:"Asset 'error' already exists"});
   });
+
+  it("doesnt get a sound until its loaded into the DOM", function() {
+    assets.loadSound('key', 'src');
+
+    expect(assets.getSound('key')).toBeNull();
+  });
+
+  it("retrieves an audio element post DOM loading", function() {
+    assets.loadSound('key', 'src');
+    spiedJQuery.returnedItem.load();
+
+    var audio = assets.getSound('key');
+
+    expect(audio.src).toEqual('src');
+  });
+
+  it("creates audio elements");
+
+  it("doesn't overwrite images with sounds or vice versa");
+
   
 });

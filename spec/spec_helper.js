@@ -4,6 +4,7 @@ require("../src/drawer");
 require("../src/fixed-game-loop");
 require("../src/scheduler");
 require("../src/screen");
+require("../src/sound");
 require("../src/vector");
 
 _ = require("underscore");
