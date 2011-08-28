@@ -12,7 +12,8 @@ describe("Eskimo", function() {
 
     var dependencyConfig = {
       updater: emptyFunction,
-      gameLoop: emptyGameLoop
+      gameLoop: emptyGameLoop,
+      jquery: jquery
     };
 
     if (customConfig !== null) {
@@ -25,8 +26,7 @@ describe("Eskimo", function() {
   function configuration(config) {
     var standardConfig = {
       canvas: canvas,
-      document: emptyDocument,
-      jquery: jquery
+      document: emptyDocument
     }
 
     if (config !== null) {
