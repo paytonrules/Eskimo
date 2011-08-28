@@ -31,29 +31,3 @@ describe("Eskimo#Jukebox", function() {
   });
 
 });
-
-/*
- *
- *    
- *
- *    var sound = Eskimo.Sound(assets);
- *    $ = require("jquery");
- *    var sound = Eskimo.Sound("song.mp3");
- *    var soundPlayed = false;
- *
- *    $('audio#eskimo_sound').bind('play', function(e) {
- *      console.log("FUCK YOU FUCKING FUCKERS");
- *      e.preventDefault();
- *      // Check sound
- *      soundPlayed = true;
- *    });
- *
- *    sound.play();
- *
- *    expect(soundPlayed).toBeTruthy();
- *
-*
- *
- *  Eskimo.Speaker.play("fuck");
- *  Eskmio.Speaker.playSong("lolololo");
- */
