@@ -6,6 +6,7 @@ Eskimo = function(depend) {
       Drawer = dependencies["drawer"] || Eskimo.Drawer,
       Updater = dependencies["updater"],
       Screen = Eskimo.Screen,
+      Jukebox = Eskimo.Jukebox,
       scheduler;
 
   function bindEvents(jquery, document, updater) {
@@ -29,9 +30,11 @@ Eskimo = function(depend) {
     start: function(configuration) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       scheduler = new Scheduler(FRAME_RATE);
-      var assets = new Assets(configuration.jquery);
-      var drawer = new Drawer(new Screen(configuration.canvas, assets));
-      var updater = new Updater(assets);
+      var imageAssets = new Assets(configuration.jquery, 'IMG');
+      var soundAssets = new Assets(configuration.jquery, 'audio');
+      var drawer = new Drawer(new Screen(configuration.canvas, imageAssets));
+      var jukebox = Eskimo.Jukebox(soundAssets);
+      var updater = new Updater({images: imageAssets, jukebox: jukebox});
       var loop = new GameLoop(scheduler, updater, drawer);
 
       bindEvents(configuration.jquery, configuration.document, updater); 

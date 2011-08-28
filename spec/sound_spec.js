@@ -1,23 +1,21 @@
 describe("Eskimo#Jukebox", function() {
-  var Jukebox;
-  // Because JSDom don't do HTML5 - a simulator for the audio element
-  var audioElement = {
-    play: function() {
-    }
-  };
- 
-  // Because JSDom don't do HTML5 I'm faking assets (which would load an audio element) 
-  // I might be able to remove this fake
-  var fakeAssets = {
-    getSound: function(name) {
-    }
-  };
+  var Jukebox, 
+      assets = new Eskimo.Assets(),
+      audioElement = {
+        play: function() {},
+        get: function() {
+          return this;
+        }
+      };
+
 
   beforeEach(function() {
-    Jukebox = require("spec_helper").Eskimo.Jukebox;
-    Jukebox.assets = fakeAssets;
+    Eskimo = require("spec_helper").Eskimo;
+
+    Jukebox = Eskimo.Jukebox(assets);
+    
+    spyOn(assets, "get").andReturn(audioElement);
     spyOn(audioElement, "play");
-    spyOn(fakeAssets, "getSound").andReturn(audioElement);
   });
 
   it("should play a sound from the asset list", function() {
@@ -29,7 +27,7 @@ describe("Eskimo#Jukebox", function() {
   it("gets the right sound from the asset list", function() {
     Jukebox.play("bang");
 
-    expect(fakeAssets.getSound).toHaveBeenCalledWith("bang");
+    expect(assets.get).toHaveBeenCalledWith("bang");
   });
 
 });

@@ -1,12 +1,11 @@
-Eskimo.Jukebox = (function() {
-  var assets = null;
+Eskimo.Jukebox = function(assets) {
 
   function play(assetName) {
-    this.assets.getSound(assetName).play();
+    this.assets.get(assetName).play();
   };
 
   return {
     assets: assets,
     play: play
   };
-})();
+};

@@ -1,12 +1,12 @@
 describe("Eskimo.Assets", function() {
-  var assets, spiedJQuery;
+  var assets, spiedJQuery, $;
 
-  beforeEach(function() {
-    var html5 = require('html5'),
-        dom = require('jsdom').jsdom(null, null, {parser: html5}),
+  function prepareHTML5() {
+    var dom = require('jsdom').jsdom(),
         define = require('../node_modules/jsdom/lib/jsdom/level2/html').define,
-        window = dom.createWindow(),
-        $ = require("jquery").create(window);
+        window = dom.createWindow();
+
+    $ = require("jquery").create(window);
 
     define("HTMLAudioElement", {
       tagName: 'AUDIO',
@@ -14,6 +14,11 @@ describe("Eskimo.Assets", function() {
         'src'
       ]
     });
+  }
+
+  beforeEach(function() {
+    var Assets;
+    prepareHTML5();
 
     spiedJQuery = (function () {
       var original = $;
@@ -23,8 +28,8 @@ describe("Eskimo.Assets", function() {
       };
     })();
 
-    var Assets = require("spec_helper").Eskimo.Assets;
-    assets = new Assets(spiedJQuery);
+    Assets = require("spec_helper").Eskimo.Assets;
+    assets = new Assets(spiedJQuery, 'img');
 
     this.addMatchers( {
       toHaveTagName: function(tag) {
@@ -37,56 +42,45 @@ describe("Eskimo.Assets", function() {
     expect(assets.get('key')).toBeNull();
   });
 
-  it("doesn't get the image if the image hasn't been loaded into the DOM", function() {
-    assets.loadImage('key', 'src');
+  it("doesn't get the asset if the image hasn't been loaded into the DOM", function() {
+    assets.load('key', 'src');
 
     expect(assets.get('key')).toBeNull();
   });
 
-  it("can get the image after it is loaded into the dom", function() {
-    assets.loadImage('key', 'src');
+  it("can get the asset after it is loaded into the dom", function() {
+    assets.load('key', 'src');
     spiedJQuery.returnedItem.load();
 
-    var image = assets.get('key');
+    var asset = assets.get('key');
 
-    expect(image).toHaveTagName('IMG');
+    expect(asset).not.toBeNull();
   });
 
-  it("sets up the image with the passed in source", function() {
-    assets.loadImage('key', 'src');
+  it("sets up the asset with the passed in source", function() {
+    assets.load('key', 'src');
     spiedJQuery.returnedItem.load();
 
-    var image = assets.get('key');
+    var asset = assets.get('key');
 
-    expect(image.src).toEqual('src');
+    expect(asset.src).toEqual('src');
+  });
+
+  it("gives the asset the tag passed into the constructor", function() {
+    assets.load('key', 'src');
+    spiedJQuery.returnedItem.load();
+
+    var asset = assets.get('key');
+
+    expect(asset).toHaveTagName('IMG');
   });
 
   it("raises an exception if there is already an asset with that key", function() {
-    assets.loadImage('key', 'src');
+    assets.load('key', 'src');
+
     expect(function() { 
-      assets.loadImage('key', 'error'); 
+      assets.load('key', 'error'); 
     } ).toThrow({name: "Eskimo.AssetAlreadyExists",
                  message:"Asset 'error' already exists"});
   });
-
-  it("doesnt get a sound until its loaded into the DOM", function() {
-    assets.loadSound('key', 'src');
-
-    expect(assets.getSound('key')).toBeNull();
-  });
-
-  it("retrieves an audio element post DOM loading", function() {
-    assets.loadSound('key', 'src');
-    spiedJQuery.returnedItem.load();
-
-    var audio = assets.getSound('key');
-
-    expect(audio.src).toEqual('src');
-  });
-
-  it("creates audio elements");
-
-  it("doesn't overwrite images with sounds or vice versa");
-
-  
 });

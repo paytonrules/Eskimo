@@ -108,12 +108,14 @@ describe("Eskimo", function() {
       expect(Drawer.screen.drawImage).not.toBeUndefined();
     });   
  
-    it("has the assets on the game screen", function() {
+    it("has the image assets on the game screen", function() {
       var theAssets;
      
-      var Assets = function(jquery) {
-        theAssets = this;
-        Assets.jquery = jquery;
+      var Assets = function(jquery, tag) {
+        if (tag === 'IMG') {
+          theAssets = this;
+          Assets.jquery = jquery;
+        }
       };
       
       var Drawer = function(screen) {
@@ -125,6 +127,36 @@ describe("Eskimo", function() {
 
       expect(Assets.jquery).toEqual(jquery);
       expect(Drawer.screen.assets).toEqual(theAssets);
+    });
+
+    it("sets up the jukebox, with Sound Assets", function() {
+      var theSoundAssets;
+
+      var Assets = function(jquery, tag) {
+        if (tag == "audio") {
+          theSoundAssets = this;
+          theSoundAssets.jquery = jquery;
+        }
+      };
+
+      spyOn(Eskimo, "Jukebox");
+
+      Eskimo(dependencies({assets: Assets})).start(configuration());
+      
+      expect(Eskimo.Jukebox).toHaveBeenCalledWith(theSoundAssets);
+      expect(theSoundAssets.jquery).toEqual(jquery);
+    });
+
+    it("makes the jukebox available to the updater", function() {
+      var Updater = function(assets) {
+        Updater.jukebox = assets.jukebox;
+      };
+
+      spyOn(Eskimo, "Jukebox").andReturn("Jukebox");
+
+      Eskimo(dependencies({updater: Updater})).start(configuration());
+
+      expect(Updater.jukebox).toEqual("Jukebox");
     });
 
     it("sends the configured updater to the game loop", function() {
@@ -147,7 +179,7 @@ describe("Eskimo", function() {
     it("sends the updater the assets", function() {
       var theAssets = "unset"; 
       var GameUpdater = function(assets) {
-        GameUpdater.assets = assets;
+        GameUpdater.assets = assets.images;
       };
 
       var Assets = function() {
