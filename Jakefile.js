@@ -33,7 +33,8 @@ task("build", function() {
   _(files).each(function(file) {
     command_string += " --js=" + file;
   });
-  command_string += " --js_output_file=eskimo.min.js"
+  command_string += " --create_source_map=eskimo.map";
+  command_string += " --js_output_file=eskimo.min.js";
   console.log(command_string);
 
   sh(command_string);
