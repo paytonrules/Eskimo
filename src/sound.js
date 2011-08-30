@@ -1,7 +1,11 @@
 Eskimo.Jukebox = function(assets) {
 
   function play(assetName) {
-    this.assets.get(assetName).play();
+    var asset = this.assets.get(assetName);
+
+    if (asset !== null) {
+      this.assets.get(assetName).play();
+    }
   };
 
   return {
