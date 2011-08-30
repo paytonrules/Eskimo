@@ -34,8 +34,7 @@ Eskimo = function(depend) {
       var imageAssets = new Assets(jquery, 'IMG');
       var soundAssets = new Assets(jquery, 'audio');
       var drawer = new Drawer(new Screen(configuration.canvas, imageAssets));
-      var jukebox = Eskimo.Jukebox(soundAssets);
-      var updater = new Updater({images: imageAssets, jukebox: jukebox});
+      var updater = new Updater({images: imageAssets, sounds: soundAssets});
       var loop = new GameLoop(scheduler, updater, drawer);
 
       bindEvents(configuration.document, updater); 

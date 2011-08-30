@@ -129,7 +129,7 @@ describe("Eskimo", function() {
       expect(Drawer.screen.assets).toEqual(theAssets);
     });
 
-    it("sets up the jukebox, with Sound Assets", function() {
+    it("sets up the updater with Sound Assets", function() {
       var theSoundAssets;
 
       var Assets = function(jquery, tag) {
@@ -139,24 +139,14 @@ describe("Eskimo", function() {
         }
       };
 
-      spyOn(Eskimo, "Jukebox");
-
-      Eskimo(dependencies({assets: Assets})).start(configuration());
-      
-      expect(Eskimo.Jukebox).toHaveBeenCalledWith(theSoundAssets);
-      expect(theSoundAssets.jquery).toEqual(jquery);
-    });
-
-    it("makes the jukebox available to the updater", function() {
       var Updater = function(assets) {
-        Updater.jukebox = assets.jukebox;
+        Updater.sounds = assets.sounds;
       };
 
-      spyOn(Eskimo, "Jukebox").andReturn("Jukebox");
-
-      Eskimo(dependencies({updater: Updater})).start(configuration());
-
-      expect(Updater.jukebox).toEqual("Jukebox");
+      Eskimo(dependencies({assets: Assets, updater: Updater})).start(configuration());
+      
+      expect(Updater.sounds).toEqual(theSoundAssets);
+      expect(theSoundAssets.jquery).toEqual(jquery);
     });
 
     it("sends the configured updater to the game loop", function() {
