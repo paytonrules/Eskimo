@@ -31,8 +31,8 @@ Eskimo = function(depend) {
     start: function(configuration) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       scheduler = new Scheduler(FRAME_RATE);
-      var imageAssets = new Assets(jquery, 'IMG');
-      var soundAssets = new Assets(jquery, 'audio');
+      var imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
+      var soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
       var drawer = new Drawer(new Screen(configuration.canvas, imageAssets));
       var updater = new Updater({images: imageAssets, sounds: soundAssets});
       var loop = new GameLoop(scheduler, updater, drawer);

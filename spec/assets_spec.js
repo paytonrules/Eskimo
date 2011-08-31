@@ -29,7 +29,9 @@ describe("Eskimo.Assets", function() {
     })();
 
     Assets = require("spec_helper").Eskimo.Assets;
-    assets = new Assets(spiedJQuery, 'img');
+    assets = new Assets({jquery: spiedJQuery, 
+                         tag: 'img',
+                         loadEvent: 'loadEvent'});
 
     this.addMatchers( {
       toHaveTagName: function(tag) {
@@ -48,9 +50,9 @@ describe("Eskimo.Assets", function() {
     expect(assets.get('key')).toBeNull();
   });
 
-  it("can get the asset after it is loaded into the dom", function() {
+  it("can get the asset after it's loadevent is triggered", function() {
     assets.load('key', 'src');
-    spiedJQuery.returnedItem.load();
+    spiedJQuery.returnedItem.trigger('loadEvent');
 
     var asset = assets.get('key');
 
@@ -59,7 +61,7 @@ describe("Eskimo.Assets", function() {
 
   it("sets up the asset with the passed in source", function() {
     assets.load('key', 'src');
-    spiedJQuery.returnedItem.load();
+    spiedJQuery.returnedItem.trigger('loadEvent');
 
     var asset = assets.get('key');
 
@@ -68,7 +70,7 @@ describe("Eskimo.Assets", function() {
 
   it("gives the asset the tag passed into the constructor", function() {
     assets.load('key', 'src');
-    spiedJQuery.returnedItem.load();
+    spiedJQuery.returnedItem.trigger('loadEvent');
 
     var asset = assets.get('key');
 

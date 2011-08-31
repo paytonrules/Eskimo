@@ -1,5 +1,8 @@
-Eskimo.Assets = function(jquery, tag) {
-  var assetList = {};
+Eskimo.Assets = function(options) {
+  var assetList = {},
+      jquery = options['jquery'],
+      tag = options['tag'],
+      loadEvent = options['loadEvent'];
 
   this.get = function(key) {
     if ( assetList[key] && assetList[key].loaded ) {
@@ -13,7 +16,7 @@ Eskimo.Assets = function(jquery, tag) {
       throw {name: "Eskimo.AssetAlreadyExists", message: "Asset '" + src + "' already exists"};
     } else {
       assetList[key] = jquery("<" + tag + " src='" + src + "'>");
-      assetList[key].load(function() {
+      assetList[key].bind(loadEvent, function() {
         assetList[key].loaded = true;
       });
     }

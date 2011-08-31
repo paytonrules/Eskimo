@@ -111,10 +111,11 @@ describe("Eskimo", function() {
     it("has the image assets on the game screen", function() {
       var theAssets;
      
-      var Assets = function(jquery, tag) {
-        if (tag === 'IMG') {
+      var Assets = function(options) {
+        if (options['tag'] === 'IMG') {
           theAssets = this;
-          Assets.jquery = jquery;
+          Assets.jquery = options['jquery'];
+          Assets.loadEvent = options['loadEvent'];
         }
       };
       
@@ -126,16 +127,18 @@ describe("Eskimo", function() {
                          assets: Assets})).start(configuration({jquery: jquery}));
 
       expect(Assets.jquery).toEqual(jquery);
+      expect(Assets.loadEvent).toEqual('load');
       expect(Drawer.screen.assets).toEqual(theAssets);
     });
 
     it("sets up the updater with Sound Assets", function() {
       var theSoundAssets;
 
-      var Assets = function(jquery, tag) {
-        if (tag == "audio") {
+      var Assets = function(options) {
+        if (options['tag'] == "audio") {
           theSoundAssets = this;
-          theSoundAssets.jquery = jquery;
+          theSoundAssets.jquery = options['jquery'];
+          theSoundAssets.loadEvent = options['loadEvent'];
         }
       };
 
@@ -147,6 +150,7 @@ describe("Eskimo", function() {
       
       expect(Updater.sounds).toEqual(theSoundAssets);
       expect(theSoundAssets.jquery).toEqual(jquery);
+      expect(theSoundAssets.loadEvent).toEqual('canplaythrough');
     });
 
     it("sends the configured updater to the game loop", function() {
