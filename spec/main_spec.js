@@ -80,33 +80,16 @@ describe("Eskimo", function() {
       expect(FakeGameLoop.scheduler.theScheduler).toEqual("this one");
     });
 
-    it("creates the game loop with the configured drawer", function() {
-      var drawer = null;
-      var Drawer = function() {
-        drawer = this;
-      };
-
-      var FakeGameLoop = function(irrellevant, irrellevant, drawer) {
+    it("creates the game loop with the screen", function() {
+      var FakeGameLoop = function(irrellevant, irrellevant, screen) {
         this.start = emptyFunction;
-        FakeGameLoop.drawer = drawer;
+        FakeGameLoop.screen = screen;
       };
 
-      Eskimo(dependencies({gameLoop: FakeGameLoop, 
-                         drawer: Drawer})).start(configuration());
+      Eskimo(dependencies({gameLoop: FakeGameLoop})).start(configuration());
 
-      expect(drawer).not.toBeNull();
-      expect(FakeGameLoop.drawer).toEqual(drawer);
+      expect(FakeGameLoop.screen.put).not.toBeUndefined();
     });    
-    
-    it("creates the drawer with a game screen", function() {
-      var Drawer = function(screen) {
-        Drawer.screen = screen;
-      };
-
-      Eskimo(dependencies({drawer: Drawer})).start(configuration());
-
-      expect(Drawer.screen.drawImage).not.toBeUndefined();
-    });   
  
     it("has the image assets on the game screen", function() {
       var theAssets;
@@ -119,16 +102,10 @@ describe("Eskimo", function() {
         }
       };
       
-      var Drawer = function(screen) {
-        Drawer.screen = screen;
-      };
-
-      Eskimo(dependencies({drawer: Drawer,
-                         assets: Assets})).start(configuration({jquery: jquery}));
+      Eskimo(dependencies({assets: Assets})).start(configuration({jquery: jquery}));
 
       expect(Assets.jquery).toEqual(jquery);
       expect(Assets.loadEvent).toEqual('load');
-      expect(Drawer.screen.assets).toEqual(theAssets);
     });
 
     it("sets up the updater with Sound Assets", function() {
@@ -142,7 +119,7 @@ describe("Eskimo", function() {
         }
       };
 
-      var Updater = function(assets) {
+      var Updater = function(assets, whocares) {
         Updater.sounds = assets.sounds;
       };
 
@@ -151,6 +128,16 @@ describe("Eskimo", function() {
       expect(Updater.sounds).toEqual(theSoundAssets);
       expect(theSoundAssets.jquery).toEqual(jquery);
       expect(theSoundAssets.loadEvent).toEqual('canplaythrough');
+    });
+
+    it("also sets up the updater with the screen", function() {
+      var Updater = function(whocares, screen) {
+        Updater.screen = screen;
+      };
+
+      Eskimo(dependencies({updater: Updater})).start(configuration());
+      
+      expect(Updater.screen.put).not.toBeUndefined();
     });
 
     it("sends the configured updater to the game loop", function() {

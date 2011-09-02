@@ -35,108 +35,50 @@ describe('Eskimo#loop', function() {
     scheduler = new MockScheduler();
   });
 
-  it('executes draw', function() {
+  it('executes screen.render', function() {
     var updater = {update: function() {}};
-    var drawer = {
-      draw: function(imageList) { 
-        gameLoop.drawn = true;
-      }
+    var screen = {
+      render: function() {}
     };
+    spyOn(screen, "render")
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, drawer);
+    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, screen);
     gameLoop.loop();
 
-    expect(gameLoop.drawn).toBeTruthy();
+    expect(screen.render).toHaveBeenCalled();
   });
 
   it('Executes update, provided time has passed since the last loop call', function() {
-    var drawer = {draw: function() {}};
+    var screen = {render: function() {}};
     var updater = {
       update: function(imageList) {
         gameLoop.updated = true;
       }
     };
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, drawer);
+    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, screen);
     scheduler.tick();
     gameLoop.loop();
 
     expect(gameLoop.updated).toBeTruthy();
   });
 
-  it('Calls updater with an empty array as the image list', function() {
-    var drawer = {draw: function() {}};
-    var updater = {
-      update: function(imageList) {
-        updater.imageList = imageList;
-      }
-    };
-
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, drawer);
-    scheduler.tick();
-    gameLoop.loop();
-
-    expect(updater.imageList).toEqual([]);
-  });
-
-  it('Passes the imageList from the update to the draw', function() {
-    var updater = {
-      update: function(imageList) {
-        imageList.update_message = 'Yes I was';
-      }
-    };
-
-    var drawer = {
-      draw: function(imageList) {
-        gameLoop.update_message = imageList.update_message;
-      }
-    };
-
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, drawer);
-    scheduler.tick();
-    gameLoop.loop();
-
-    expect(gameLoop.update_message).toEqual('Yes I was');
-  });
-
-  it('clears the list between calls to the update', function() {
-    var updater = {
-      update: function(imageList) {
-        updater.imageList = imageList;
-      }
-    };
-
-    var drawer = {
-      draw: function(imageList) {
-        imageList.push("and she was");
-      }
-    };
-
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, drawer);
-    scheduler.tick();
-    gameLoop.loop();
-    scheduler.tick();
-    gameLoop.loop();
-
-    expect(updater.imageList).toEqual(['and she was']);
-  });
-
   it('executes multiple updates to catch up if the draw takes a long time', function() {
-    var draws = new CallCounter(function() {
+    var renders = new CallCounter(function() {
       scheduler.tick();
     });
 
     var updates = new CallCounter();
-    var drawer = {draw: draws.call};
+    var screen = {render: renders.call};
     var updater = {update: updates.call};
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, drawer);
+    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, screen);
     scheduler.tick();
     gameLoop.loop();
     scheduler.tick();
     gameLoop.loop();
 
-    expect(draws.calls()).toEqual(2);
+    expect(renders.calls()).toEqual(2);
     expect(updates.calls()).toEqual(3);
   });
 

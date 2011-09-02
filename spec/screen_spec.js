@@ -2,41 +2,27 @@ describe("Eskimo Screen", function() {
   var assets, Eskimo, Context, context, screen;
 
   Context = function() {
-    imageList = [];
-
     this.drawImage = function(image, x, y) {
       imageList.push({name: image, x: x, y: y});
     };
 
-    this.hasImageNamed = function(imageName) {
-      return _(imageList).any(function(image) {
-        return image.name === imageName; 
-      });
-    };
-
     this.fillRect = function(x, y, width, height) {
       this.filledRect = {x: x, y: y, width: width, height: height };
-    };
-
-    this.hasImageAt = function(x, y) {
-      return _(imageList).any(function(image) {
-        return (image.x === x && image.y === y);
-      });
     };
   };
 
   beforeEach(function() {
     // Simulating the DOM methods I'm calling.  Seems f'd.
     // Very 'double entry' accounting
-    var domCanvas = {
+    // Look into doing this with JSDom
+    var canvas = [{
       getContext: function(contextName) {
         if (contextName === '2d') {
           return context;
         }
       }
-    };
+    }];
     
-    var canvas = [domCanvas];
     canvas.width = function() {
       return 100;
     };
@@ -64,14 +50,6 @@ describe("Eskimo Screen", function() {
     screen = new Eskimo.Screen(canvas, assets);
 
     this.addMatchers( {
-      toHaveImageNamed: function(imageName) { 
-        return this.actual.hasImageNamed(imageName);
-      },
-
-      toHaveImageAt: function(x, y) {
-        return this.actual.hasImageAt(x, y);
-      },
-
       toHaveScreenClearedTo: function(color) {
         return (this.actual.fillStyle === color &&
                 this.actual.filledRect.x === 0,
@@ -87,31 +65,68 @@ describe("Eskimo Screen", function() {
     expect(screen).not.toBeUndefined();
   });
 
+  it("draws a asset you put on it", function() {
+    spyOn(context, "drawImage");
+    assets.set("background", "background.src");
+    
+    screen.put("background");
+    screen.render();
+
+    expect(context.drawImage).toHaveBeenCalledWith(assets.get("background"));
+  });
+
+  it("draws multiple assets", function() {
+    spyOn(context, "drawImage");
+    assets.set("background", "one");
+    assets.set("joe", "joe momma");
+
+    screen.put("background");
+    screen.put("joe");
+    screen.render();
+
+    expect(context.drawImage).toHaveBeenCalledWith(assets.get("joe"));
+  });
+
+  it("draws the assets in the order of puts", function() {
+    var images = [];
+    spyOn(context, "drawImage").andCallFake(function(assetName) {
+      images.push(assetName);
+    });
+    assets.set("one", "one");
+    assets.set("two", "two");
+
+    screen.put("two");
+    screen.put("one");
+    screen.render();
+
+    expect(images).toEqual(['two', 'one']);
+  });
+
   it("clears the screen to the configured clear color", function() {
     Eskimo.Screen.BACKGROUND_COLOR = "#aaaabb";
 
-    screen.clear();
+    screen.render();
 
     expect(context).toHaveScreenClearedTo("#aaaabb");
   });
 
-  it("draws whatever is loaded from the asset loader on the context", function() {
-    assets.set("image", "filename");
-    screen.drawImage("image", 0, 0);
+  it("doesnt draw an asset if it is remove", function() {
+    spyOn(context, "drawImage");
+    assets.set("one", "blah");
     
-    expect(context).toHaveImageNamed("filename");
+    screen.put("one");
+    screen.remove("one");
+
+    screen.render();
+
+    expect(context.drawImage).not.toHaveBeenCalled();
   });
 
-  it("draws it at the right location", function() {
-    assets.set("image", "filename");
-    screen.drawImage("image", 100, 200);
+  it("clears all placed assets from the list", function() {
+    spyOn(context, "drawImage");
+    assets.set("one");
 
-    expect(context).toHaveImageAt(100, 200);
-  });
-
-  it("doesnt draw anything if the image does not exist", function() {
-    screen.drawImage("", 100, 200);
-
-    expect(context).not.toHaveImageAt(100, 200);
+    screen.put("one");
+    screen.clear();
   });
 });

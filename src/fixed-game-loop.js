@@ -1,15 +1,15 @@
-Eskimo.FixedGameLoop = function(scheduler, updater, drawer) {
+Eskimo.FixedGameLoop = function(scheduler, updater, screen) {
   var nextGameTick = scheduler.getTicks();
   var imageList;
 
   this.loop = function() {
     while (scheduler.getTicks() > nextGameTick) {
       imageList = [];
-      updater.update(imageList);
+      updater.update();
 
       nextGameTick += scheduler.getTickTime();
     }
-    drawer.draw(imageList);
+    screen.render();
   };
 
   this.stop = function() {
