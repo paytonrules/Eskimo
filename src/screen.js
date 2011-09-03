@@ -7,9 +7,11 @@ Eskimo.Screen = function(canvas, assets) {
     context.fillRect(0, 0, canvas.width(), canvas.height());
   }
 
-  this.put = function(image) {
+  function put(image) {
     imageList.push(image);
-  };
+  }
+
+  this.put = put;
 
   this.remove = function(assetName) {
     imageList.pop(assetName);
@@ -28,6 +30,21 @@ Eskimo.Screen = function(canvas, assets) {
   this.clear = function() {
     imageList = [];
   };
+
+  this.loadScreen = function(json) {
+    var images = json.images,
+        imageStruct,
+        image;
+
+    for(var imageName in images) {
+      if (images.hasOwnProperty(imageName)) {
+        imageStruct = images[imageName]; 
+        image = Eskimo.Image(imageName, imageStruct.location.x, imageStruct.location.y);
+        assets.load(imageName, imageStruct.src);
+        put(image);
+      }
+    }
+  }
 };
 
 Eskimo.Screen.BACKGROUND_COLOR = "#aaaabb";

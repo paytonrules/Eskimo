@@ -39,7 +39,7 @@ describe("Eskimo Screen", function() {
           return assetList[key];
         }, 
 
-        set: function(key, value) {
+        load: function(key, value) {
           assetList[key] = value;
         }
       };
@@ -67,7 +67,7 @@ describe("Eskimo Screen", function() {
 
   it("draws a asset you put on it", function() {
     spyOn(context, "drawImage");
-    assets.set("background", "background.src");
+    assets.load("background", "background.src");
     var image = Eskimo.Image("background",10, 20);
     
     screen.put(image);
@@ -78,8 +78,8 @@ describe("Eskimo Screen", function() {
 
   it("draws multiple assets", function() {
     spyOn(context, "drawImage");
-    assets.set("background", "one");
-    assets.set("joe", "joe momma");
+    assets.load("background", "one");
+    assets.load("joe", "joe momma");
 
     screen.put(Eskimo.Image("background", 0, 0));
     screen.put(Eskimo.Image("joe", 20, 30));
@@ -93,8 +93,8 @@ describe("Eskimo Screen", function() {
     spyOn(context, "drawImage").andCallFake(function(assetName) {
       images.push(assetName);
     });
-    assets.set("one", "one");
-    assets.set("two", "two");
+    assets.load("one", "one");
+    assets.load("two", "two");
 
     screen.put(Eskimo.Image("two", 0, 0));
     screen.put(Eskimo.Image("one", 0, 0));
@@ -113,7 +113,7 @@ describe("Eskimo Screen", function() {
 
   it("doesnt draw an asset if it is remove", function() {
     spyOn(context, "drawImage");
-    assets.set("one", "blah");
+    assets.load("one", "blah");
     
     screen.put(Eskimo.Image("one", 10, 20));
     screen.remove("one");
@@ -134,9 +134,55 @@ describe("Eskimo Screen", function() {
 
   it("clears all placed assets from the list", function() {
     spyOn(context, "drawImage");
-    assets.set("one");
+    assets.load("one");
 
     screen.put("one");
     screen.clear();
   });
+
+  it("can load an entire screen from a JSON structure", function() {
+    spyOn(context, "drawImage");
+    screen.loadScreen({
+      'images': {
+        'one': {
+          'src' : 'src',
+          'location': {
+            'x': 100, 
+            'y': 200 
+          }
+        }
+      }
+    });
+
+    screen.render();
+
+    expect(context.drawImage).toHaveBeenCalledWith('src', 100, 200);
+  });
+
+  it("will load multiple entries", function() {
+    spyOn(context, "drawImage");
+    var images = {
+      'images': {
+        'irrelevant': { 
+          'src' : 'irrelevant',
+          'location': {
+            'x': 0, 
+            'y': 0 
+          }
+        },
+        'second': {
+          'src': 'second.jpg',
+          'location': {
+            'x': 10,
+            'y': 200
+          }
+        }
+      }
+    };
+    screen.loadScreen(images);
+    screen.render();
+
+    expect(context.drawImage).toHaveBeenCalledWith('second.jpg', 10, 200);
+  });
+
 });
