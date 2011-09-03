@@ -68,11 +68,12 @@ describe("Eskimo Screen", function() {
   it("draws a asset you put on it", function() {
     spyOn(context, "drawImage");
     assets.set("background", "background.src");
+    var image = Eskimo.Image("background",10, 20);
     
-    screen.put("background");
+    screen.put(image);
     screen.render();
 
-    expect(context.drawImage).toHaveBeenCalledWith(assets.get("background"));
+    expect(context.drawImage).toHaveBeenCalledWith(assets.get("background"), 10, 20);
   });
 
   it("draws multiple assets", function() {
@@ -80,11 +81,11 @@ describe("Eskimo Screen", function() {
     assets.set("background", "one");
     assets.set("joe", "joe momma");
 
-    screen.put("background");
-    screen.put("joe");
+    screen.put(Eskimo.Image("background", 0, 0));
+    screen.put(Eskimo.Image("joe", 20, 30));
     screen.render();
 
-    expect(context.drawImage).toHaveBeenCalledWith(assets.get("joe"));
+    expect(context.drawImage).toHaveBeenCalledWith(assets.get("joe"), 20, 30);
   });
 
   it("draws the assets in the order of puts", function() {
@@ -95,8 +96,8 @@ describe("Eskimo Screen", function() {
     assets.set("one", "one");
     assets.set("two", "two");
 
-    screen.put("two");
-    screen.put("one");
+    screen.put(Eskimo.Image("two", 0, 0));
+    screen.put(Eskimo.Image("one", 0, 0));
     screen.render();
 
     expect(images).toEqual(['two', 'one']);
@@ -114,9 +115,18 @@ describe("Eskimo Screen", function() {
     spyOn(context, "drawImage");
     assets.set("one", "blah");
     
-    screen.put("one");
+    screen.put(Eskimo.Image("one", 10, 20));
     screen.remove("one");
 
+    screen.render();
+
+    expect(context.drawImage).not.toHaveBeenCalled();
+  });
+
+  it("doesnt draw if the image isnt in the asset list", function() {
+    spyOn(context, "drawImage");
+
+    screen.put(Eskimo.Image("one", 10, 20));
     screen.render();
 
     expect(context.drawImage).not.toHaveBeenCalled();

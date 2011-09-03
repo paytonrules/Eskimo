@@ -1,29 +1,32 @@
 Eskimo.Screen = function(canvas, assets) {
   var context = canvas[0].getContext("2d");
-  var assetList = [];
+  var imageList = [];
 
   function clearScreen() {
     context.fillStyle = Eskimo.Screen.BACKGROUND_COLOR;
     context.fillRect(0, 0, canvas.width(), canvas.height());
   }
 
-  this.put = function(assetName) {
-    assetList.push(assetName);
+  this.put = function(image) {
+    imageList.push(image);
   };
 
   this.remove = function(assetName) {
-    assetList.pop(assetName);
+    imageList.pop(assetName);
   };
 
   this.render = function() {
     clearScreen();
-    _(assetList).each(function(assetName) {
-      context.drawImage(assets.get(assetName));
+    _(imageList).each(function(image) {
+      var asset = assets.get(image.name);
+      if (asset) {
+        context.drawImage(assets.get(image.name), image.x, image.y);
+      }
     });
   };
 
   this.clear = function() {
-    assetList = [];
+    imageList = [];
   };
 };
 
