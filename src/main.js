@@ -42,4 +42,4 @@ Eskimo = function(depend) {
 };
 
 Eskimo.DOCUMENT_EVENTS = ['keydown', 'keyup'];
-Eskimo.CANVAS_EVENTS = ['mousedown', 'click', 'dblclick', 'mousemove'];
+Eskimo.CANVAS_EVENTS = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'];
