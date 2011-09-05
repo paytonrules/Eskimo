@@ -9,21 +9,19 @@ Eskimo = function(depend) {
       Jukebox = Eskimo.Jukebox,
       scheduler;
 
-  function bindEvents(document, updater) {
-    jquery(document.documentElement).bind({
-      keydown: function(event) {
-        if (typeof(updater.keydown) !== "undefined") {
-          updater.keydown(event);
+  function bindEventsOn(eventList, element, updater) {
+    _(eventList).each(function(eventName) {
+      jquery(element).bind(eventName, function(event) {
+        if (typeof(updater[eventName]) !== "undefined") {
+          updater[eventName](event);
         }
-      },
-
-      keyup: function(event) {
-        if (typeof(updater.keyup) !== "undefined") {
-          updater.keyup(event);
-        }
-      }
+      });
     });
+  }
 
+  function bindAllEvents(document, canvas, updater) {
+    bindEventsOn(Eskimo.DOCUMENT_EVENTS, document.documentElement, updater);
+    bindEventsOn(Eskimo.CANVAS_EVENTS, canvas, updater);
   };
 
   return {
@@ -36,9 +34,12 @@ Eskimo = function(depend) {
       var updater = new Updater({images: imageAssets, sounds: soundAssets}, screen);
       var loop = new GameLoop(scheduler, updater, screen);
 
-      bindEvents(configuration.document, updater); 
+      bindAllEvents(configuration.document, configuration.canvas, updater); 
 
       loop.start();
     }
   };
 };
+
+Eskimo.DOCUMENT_EVENTS = ['keydown', 'keyup'];
+Eskimo.CANVAS_EVENTS = ['mousedown', 'click', 'dblclick', 'mousemove'];

@@ -197,7 +197,8 @@ describe("Eskimo", function() {
         jquery = require("jquery").create(window);
       });
 
-      it("sends keydown events to the updater", function() {
+      it("sends one DOCUMENT_EVENT to the updater", function() {
+        Eskimo.DOCUMENT_EVENTS = ['keydown'];
         var Updater = function() {
           this.keydown = function(event) {
             Updater.event = event;
@@ -212,7 +213,8 @@ describe("Eskimo", function() {
         expect(Updater.event).not.toBeUndefined();
       });
 
-      it("passes the correct event for keydown", function() {
+      it("passes the correct event to the DOCUMENT EVENT", function() {
+        Eskimo.DOCUMENT_EVENTS = ['keydown'];
         var Updater = function() {
           this.keydown = function(event) {
             Updater.key = event.which;
@@ -227,36 +229,70 @@ describe("Eskimo", function() {
         expect(Updater.key).toEqual(87);
       });
       
-      it("doesn't cause an error if the updater doesn't have a keydown", function() {
+      it("doesn't cause an error if the updater doesn't have that event", function() {
+        Eskimo.DOCUMENT_EVENTS = ['keydown'];
         Eskimo(dependencies()).start(configuration({jquery: jquery,
                                                   document: document}));
 
-        jquery(document.documentElement).keydown();
+        expect(function() {jquery(document.documentElement).keydown() }).not.toThrow();
       });
       
-      it("passes the correct event for a keyup", function() {
+      it("works with multiple events", function() {
+        Eskimo.DOCUMENT_EVENTS = ['keydown', 'keyup'];
         var Updater = function() {
           this.keyup = function(event) {
-            Updater.key = event.which;
-          }
+            Updater.event = event;
+          };
         };
 
         Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
-                                                                    document: document}));
-
-        jquery.event.trigger({type: 'keyup',
-                              which : 87 });
-
-        expect(Updater.key).toEqual(87);
-      });
-
-      it("doesn't cause an error if the updater doesn't have a keyup", function() {
-        Eskimo(dependencies()).start(configuration({jquery: jquery,
-                                                  document: document}));
+                                                                      document: document})); 
 
         jquery(document.documentElement).keyup();
+
+        expect(Updater.event).not.toBeUndefined();
       });
 
+      it("sends CANVAS_EVENTS to the updater", function() {
+        Eskimo.CANVAS_EVENTS = ['mousedown'];
+        var Updater = function() {
+          this.mousedown = function(event) {
+            Updater.mousedown = true;
+          }
+        };
+        
+        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
+                                                                      canvas: canvas}));
+
+        jquery(canvas).mousedown();
+
+        expect(Updater.mousedown).toBeTruthy();
+      });
+
+      it("does not throw an exception if the updater uasn't defined the canvas event", function() {
+        Eskimo.CANVAS_EVENTS = ['mousedown'];
+
+        Eskimo(dependencies()).start(configuration({jquery: jquery,
+                                                    canvas: canvas}));
+
+        expect(function() {jquery(canvas).mousedown() }).not.toThrow();
+      });
+
+      it("works with multiple CANVAS_EVENTS", function() {
+        Eskimo.CANVAS_EVENTS = ['mousedown', 'mouseup'];
+        var Updater = function() {
+          this.mouseup = function(event) {
+            Updater.mouseup = true;
+          }
+        };
+        
+        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
+                                                                      canvas: canvas}));
+
+        jquery(canvas).mouseup();
+
+        expect(Updater.mouseup).toBeTruthy();
+      });
     });
  
     it("uses a intelligent defaults", function() {
