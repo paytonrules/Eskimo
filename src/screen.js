@@ -5,16 +5,19 @@ Eskimo.Screen = function(canvas, assets) {
   function clearScreen() {
     context.fillStyle = Eskimo.Screen.BACKGROUND_COLOR;
     context.fillRect(0, 0, canvas.width(), canvas.height());
-  }
+  };
 
   function put(image) {
     imageList.push(image);
-  }
+  };
 
   this.put = put;
 
   this.remove = function(assetName) {
     imageList.pop(assetName);
+  };
+
+  this.get = function() {
   };
 
   this.render = function() {

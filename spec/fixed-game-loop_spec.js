@@ -104,4 +104,36 @@ describe('Eskimo#loop', function() {
     expect(scheduler.loop).toEqual(gameLoop.loop);
   });
 
+  it('will update a second updater', function() {
+    var newUpdater = {update: function() {}};
+    spyOn(newUpdater, "update");
+
+    gameLoop = new Eskimo.FixedGameLoop(scheduler, {update: function() {}}, {render: function() {}});
+
+    gameLoop.addUpdater(newUpdater);
+
+    scheduler.tick();
+    gameLoop.loop();
+
+    expect(newUpdater.update).toHaveBeenCalled();
+  });
+
+  it('reset the update list to the original updater', function() {
+    var originalUpdater = {update: function() {}};
+    var newUpdater = {update: function() {}};
+    spyOn(newUpdater, "update");
+    spyOn(originalUpdater, "update");
+
+    gameLoop = new Eskimo.FixedGameLoop(scheduler, originalUpdater, {render: function() {}});
+    gameLoop.addUpdater(newUpdater);
+    gameLoop.clearUpdaters();
+
+    scheduler.tick();
+    gameLoop.loop();
+
+    expect(newUpdater.update).not.toHaveBeenCalled();
+    expect(originalUpdater.update).toHaveBeenCalled();
+  });
+
+
 });

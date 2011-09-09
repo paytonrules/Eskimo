@@ -7,6 +7,7 @@ require("../src/scheduler");
 require("../src/screen");
 require("../src/jukebox");
 require("../src/vector");
+require("../src/updater_list");
 
 _ = require("underscore");
 exports.Eskimo = global.Eskimo;
