@@ -65,29 +65,6 @@ Eskimo.LevelLoader = (function() {
 
     initializeAssets: function(jquery) {
       initializeAssets(jquery);
-    },
-
-    create: function(jquery, levels, updaterList) {
-
-     return {
-        // Mix & match here.  You've got image assets and a jukebox.  You should probably return THE screen
-        // loaded up with the assets
-        getImageAssets: function() {
-          return imageAssets;
-        },
-
-        getJukebox: function() {
-          return new Eskimo.Jukebox(soundAssets);
-        },
-
-        load: function(levelName, context) {
-
-          if (levels && levels[levelName]) {
-            addAssetsForLevel(levels[levelName], context);
-          }
-        }
-
-      };
     }
   };
 })();
