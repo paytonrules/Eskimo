@@ -1,6 +1,6 @@
-Eskimo.Screen = function(canvas, assets) {
-  var context = canvas[0].getContext("2d");
-  var imageList = [];
+Eskimo.Screen = function(canvas) {
+  var context = canvas[0].getContext("2d"),
+      imageList = [];
 
   function clearScreen() {
     context.fillStyle = Eskimo.Screen.BACKGROUND_COLOR;
@@ -17,10 +17,8 @@ Eskimo.Screen = function(canvas, assets) {
     imageList.pop(assetName);
   };
 
-  this.get = function() {
-  };
-
   this.render = function() {
+    var assets = Eskimo.LevelLoader.getImageAssets(); // THIS MUST BE FAST!
     clearScreen();
     _(imageList).each(function(image) {
       var asset = assets.get(image.name);
@@ -33,21 +31,6 @@ Eskimo.Screen = function(canvas, assets) {
   this.clear = function() {
     imageList = [];
   };
-
-  this.loadScreen = function(json) {
-    var images = json.images,
-        imageStruct,
-        image;
-
-    for(var imageName in images) {
-      if (images.hasOwnProperty(imageName)) {
-        imageStruct = images[imageName]; 
-        image = Eskimo.Image(imageName, imageStruct.location.x, imageStruct.location.y);
-        assets.load(imageName, imageStruct.src);
-        put(image);
-      }
-    }
-  }
 };
 
 Eskimo.Screen.BACKGROUND_COLOR = "#aaaabb";

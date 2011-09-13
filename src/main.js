@@ -5,7 +5,7 @@ Eskimo = function(depend) {
       Assets = dependencies['assets'] || Eskimo.Assets,
       Updater = dependencies["updater"],
       jquery = dependencies["jquery"],
-      Screen = Eskimo.Screen,
+      Screen = dependencies["screen"] || Eskimo.Screen,
       Jukebox = Eskimo.Jukebox,
       scheduler;
 
@@ -26,13 +26,18 @@ Eskimo = function(depend) {
 
   return {
     start: function(configuration) {
+      Eskimo.LevelLoader.jquery = jquery;
+      Eskimo.LevelLoader.levels = configuration.levels;
+
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       scheduler = new Scheduler(FRAME_RATE);
-      var imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
-      var soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
-      var screen = new Screen(configuration.canvas, imageAssets)
-      var updater = new Updater({images: imageAssets, sounds: soundAssets}, screen);
-      var loop = new GameLoop(scheduler, updater, screen);
+      var updaterList = new Eskimo.UpdaterList();
+
+      var screen = new Screen(configuration.canvas);
+      var updater = new Updater(screen);
+
+      updaterList.add(updater);
+      var loop = new GameLoop(scheduler, updaterList, screen);
 
       bindAllEvents(configuration.document, configuration.canvas, updater); 
 

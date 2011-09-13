@@ -2,7 +2,8 @@ Eskimo.Assets = function(options) {
   var assetList = {},
       jquery = options['jquery'],
       tag = options['tag'],
-      loadEvent = options['loadEvent'];
+      loadEvent = options['loadEvent'],
+      size = 0;
 
   this.get = function(key) {
     if ( assetList[key] && assetList[key].loaded ) {
@@ -17,8 +18,20 @@ Eskimo.Assets = function(options) {
     } else {
       assetList[key] = jquery("<" + tag + " src='" + src + "'>");
       assetList[key].bind(loadEvent, function() {
-        assetList[key].loaded = true;
+        if (assetList[key]) {
+          assetList[key].loaded = true;
+        }
       });
     }
+    size++;
+  };
+
+  this.size = function() {
+    return size;
+  };
+
+  this.clear = function() {
+    size = 0;
+    assetList = {};
   };
 };

@@ -46,19 +46,20 @@ describe("Eskimo Screen", function() {
     }());
 
     Eskimo = require("spec_helper").Eskimo;
+
+    spyOn(Eskimo.LevelLoader, "getImageAssets").andReturn(assets);
     context = new Context();
-    screen = new Eskimo.Screen(canvas, assets);
+    screen = new Eskimo.Screen(canvas);
 
     this.addMatchers( {
       toHaveScreenClearedTo: function(color) {
         return (this.actual.fillStyle === color &&
                 this.actual.filledRect.x === 0,
-                this.actual.filledRect.y === 0,
-                this.actual.filledRect.width === canvas.width(),
-                this.actual.filledRect.height === canvas.height());
+        this.actual.filledRect.y === 0,
+        this.actual.filledRect.width === canvas.width(),
+        this.actual.filledRect.height === canvas.height());
       }
-
-   });
+    });
   });
 
   it("is created with a canvas", function() {
@@ -138,51 +139,6 @@ describe("Eskimo Screen", function() {
 
     screen.put("one");
     screen.clear();
-  });
-
-  it("can load an entire screen from a JSON structure", function() {
-    spyOn(context, "drawImage");
-    screen.loadScreen({
-      'images': {
-        'one': {
-          'src' : 'src',
-          'location': {
-            'x': 100, 
-            'y': 200 
-          }
-        }
-      }
-    });
-
-    screen.render();
-
-    expect(context.drawImage).toHaveBeenCalledWith('src', 100, 200);
-  });
-
-  it("will load multiple entries", function() {
-    spyOn(context, "drawImage");
-    var images = {
-      'images': {
-        'irrelevant': { 
-          'src' : 'irrelevant',
-          'location': {
-            'x': 0, 
-            'y': 0 
-          }
-        },
-        'second': {
-          'src': 'second.jpg',
-          'location': {
-            'x': 10,
-            'y': 200
-          }
-        }
-      }
-    };
-    screen.loadScreen(images);
-    screen.render();
-
-    expect(context.drawImage).toHaveBeenCalledWith('second.jpg', 10, 200);
   });
 
 });

@@ -4,6 +4,7 @@ describe("Eskimo", function() {
   var emptyFunction = function() {};
   var emptyDocument = {documentElement: null};
   var jquery = require("jquery");
+  var levels = {};
 
   function dependencies(customConfig) {
     var emptyGameLoop = function(a, b, c) {
@@ -26,7 +27,8 @@ describe("Eskimo", function() {
   function configuration(config) {
     var standardConfig = {
       canvas: canvas,
-      document: emptyDocument
+      document: emptyDocument,
+      levels: levels
     }
 
     if (config !== null) {
@@ -64,6 +66,24 @@ describe("Eskimo", function() {
       expect(FakeScheduler.FRAME_RATE).toEqual(60);
     });
 
+    it("configures the level loader with jquery, the configured levels, and an empty update list", function() {
+      Eskimo(dependencies({jquery: jquery})).start(configuration({levels: levels}));
+
+      expect(Eskimo.LevelLoader.levels).toEqual(levels);
+      expect(Eskimo.LevelLoader.countUpdaters()).toEqual(0);
+      expect(Eskimo.LevelLoader.jquery).toEqual(jquery);
+    });
+
+    it("has the canvas on the game screen", function() {
+      var MyScreen = function(theCanvas) {
+        MyScreen.canvas = theCanvas;
+      };
+     
+      Eskimo(dependencies({screen: MyScreen})).start(configuration({canvas: canvas}));
+
+      expect(MyScreen.canvas).toEqual(canvas);
+    });
+
     it("creates the fixed step game loop with the scheduler", function() {
       var FakeGameLoop = function(scheduler) {
         FakeGameLoop.scheduler = scheduler;
@@ -80,6 +100,16 @@ describe("Eskimo", function() {
       expect(FakeGameLoop.scheduler.theScheduler).toEqual("this one");
     });
 
+    it("sets up the updater with the screen", function() {
+      var Updater = function(screen) {
+        Updater.screen = screen;
+      };
+
+      Eskimo(dependencies({updater: Updater})).start(configuration());
+      
+      expect(Updater.screen.put).not.toBeUndefined();
+    });
+
     it("creates the game loop with the screen", function() {
       var FakeGameLoop = function(irrellevant, irrellevant, screen) {
         this.start = emptyFunction;
@@ -89,88 +119,23 @@ describe("Eskimo", function() {
       Eskimo(dependencies({gameLoop: FakeGameLoop})).start(configuration());
 
       expect(FakeGameLoop.screen.put).not.toBeUndefined();
-    });    
- 
-    it("has the image assets on the game screen", function() {
-      var theAssets;
-     
-      var Assets = function(options) {
-        if (options['tag'] === 'IMG') {
-          theAssets = this;
-          Assets.jquery = options['jquery'];
-          Assets.loadEvent = options['loadEvent'];
-        }
-      };
-      
-      Eskimo(dependencies({assets: Assets})).start(configuration({jquery: jquery}));
-
-      expect(Assets.jquery).toEqual(jquery);
-      expect(Assets.loadEvent).toEqual('load');
     });
 
-    it("sets up the updater with Sound Assets", function() {
-      var theSoundAssets;
-
-      var Assets = function(options) {
-        if (options['tag'] == "audio") {
-          theSoundAssets = this;
-          theSoundAssets.jquery = options['jquery'];
-          theSoundAssets.loadEvent = options['loadEvent'];
-        }
-      };
-
-      var Updater = function(assets, whocares) {
-        Updater.sounds = assets.sounds;
-      };
-
-      Eskimo(dependencies({assets: Assets, updater: Updater})).start(configuration());
-      
-      expect(Updater.sounds).toEqual(theSoundAssets);
-      expect(theSoundAssets.jquery).toEqual(jquery);
-      expect(theSoundAssets.loadEvent).toEqual('canplaythrough');
-    });
-
-    it("also sets up the updater with the screen", function() {
-      var Updater = function(whocares, screen) {
-        Updater.screen = screen;
-      };
-
-      Eskimo(dependencies({updater: Updater})).start(configuration());
-      
-      expect(Updater.screen.put).not.toBeUndefined();
-    });
-
-    it("sends the configured updater to the game loop", function() {
-      var theUpdater = 'unset';
+    it("sends the game loop the update list - with the new updater added", function() {
       var GameUpdater = function() {
-        theUpdater = this;
+        GameUpdater.theUpdater = this;
       };
 
-      var FakeGameLoop = function(irrelevant, updater, irrelevant) {
-        FakeGameLoop.updater = updater;
+      var FakeGameLoop = function(irrelevant, updateList, irrelevant) {
+        FakeGameLoop.updateList = updateList;
         this.start = emptyFunction;
       };
 
       Eskimo(dependencies({gameLoop: FakeGameLoop,
                            updater: GameUpdater})).start(configuration());
 
-      expect(FakeGameLoop.updater).toEqual(theUpdater);
-    });
-
-    it("sends the updater the assets", function() {
-      var theAssets = "unset"; 
-      var GameUpdater = function(assets) {
-        GameUpdater.assets = assets.images;
-      };
-
-      var Assets = function() {
-        theAssets = this;
-      };
-
-      Eskimo(dependencies({assets: Assets,
-                         updater: GameUpdater})).start(configuration());
-
-      expect(GameUpdater.assets).toEqual(theAssets);
+      expect(FakeGameLoop.updateList.size()).toEqual(1);
+      expect(FakeGameLoop.updateList.get(0)).toEqual(GameUpdater.theUpdater);
     });
 
     it("starts the game loop", function() {

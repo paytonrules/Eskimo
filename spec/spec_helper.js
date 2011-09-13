@@ -8,6 +8,7 @@ require("../src/screen");
 require("../src/jukebox");
 require("../src/vector");
 require("../src/updater_list");
+require("../src/level_loader");
 
 _ = require("underscore");
 exports.Eskimo = global.Eskimo;
