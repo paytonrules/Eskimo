@@ -4,7 +4,6 @@ describe("Eskimo.LevelLoader", function() {
   function spyOnJQueryCapturingElements() {
     var spiedJQuery = {
       jquery: (function() {
-        var $ = require('jquery');
         var dom = require('jsdom').jsdom(),
             define = require('../node_modules/jsdom/lib/jsdom/level2/html').define,
             window = dom.createWindow(),
