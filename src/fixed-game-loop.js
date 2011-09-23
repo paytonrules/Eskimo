@@ -5,7 +5,6 @@ Eskimo.FixedGameLoop = function(scheduler, updater, screen) {
 
   this.loop = function() {
     while (scheduler.getTicks() > nextGameTick) {
-      imageList = [];
       updaterList.update();
 
       nextGameTick += scheduler.getTickTime();
