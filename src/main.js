@@ -26,6 +26,7 @@ Eskimo = function(depend) {
 
   return {
     start: function(configuration) {
+      // Ugh - no likey
       Eskimo.LevelLoader.jquery = jquery;
       Eskimo.LevelLoader.levels = configuration.levels;
 
