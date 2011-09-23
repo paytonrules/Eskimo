@@ -66,12 +66,19 @@ describe("Eskimo", function() {
       expect(FakeScheduler.FRAME_RATE).toEqual(60);
     });
 
-    it("configures the level loader with jquery, the configured levels, and an empty update list", function() {
+    it("configures the level loader with the configured levels, and an empty update list", function() {
       Eskimo(dependencies({jquery: jquery})).start(configuration({levels: levels}));
 
       expect(Eskimo.LevelLoader.levels).toEqual(levels);
       expect(Eskimo.LevelLoader.countUpdaters()).toEqual(0);
-      expect(Eskimo.LevelLoader.jquery).toEqual(jquery);
+    });
+
+    it("initializes the level loader", function() {
+      spyOn(Eskimo.LevelLoader, "initializeAssets");
+
+      Eskimo(dependencies()).start(configuration());
+
+      expect(Eskimo.LevelLoader.initializeAssets).toHaveBeenCalledWith(jquery);
     });
 
     it("has the canvas on the game screen", function() {

@@ -27,8 +27,8 @@ Eskimo = function(depend) {
   return {
     start: function(configuration) {
       // Ugh - no likey
-      Eskimo.LevelLoader.jquery = jquery;
       Eskimo.LevelLoader.levels = configuration.levels;
+      Eskimo.LevelLoader.initializeAssets(jquery);
 
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       scheduler = new Scheduler(FRAME_RATE);
