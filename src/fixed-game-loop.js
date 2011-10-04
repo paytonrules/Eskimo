@@ -1,30 +1,42 @@
-Eskimo.FixedGameLoop = function(scheduler, updater, screen) {
-  var nextGameTick = scheduler.getTicks(),
-      updaterList = new Eskimo.UpdaterList(updater),
-      imageList;
+Eskimo.FixedGameLoop = (function() {
+  var scheduler,
+      nextGameTick,
+      originalUpdater,
+      updaterList,
+      screen;
 
-  this.loop = function() {
-    while (scheduler.getTicks() > nextGameTick) {
-      updaterList.update();
+  return {
+    init: function(newScheduler, newUpdater, newScreen) {
+      scheduler = newScheduler;
+      nextGameTick = newScheduler.getTicks();
+      updaterList = new Eskimo.UpdaterList(newUpdater);
+      screen = newScreen;
+      originalUpdater = newUpdater;
+    },
 
-      nextGameTick += scheduler.getTickTime();
+    loop: function() {
+      while (scheduler.getTicks() > nextGameTick) {
+        updaterList.update();
+
+        nextGameTick += scheduler.getTickTime();
+      }
+      screen.render();
+    },
+
+    stop: function() {
+      scheduler.stop();
+    },
+
+    start: function() {
+      scheduler.start(this.loop);
+    },
+
+    addUpdater: function(updater) {
+      updaterList.add(updater);
+    },
+
+    clearUpdaters: function() {
+      updaterList = new Eskimo.UpdaterList(originalUpdater);
     }
-    screen.render();
-  };
-
-  this.stop = function() {
-    scheduler.stop();
-  };
-
-  this.start = function() {
-    scheduler.start(this.loop);
-  };
-
-  this.addUpdater = function(updater) {
-    updaterList.add(updater);
-  };
-
-  this.clearUpdaters = function() {
-    updaterList = new Eskimo.UpdaterList(updater);
-  };
-};
+  }
+})();

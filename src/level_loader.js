@@ -10,7 +10,7 @@ Eskimo.LevelLoader = (function() {
     var control;
     if (structure.control) {
       control = eval(structure.control); //Security risk
-      Eskimo.LevelLoader.updaterList.add(control.create(structure, context)); 
+      Eskimo.FixedGameLoop.updaterList.add(control.create(structure, context)); 
     }
   };
 

@@ -226,17 +226,16 @@ describe("Eskimo.LevelLoader", function() {
 
     beforeEach(function() {
       jquery = require('jquery');
-      updateList = new Eskimo.UpdaterList();
       levelLoader = Eskimo.LevelLoader;
       levelLoader.initializeAssets(jquery);
-      levelLoader.updaterList = updateList; // temp!
+      Eskimo.FixedGameLoop.updaterList = new Eskimo.UpdaterList()
       levelLoader.levels = levelsWithControl;
     });
 
     it("adds to the update list for any controls", function() {
       levelLoader.load("levelOne");
 
-      expect(updateList.get(0) instanceof String).toBeTruthy();
+      expect(Eskimo.FixedGameLoop.updaterList.get(0) instanceof String).toBeTruthy();
     });
 
     it("passes in any other data to the structure field", function() {

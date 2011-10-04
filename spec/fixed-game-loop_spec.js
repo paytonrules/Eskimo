@@ -31,7 +31,7 @@ describe('Eskimo#loop', function() {
   };
 
   beforeEach( function() {
-    Eskimo = require("spec_helper").Eskimo;
+    FixedGameLoop = require("spec_helper").Eskimo.FixedGameLoop;
     scheduler = new MockScheduler();
   });
 
@@ -42,25 +42,22 @@ describe('Eskimo#loop', function() {
     };
     spyOn(screen, "render")
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, screen);
-    gameLoop.loop();
+    FixedGameLoop.init(scheduler, updater, screen);
+    FixedGameLoop.loop();
 
     expect(screen.render).toHaveBeenCalled();
   });
 
   it('Executes update, provided time has passed since the last loop call', function() {
     var screen = {render: function() {}};
-    var updater = {
-      update: function(imageList) {
-        gameLoop.updated = true;
-      }
-    };
+    var updater = { update: function() {} };
+    spyOn(updater, "update");
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, screen);
+    FixedGameLoop.init(scheduler, updater, screen);
     scheduler.tick();
-    gameLoop.loop();
+    FixedGameLoop.loop();
 
-    expect(gameLoop.updated).toBeTruthy();
+    expect(updater.update).toHaveBeenCalled();
   });
 
   it('executes multiple updates to catch up if the draw takes a long time', function() {
@@ -72,11 +69,11 @@ describe('Eskimo#loop', function() {
     var screen = {render: renders.call};
     var updater = {update: updates.call};
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, updater, screen);
+    FixedGameLoop.init(scheduler, updater, screen);
     scheduler.tick();
-    gameLoop.loop();
+    FixedGameLoop.loop();
     scheduler.tick();
-    gameLoop.loop();
+    FixedGameLoop.loop();
 
     expect(renders.calls()).toEqual(2);
     expect(updates.calls()).toEqual(3);
@@ -87,8 +84,8 @@ describe('Eskimo#loop', function() {
       scheduler.stopped = true;
     };
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, {}, {});
-    gameLoop.stop();
+    FixedGameLoop.init(scheduler, {}, {});
+    FixedGameLoop.stop();
 
     expect(scheduler.stopped).toBeTruthy();
   });
@@ -98,22 +95,22 @@ describe('Eskimo#loop', function() {
       scheduler.loop = loop;
     };
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, {}, {});
-    gameLoop.start();
+    FixedGameLoop.init(scheduler, {}, {});
+    FixedGameLoop.start();
 
-    expect(scheduler.loop).toEqual(gameLoop.loop);
+    // TEMP!
+    expect(scheduler.loop).toEqual(FixedGameLoop.loop);
   });
 
   it('will update a second updater', function() {
     var newUpdater = {update: function() {}};
     spyOn(newUpdater, "update");
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, {update: function() {}}, {render: function() {}});
-
-    gameLoop.addUpdater(newUpdater);
+    FixedGameLoop.init(scheduler, {update: function() {}}, {render: function() {}});
+    FixedGameLoop.addUpdater(newUpdater);
 
     scheduler.tick();
-    gameLoop.loop();
+    FixedGameLoop.loop();
 
     expect(newUpdater.update).toHaveBeenCalled();
   });
@@ -124,16 +121,15 @@ describe('Eskimo#loop', function() {
     spyOn(newUpdater, "update");
     spyOn(originalUpdater, "update");
 
-    gameLoop = new Eskimo.FixedGameLoop(scheduler, originalUpdater, {render: function() {}});
-    gameLoop.addUpdater(newUpdater);
-    gameLoop.clearUpdaters();
+    FixedGameLoop.init(scheduler, originalUpdater, {render: function() {}});
+    FixedGameLoop.addUpdater(newUpdater);
+    FixedGameLoop.clearUpdaters();
 
     scheduler.tick();
-    gameLoop.loop();
+    FixedGameLoop.loop();
 
     expect(newUpdater.update).not.toHaveBeenCalled();
     expect(originalUpdater.update).toHaveBeenCalled();
   });
-
 
 });
