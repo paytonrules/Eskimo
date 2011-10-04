@@ -1,6 +1,8 @@
 describe("Eskimo Screen", function() {
   var assets, Eskimo, Context, context, screen;
 
+  // Mixed styles here.  Are you gonna spy on this, or simulate.
+  // Prefer simulation
   Context = function() {
     this.drawImage = function(image, x, y) {
       imageList.push({name: image, x: x, y: y});
