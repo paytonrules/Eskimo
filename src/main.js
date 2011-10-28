@@ -1,13 +1,11 @@
 Eskimo = function(depend) {
   var dependencies = depend || {}, 
       Scheduler = dependencies['scheduler'] || Eskimo.Scheduler,
-      GameLoop = dependencies['gameLoop'] || Eskimo.FixedGameLoop,
       Assets = dependencies['assets'] || Eskimo.Assets,
       Updater = dependencies["updater"],
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || Eskimo.Screen,
-      Jukebox = Eskimo.Jukebox,
-      scheduler;
+      Jukebox = Eskimo.Jukebox;
 
   function bindEventsOn(eventList, element, updater) {
     _(eventList).each(function(eventName) {
@@ -30,19 +28,19 @@ Eskimo = function(depend) {
       Eskimo.LevelLoader.levels = configuration.levels;
       Eskimo.LevelLoader.initializeAssets(jquery);
 
-      var FRAME_RATE = configuration.FRAME_RATE || 60;
-      scheduler = new Scheduler(FRAME_RATE);
-      var updaterList = new Eskimo.UpdaterList();
-
-      var screen = new Screen(configuration.canvas);
-      var updater = new Updater(screen);
+      var FRAME_RATE = configuration.FRAME_RATE || 60,
+          updaterList = new Eskimo.UpdaterList(),
+          screen = new Screen(configuration.canvas),
+          updater = new Updater(screen),
+          scheduler = new Scheduler(FRAME_RATE);
 
       updaterList.add(updater);
-      var loop = new GameLoop(scheduler, updaterList, screen);
+
+      Eskimo.FixedGameLoop.init(scheduler, updaterList, screen);
 
       bindAllEvents(configuration.document, configuration.canvas, updater); 
 
-      loop.start();
+      Eskimo.FixedGameLoop.start();
     }
   };
 };

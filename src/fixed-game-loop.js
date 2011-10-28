@@ -31,7 +31,7 @@ Eskimo.FixedGameLoop = (function() {
       scheduler.start(this.loop);
     },
 
-    // Updater list isn't really co-hesive - perhaps this should be a shared object?
+    // Updater list isn't really cohesive - perhaps this should be a shared object?
     // Didn't I do that already and decide it didn't work?
     // Maybe its the monostate.
     addUpdater: function(updater) {

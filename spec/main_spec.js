@@ -7,13 +7,8 @@ describe("Eskimo", function() {
   var levels = {};
 
   function dependencies(customConfig) {
-    var emptyGameLoop = function(a, b, c) {
-      this.start = emptyFunction;
-    };
-
     var dependencyConfig = {
       updater: emptyFunction,
-      gameLoop: emptyGameLoop,
       jquery: jquery
     };
 
@@ -40,6 +35,10 @@ describe("Eskimo", function() {
 
   beforeEach(function() {
     Eskimo = require("spec_helper").Eskimo;
+    spyOn(Eskimo.FixedGameLoop, "init").andCallFake(function(scheduler, updaterList, screen) {
+      Eskimo.FixedGameLoop.updaterList = updaterList;
+    });
+    spyOn(Eskimo.FixedGameLoop, "start");
     domCanvas = {getContext: function() {}}; 
     canvas = [domCanvas];
   });
@@ -91,21 +90,17 @@ describe("Eskimo", function() {
       expect(MyScreen.canvas).toEqual(canvas);
     });
 
-    it("creates the fixed step game loop with the scheduler", function() {
-      var FakeGameLoop = function(scheduler) {
-        FakeGameLoop.scheduler = scheduler;
-        this.start = emptyFunction;
-      };
-
+    it("initializes the fixed game loop with the scheduler", function() {
+      var sched = {fake: 'sched'};
       var FakeScheduler = function(frameRate) {
-        this.theScheduler = "this one";
+        return sched;
       };
 
-      Eskimo(dependencies({scheduler: FakeScheduler, 
-                         gameLoop: FakeGameLoop})).start(configuration());
+      Eskimo(dependencies({scheduler: FakeScheduler})).start(configuration());
 
-      expect(FakeGameLoop.scheduler.theScheduler).toEqual("this one");
+      expect(Eskimo.FixedGameLoop.init).toHaveBeenCalledWith(sched, jasmine.any(Object), jasmine.any(Object));
     });
+
 
     it("sets up the updater with the screen", function() {
       var Updater = function(screen) {
@@ -117,44 +112,33 @@ describe("Eskimo", function() {
       expect(Updater.screen.put).not.toBeUndefined();
     });
 
-    it("creates the game loop with the screen", function() {
-      var FakeGameLoop = function(irrellevant, irrellevant, screen) {
-        this.start = emptyFunction;
-        FakeGameLoop.screen = screen;
+    it("initializes the game loop with the screen", function() {
+      var fakeScreen = {fake: 'screen'};
+      var FakeScreen = function() {
+        return fakeScreen;
       };
 
-      Eskimo(dependencies({gameLoop: FakeGameLoop})).start(configuration());
+      Eskimo(dependencies({screen: FakeScreen})).start(configuration());
 
-      expect(FakeGameLoop.screen.put).not.toBeUndefined();
+      expect(Eskimo.FixedGameLoop.init).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object),  fakeScreen);
     });
 
-    it("sends the game loop the update list - with the new updater added", function() {
+
+    it("sends the game loop the update list - with the game updater added", function() {
       var GameUpdater = function() {
         GameUpdater.theUpdater = this;
       };
 
-      var FakeGameLoop = function(irrelevant, updateList, irrelevant) {
-        FakeGameLoop.updateList = updateList;
-        this.start = emptyFunction;
-      };
+      Eskimo(dependencies({updater: GameUpdater})).start(configuration());
 
-      Eskimo(dependencies({gameLoop: FakeGameLoop,
-                           updater: GameUpdater})).start(configuration());
-
-      expect(FakeGameLoop.updateList.size()).toEqual(1);
-      expect(FakeGameLoop.updateList.get(0)).toEqual(GameUpdater.theUpdater);
+      expect(Eskimo.FixedGameLoop.updaterList.size()).toEqual(1);
+      expect(Eskimo.FixedGameLoop.updaterList.get(0)).toEqual(GameUpdater.theUpdater);
     });
 
     it("starts the game loop", function() {
-      FakeGameLoop = function() {
-        this.start = function() {
-          FakeGameLoop.started = true;
-        };
-      };
+      Eskimo(dependencies()).start(configuration());
 
-      Eskimo(dependencies({gameLoop: FakeGameLoop})).start(configuration());
-
-      expect(FakeGameLoop.started).toBeTruthy();
+      expect(Eskimo.FixedGameLoop.start).toHaveBeenCalled();
     });
 
     describe("binding events", function() {
