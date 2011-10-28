@@ -36,11 +36,9 @@ Eskimo = function(depend) {
 
       updaterList.add(updater);
 
-      Eskimo.FixedGameLoop.init(scheduler, updaterList, screen);
-
       bindAllEvents(configuration.document, configuration.canvas, updater); 
 
-      Eskimo.FixedGameLoop.start();
+      Eskimo.FixedGameLoop.start(scheduler, updaterList, screen);
     }
   };
 };

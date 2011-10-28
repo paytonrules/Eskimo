@@ -5,15 +5,16 @@ Eskimo.FixedGameLoop = (function() {
       updaterList,
       screen;
 
-  return {
-    init: function(newScheduler, newUpdater, newScreen) {
-      scheduler = newScheduler;
-      nextGameTick = newScheduler.getTicks();
-      updaterList = new Eskimo.UpdaterList(newUpdater);
-      screen = newScreen;
-      originalUpdater = newUpdater;
-    },
+  function init(newScheduler, newUpdater, newScreen) {
+    scheduler = newScheduler;
+    nextGameTick = newScheduler.getTicks();
+    updaterList = new Eskimo.UpdaterList(newUpdater); // Pretty sure this is wrong
+    screen = newScreen;
+    originalUpdater = newUpdater;
+  }
 
+  return {
+    //init: init,
     loop: function() {
       while (scheduler.getTicks() > nextGameTick) {
         updaterList.update();
@@ -27,7 +28,8 @@ Eskimo.FixedGameLoop = (function() {
       scheduler.stop();
     },
 
-    start: function() {
+    start: function(newScheduler, newUpdater, newScreen) {
+      init(newScheduler, newUpdater, newScreen);
       scheduler.start(this.loop);
     },
 

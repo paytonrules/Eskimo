@@ -13,6 +13,8 @@ describe('Eskimo#loop', function() {
 
     this.tick = function() {
       ticks += 1;
+    },
+    this.start = function() {
     }
   };
 
@@ -42,7 +44,7 @@ describe('Eskimo#loop', function() {
     };
     spyOn(screen, "render")
 
-    FixedGameLoop.init(scheduler, updater, screen);
+    FixedGameLoop.start(scheduler, updater, screen);
     FixedGameLoop.loop();
 
     expect(screen.render).toHaveBeenCalled();
@@ -53,7 +55,7 @@ describe('Eskimo#loop', function() {
     var updater = { update: function() {} };
     spyOn(updater, "update");
 
-    FixedGameLoop.init(scheduler, updater, screen);
+    FixedGameLoop.start(scheduler, updater, screen);
     scheduler.tick();
     FixedGameLoop.loop();
 
@@ -69,7 +71,7 @@ describe('Eskimo#loop', function() {
     var screen = {render: renders.call};
     var updater = {update: updates.call};
 
-    FixedGameLoop.init(scheduler, updater, screen);
+    FixedGameLoop.start(scheduler, updater, screen);
     scheduler.tick();
     FixedGameLoop.loop();
     scheduler.tick();
@@ -84,7 +86,7 @@ describe('Eskimo#loop', function() {
       scheduler.stopped = true;
     };
 
-    FixedGameLoop.init(scheduler, {}, {});
+    FixedGameLoop.start(scheduler, {}, {});
     FixedGameLoop.stop();
 
     expect(scheduler.stopped).toBeTruthy();
@@ -95,10 +97,8 @@ describe('Eskimo#loop', function() {
       scheduler.loop = loop;
     };
 
-    FixedGameLoop.init(scheduler, {}, {});
-    FixedGameLoop.start();
+    FixedGameLoop.start(scheduler, {}, {});
 
-    // TEMP!
     expect(scheduler.loop).toEqual(FixedGameLoop.loop);
   });
 
@@ -106,7 +106,7 @@ describe('Eskimo#loop', function() {
     var newUpdater = {update: function() {}};
     spyOn(newUpdater, "update");
 
-    FixedGameLoop.init(scheduler, {update: function() {}}, {render: function() {}});
+    FixedGameLoop.start(scheduler, {update: function() {}}, {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
 
     scheduler.tick();
@@ -121,7 +121,7 @@ describe('Eskimo#loop', function() {
     spyOn(newUpdater, "update");
     spyOn(originalUpdater, "update");
 
-    FixedGameLoop.init(scheduler, originalUpdater, {render: function() {}});
+    FixedGameLoop.start(scheduler, originalUpdater, {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
     FixedGameLoop.clearUpdaters();
 

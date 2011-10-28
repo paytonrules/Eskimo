@@ -35,10 +35,9 @@ describe("Eskimo", function() {
 
   beforeEach(function() {
     Eskimo = require("spec_helper").Eskimo;
-    spyOn(Eskimo.FixedGameLoop, "init").andCallFake(function(scheduler, updaterList, screen) {
+    spyOn(Eskimo.FixedGameLoop, "start").andCallFake(function(scheduler, updaterList, screen) {
       Eskimo.FixedGameLoop.updaterList = updaterList;
     });
-    spyOn(Eskimo.FixedGameLoop, "start");
     domCanvas = {getContext: function() {}}; 
     canvas = [domCanvas];
   });
@@ -90,7 +89,7 @@ describe("Eskimo", function() {
       expect(MyScreen.canvas).toEqual(canvas);
     });
 
-    it("initializes the fixed game loop with the scheduler", function() {
+    it("starts the fixed game loop with the scheduler", function() {
       var sched = {fake: 'sched'};
       var FakeScheduler = function(frameRate) {
         return sched;
@@ -98,7 +97,7 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies({scheduler: FakeScheduler})).start(configuration());
 
-      expect(Eskimo.FixedGameLoop.init).toHaveBeenCalledWith(sched, jasmine.any(Object), jasmine.any(Object));
+      expect(Eskimo.FixedGameLoop.start).toHaveBeenCalledWith(sched, jasmine.any(Object), jasmine.any(Object));
     });
 
 
@@ -112,7 +111,7 @@ describe("Eskimo", function() {
       expect(Updater.screen.put).not.toBeUndefined();
     });
 
-    it("initializes the game loop with the screen", function() {
+    it("starts the game loop with the screen", function() {
       var fakeScreen = {fake: 'screen'};
       var FakeScreen = function() {
         return fakeScreen;
@@ -120,7 +119,7 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies({screen: FakeScreen})).start(configuration());
 
-      expect(Eskimo.FixedGameLoop.init).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object),  fakeScreen);
+      expect(Eskimo.FixedGameLoop.start).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object),  fakeScreen);
     });
 
 
@@ -133,12 +132,6 @@ describe("Eskimo", function() {
 
       expect(Eskimo.FixedGameLoop.updaterList.size()).toEqual(1);
       expect(Eskimo.FixedGameLoop.updaterList.get(0)).toEqual(GameUpdater.theUpdater);
-    });
-
-    it("starts the game loop", function() {
-      Eskimo(dependencies()).start(configuration());
-
-      expect(Eskimo.FixedGameLoop.start).toHaveBeenCalled();
     });
 
     describe("binding events", function() {
