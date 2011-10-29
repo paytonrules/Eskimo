@@ -14,6 +14,7 @@ describe('Eskimo#loop', function() {
     this.tick = function() {
       ticks += 1;
     },
+
     this.start = function() {
     }
   };
