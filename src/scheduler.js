@@ -5,6 +5,7 @@ Eskimo.Scheduler = function(framesPerSecond) {
   };
 
   this.stop = function() {
+    console.log("STOP THE SCHEDULE");
     clearInterval(timer);
   };
 

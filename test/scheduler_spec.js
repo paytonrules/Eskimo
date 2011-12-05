@@ -1,5 +1,6 @@
 describe("Eskimo#scheduler", function() {
-  var Eskimo, counter;
+  var Eskimo, 
+      counter;
   
   var CallCounterUpTo = function(maximum) {
     var calls = 0;
@@ -23,19 +24,20 @@ describe("Eskimo#scheduler", function() {
   };
   
   beforeEach( function() {
-    Eskimo = require('spec_helper').Eskimo;
+    Eskimo = require('./spec_helper').Eskimo;
     counter = new CallCounterUpTo(2);
   });
 
-  it('schedules method called for repeated calls', function() {
+  it('schedules method called for repeated calls', function(done) {
     var scheduler = new Eskimo.Scheduler(100);
     counter.scheduler = scheduler;
     
-    scheduler.start(counter.call);
-
-    waitsFor(function() {
-      return (counter.completed());
-    }, "Calls never complete", 1001);
+    scheduler.start(function() {
+      counter.call();
+      if (counter.completed()) {
+        done();
+      }
+    });
   });
 
   it('calls that method with the tick rate', function() {
@@ -46,45 +48,39 @@ describe("Eskimo#scheduler", function() {
 
     startTime = (new Date()).getTime();
 
-    scheduler.start(counter.call);
-
-    waitsFor(function() {
-      return (counter.completed());
-    }, "Calls never complete", 1001);
-
-    runs(function() {
-      var doneTime = (new Date()).getTime();
-      expect(doneTime - startTime).toBeGreaterThan(199);
-      expect(doneTime - startTime).toBeLessThan(220); // This should be able to be around 200 - 203 - something isn't right
+    scheduler.start(function() {
+      counter.call();
+      if (counter.completed()) {
+        var doneTime = (new Date().getTime());
+        (doneTime - startTime).should.be.within(199, 220);
+        done();
+      }
     });
   });
-
-  it('stops calling after ...it stops', function() {
+/*
+  it('stops calling after ...it stops', function(done) {
     var scheduler = new Eskimo.Scheduler(100);
     counter.scheduler = scheduler;
 
     scheduler.start(counter.call);
 
-    waitsFor(function() {
-      return (counter.completed());
-    }, "Calls didn't complete", 100);
+    setTimeout(function() {
+      counter.getCalls().should.equal(2);
+      done();
+    }, 200);
 
-    waits(15);
-
-    runs(function() {
-      expect(counter.getCalls()).toEqual(2);
-    });
   });
+  */
 
   it('returns the time for tics', function() {
     var scheduler = new Eskimo.Scheduler(100);
 
-    expect(scheduler.getTicks()).toEqual((new Date()).getTime());
+    scheduler.getTicks().should.equal((new Date()).getTime());
   });
 
   it('returns its tick time', function() {
     var scheduler = new Eskimo.Scheduler(23);
 
-    expect(scheduler.getTickTime()).toEqual(1000 / 23);
+    scheduler.getTickTime().should.equal(1000 / 23);
   });
 });
