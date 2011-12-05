@@ -1,5 +1,8 @@
 describe('Eskimo#loop', function() {
-  var gameLoop, scheduler, Eskimo;
+  var gameLoop, 
+      scheduler, 
+      FixedGameLoop,
+      Spies = require('./spies');
 
   var MockScheduler = function() {
     var ticks = 0;
@@ -34,7 +37,7 @@ describe('Eskimo#loop', function() {
   };
 
   beforeEach( function() {
-    FixedGameLoop = require("spec_helper").Eskimo.FixedGameLoop;
+    FixedGameLoop = require("./spec_helper").Eskimo.FixedGameLoop;
     scheduler = new MockScheduler();
   });
 
@@ -43,24 +46,24 @@ describe('Eskimo#loop', function() {
     var screen = {
       render: function() {}
     };
-    spyOn(screen, "render")
+    var screenSpy = Spies.spyOn(screen, "render")
 
     FixedGameLoop.start(scheduler, updater, screen);
     FixedGameLoop.loop();
 
-    expect(screen.render).toHaveBeenCalled();
+    screenSpy.wasCalled().should.be.true;
   });
 
   it('Executes update, provided time has passed since the last loop call', function() {
     var screen = {render: function() {}};
     var updater = { update: function() {} };
-    spyOn(updater, "update");
+    var updateSpy = Spies.spyOn(updater, "update");
 
     FixedGameLoop.start(scheduler, updater, screen);
     scheduler.tick();
     FixedGameLoop.loop();
 
-    expect(updater.update).toHaveBeenCalled();
+    updateSpy.wasCalled().should.be.true;
   });
 
   it('executes multiple updates to catch up if the draw takes a long time', function() {
@@ -78,8 +81,8 @@ describe('Eskimo#loop', function() {
     scheduler.tick();
     FixedGameLoop.loop();
 
-    expect(renders.calls()).toEqual(2);
-    expect(updates.calls()).toEqual(3);
+    renders.calls().should.equal(2);
+    updates.calls().should.equal(3);
   });
 
   it('delegates stop to the scheduler', function() {
@@ -90,7 +93,7 @@ describe('Eskimo#loop', function() {
     FixedGameLoop.start(scheduler, {}, {});
     FixedGameLoop.stop();
 
-    expect(scheduler.stopped).toBeTruthy();
+    scheduler.stopped.should.be.true;
   });
 
   it('delegates start to the scheduler, passing it its loop method', function() {
@@ -100,12 +103,12 @@ describe('Eskimo#loop', function() {
 
     FixedGameLoop.start(scheduler, {}, {});
 
-    expect(scheduler.loop).toEqual(FixedGameLoop.loop);
+    scheduler.loop.should.eql(FixedGameLoop.loop);
   });
 
   it('will update a second updater', function() {
     var newUpdater = {update: function() {}};
-    spyOn(newUpdater, "update");
+    var updateSpy = Spies.spyOn(newUpdater, "update");
 
     FixedGameLoop.start(scheduler, {update: function() {}}, {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
@@ -113,14 +116,14 @@ describe('Eskimo#loop', function() {
     scheduler.tick();
     FixedGameLoop.loop();
 
-    expect(newUpdater.update).toHaveBeenCalled();
+    updateSpy.wasCalled().should.be.true;
   });
 
   it('reset the update list to the original updater', function() {
     var originalUpdater = {update: function() {}};
     var newUpdater = {update: function() {}};
-    spyOn(newUpdater, "update");
-    spyOn(originalUpdater, "update");
+    var newUpdaterSpy = Spies.spyOn(newUpdater, "update");
+    var originalUpdaterSpy = Spies.spyOn(originalUpdater, "update");
 
     FixedGameLoop.start(scheduler, originalUpdater, {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
@@ -129,8 +132,8 @@ describe('Eskimo#loop', function() {
     scheduler.tick();
     FixedGameLoop.loop();
 
-    expect(newUpdater.update).not.toHaveBeenCalled();
-    expect(originalUpdater.update).toHaveBeenCalled();
+    newUpdaterSpy.wasCalled().should.be.false;
+    originalUpdaterSpy.wasCalled().should.be.true;
   });
 
 });
