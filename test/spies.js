@@ -11,7 +11,7 @@ function stub() {
 function spyOn() {
   var obj, functionName, returnValue, 
       wasCalled, capturedArgs, originalFunction, 
-      spy, fake;
+      spy, fake, callCount;
 
   if(typeof arguments[0] === 'string') {
     obj = {};
@@ -27,6 +27,7 @@ function spyOn() {
     wasCalled = false;
     capturedArgs = [];
     fake = null;
+    callCount = 0;
   }
 
   function passedArguments(index) {
@@ -40,6 +41,7 @@ function spyOn() {
   function spyFunction() { 
     capturedArgs = arguments;
     wasCalled = true;
+    callCount++;
     if (fake) {
       return fake(spy, capturedArgs);
     }
@@ -68,7 +70,8 @@ function spyOn() {
     object: obj,
     spyFunction: spyFunction,
     andCallFake: andCallFake,
-    originalFunction: originalFunction
+    originalFunction: originalFunction,
+    callCount: function() { return callCount;}
   };
 
   spy.resetSpy();
