@@ -14,7 +14,7 @@ desc("Install dependencies")
 task("dependencies", function() {
   sh('npm install glob');
   sh('npm install html5');
-  sh('npm install jessie -g');
+  sh('npm install mocha -g');
   sh('npm install jquery');
   sh('npm install jsdom');
   sh('npm install underscore');
