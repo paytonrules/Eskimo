@@ -1,5 +1,9 @@
+// Weird - where the hell is spec helper being required?  And yet this works!
 describe("Eskimo.LevelLoader", function() {
-  var levelLoader;
+  var levelLoader,
+      Spies = require('./spies'),
+      should = require('should'),
+      spiedJQuery;
 
   function spyOnJQueryCapturingElements() {
     var spiedJQuery = {
@@ -29,8 +33,8 @@ describe("Eskimo.LevelLoader", function() {
       elements: []
     };
 
-    spyOn(spiedJQuery, 'jquery').andCallFake(function(params) {
-      var newElement = spiedJQuery.jquery.originalValue(params);
+    Spies.stub(spiedJQuery, 'jquery').andCallFake(function(spy, params) {
+      var newElement = spy.originalFunction(params['0']);
 
       spiedJQuery.elements.push(newElement);
       return newElement;
@@ -50,7 +54,7 @@ describe("Eskimo.LevelLoader", function() {
 
     levelLoader.load("monkey");
 
-    expect(levelLoader.getImageAssets().size()).toEqual(0);
+    levelLoader.getImageAssets().size().should.equal(0);
   });
 
   it("creates image assets for any images in the level", function() {
@@ -70,7 +74,7 @@ describe("Eskimo.LevelLoader", function() {
 
     imageAssets = levelLoader.getImageAssets();
 
-    expect(imageAssets.get("imageName").src).toEqual('background.jpg');
+    imageAssets.get("imageName").src.should.equal('background.jpg');
   });
 
   it("creates a jukebox from the sounds in the level", function() {
@@ -93,8 +97,8 @@ describe("Eskimo.LevelLoader", function() {
 
     jukebox = levelLoader.getJukebox();
 
-    expect(jukebox.assets.get('soundOne').src).toEqual('sound.mp3');
-    expect(jukebox.assets.get('soundTwo').src).toEqual('secondSound.mp3');
+    jukebox.assets.get('soundOne').src.should.equal('sound.mp3');
+    jukebox.assets.get('soundTwo').src.should.equal('secondSound.mp3');
   });
 
   it("removes the previous level images", function() {
@@ -122,8 +126,8 @@ describe("Eskimo.LevelLoader", function() {
 
     imageAssets = levelLoader.getImageAssets();
 
-    expect(imageAssets.get("oldImage")).toBeNull();
-    expect(imageAssets.get("newImage")).not.toBeNull();
+    should.not.exist(imageAssets.get("oldImage"));
+    imageAssets.get("newImage").should.be.ok;
   });
 
   it("removes the previous levels sounds as well", function() {
@@ -152,8 +156,8 @@ describe("Eskimo.LevelLoader", function() {
 
     soundAssets = levelLoader.getJukebox().assets;
 
-    expect(soundAssets.get("oldSound")).toBeNull();
-    expect(soundAssets.get("newSound")).not.toBeNull();
+    should.not.exist(soundAssets.get("oldSound"));
+    soundAssets.get("newSound").should.exist;
   });
     
   it("does not clear the previous level if the requested level doesn't exist", function() {
@@ -182,8 +186,8 @@ describe("Eskimo.LevelLoader", function() {
     soundAssets = levelLoader.getJukebox().assets;
     imageAssets = levelLoader.getImageAssets();
 
-    expect(soundAssets.get("sound")).not.toBeNull();
-    expect(imageAssets.get("image")).not.toBeNull();
+    soundAssets.get("sound").should.exist;
+    imageAssets.get("image").should.exist;
   });
 
   describe("The controls", function() {
@@ -235,27 +239,27 @@ describe("Eskimo.LevelLoader", function() {
     it("adds to the update list for any controls", function() {
       levelLoader.load("levelOne");
 
-      expect(Eskimo.FixedGameLoop.updaterList.get(0) instanceof String).toBeTruthy();
+      Eskimo.FixedGameLoop.updaterList.get(0).should.be.an.instanceof(String);
     });
 
     it("passes in any other data to the structure field", function() {
       levelLoader.load("levelOne");
 
-      expect(Tests.MyControl.structure.data).toEqual("data");
+      Tests.MyControl.structure.data.should.equal('data');
     });
 
     it("does this for sounds as well - ugh this stupid duplication", function() {
       levelLoader.load("levelOne");
       
-      expect(Tests.MySoundControl.structure.extraSoundData).toEqual("soundData");
+      Tests.MySoundControl.structure.extraSoundData.should.equal('soundData');
     });
 
     it("optionally takes a context that is passed to any created controls", function() {
-      context = "test";
+      var context = "test";
 
       levelLoader.load("levelOne", context);
 
-      expect(Tests.MyControl.context).toEqual("test");
+      Tests.MyControl.context.should.equal('test');
     });
   });
 

@@ -41,7 +41,7 @@ function spyOn() {
     capturedArgs = arguments;
     wasCalled = true;
     if (fake) {
-      return fake(this, capturedArgs);
+      return fake(spy, capturedArgs);
     }
     else {
       return returnValue;
@@ -67,7 +67,8 @@ function spyOn() {
     resetSpy: initialize,
     object: obj,
     spyFunction: spyFunction,
-    andCallFake: andCallFake 
+    andCallFake: andCallFake,
+    originalFunction: originalFunction
   };
 
   spy.resetSpy();

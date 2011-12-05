@@ -35,12 +35,6 @@ describe("Eskimo.Assets", function() {
     assets = new Assets({jquery: spiedJQuery, 
                          tag: 'img',
                          loadEvent: 'loadEvent'});
-/*
-    this.addMatchers({
-      toHaveTagName: function(tag) {
-        return this.actual.tagName === tag;
-      }
-    });*/
   });
   
   it("doesn't have an asset if it hasn't been loaded yet by the user", function() {
