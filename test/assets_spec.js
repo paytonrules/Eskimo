@@ -1,5 +1,8 @@
 describe("Eskimo.Assets", function() {
-  var assets, spiedJQuery, $;
+  var assets, 
+      spiedJQuery, 
+      $,
+      should = require('should');
 
   function prepareHTML5() {
     var dom = require('jsdom').jsdom(),
@@ -28,26 +31,26 @@ describe("Eskimo.Assets", function() {
       };
     })();
 
-    Assets = require("spec_helper").Eskimo.Assets;
+    Assets = require("./spec_helper").Eskimo.Assets;
     assets = new Assets({jquery: spiedJQuery, 
                          tag: 'img',
                          loadEvent: 'loadEvent'});
-
-    this.addMatchers( {
+/*
+    this.addMatchers({
       toHaveTagName: function(tag) {
         return this.actual.tagName === tag;
       }
-    });
+    });*/
   });
   
   it("doesn't have an asset if it hasn't been loaded yet by the user", function() {
-    expect(assets.get('key')).toBeNull();
+    should.not.exist(assets.get('key'));
   });
 
   it("doesn't get the asset if the image hasn't been loaded into the DOM", function() {
     assets.load('key', 'src');
 
-    expect(assets.get('key')).toBeNull();
+    should.not.exist(assets.get('key'));
   });
 
   it("can get the asset after it's loadevent is triggered", function() {
@@ -56,7 +59,7 @@ describe("Eskimo.Assets", function() {
 
     var asset = assets.get('key');
 
-    expect(asset).not.toBeNull();
+    asset.should.be.ok;
   });
 
   it("sets up the asset with the passed in source", function() {
@@ -65,7 +68,7 @@ describe("Eskimo.Assets", function() {
 
     var asset = assets.get('key');
 
-    expect(asset.src).toEqual('src');
+    asset.src.should.equal('src');
   });
 
   it("gives the asset the tag passed into the constructor", function() {
@@ -74,15 +77,18 @@ describe("Eskimo.Assets", function() {
 
     var asset = assets.get('key');
 
-    expect(asset).toHaveTagName('IMG');
+    asset.tagName.should.equal('IMG');
   });
 
   it("raises an exception if there is already an asset with that key", function() {
     assets.load('key', 'src');
 
-    expect(function() { 
-      assets.load('key', 'error'); 
-    } ).toThrow({name: "Eskimo.AssetAlreadyExists",
-                 message:"Asset 'error' already exists"});
+    try {
+      assets.load('key', 'error');
+      should.fail("Should have thrown an exception, but didn't");
+    } catch (err) {
+      err.should.eql({name: "Eskimo.AssetAlreadyExists",
+                      message:"Asset 'error' already exists"});
+    }
   });
 });
