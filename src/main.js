@@ -22,9 +22,9 @@ Eskimo = function(depend) {
     bindEventsOn(Eskimo.CANVAS_EVENTS, canvas, updater);
   };
 
+  // Main needs to get streamlined.
   return {
     start: function(configuration) {
-      // Ugh - no likey
       Eskimo.LevelLoader.levels = configuration.levels;
       Eskimo.LevelLoader.initializeAssets(jquery);
 
