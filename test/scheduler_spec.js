@@ -5,22 +5,23 @@ describe("Eskimo#scheduler", function() {
   var CallCounterUpTo = function(maximum) {
     var calls = 0;
     var self = this;
-    this.call = function() {
+    self.call = function() {
       calls += 1;
 
       if (calls === maximum) {
         self.scheduler.stop();
       }
-
     };
 
-    this.completed = function() {
+    self.completed = function() {
       return (calls === maximum);
     };
 
-    this.getCalls = function() {
+    self.getCalls = function() {
       return calls;
     };
+
+    self.maximum = maximum;
   };
   
   beforeEach( function() {
@@ -40,6 +41,18 @@ describe("Eskimo#scheduler", function() {
     });
   });
 
+  it('clears the interval when stop is called', function() {
+    var TestInterval = {
+      clearInterval: function() {this.cleared = true;}
+    };
+    var scheduler = new Eskimo.Scheduler(100);
+    scheduler.setIntervalWrapper(TestInterval);
+
+    scheduler.stop();
+
+    TestInterval.cleared.should.be.true;
+  });
+
   it('calls that method with the tick rate', function() {
     var framesPerSecond = 10;
     var scheduler = new Eskimo.Scheduler(framesPerSecond);
@@ -57,20 +70,6 @@ describe("Eskimo#scheduler", function() {
       }
     });
   });
-/*
-  it('stops calling after ...it stops', function(done) {
-    var scheduler = new Eskimo.Scheduler(100);
-    counter.scheduler = scheduler;
-
-    scheduler.start(counter.call);
-
-    setTimeout(function() {
-      counter.getCalls().should.equal(2);
-      done();
-    }, 200);
-
-  });
-  */
 
   it('returns the time for tics', function() {
     var scheduler = new Eskimo.Scheduler(100);

@@ -1,16 +1,21 @@
 Eskimo.Scheduler = function(framesPerSecond) {
-  var timer;
+  var timer, 
+      intervalWrapper = Eskimo.IntervalWrapper; 
+
   this.start = function(method) {
-    timer = setInterval(function() { method(); }, this.getTickTime());
+    timer = intervalWrapper.setInterval(function() { method(); }, this.getTickTime());
   };
 
   this.stop = function() {
-    console.log("STOP THE SCHEDULE");
-    clearInterval(timer);
+    intervalWrapper.clearInterval(timer); // clearInterval(timer);
   };
 
   this.getTickTime = function() {
     return (1000 / framesPerSecond);
+  };
+
+  this.setIntervalWrapper = function(iv) {
+    intervalWrapper = iv;
   };
 };
 
