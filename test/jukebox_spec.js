@@ -1,7 +1,7 @@
 describe("Eskimo#Jukebox", function() {
   var Jukebox, 
-      Eskimo = require("./spec_helper").Eskimo,
-      assets = new Eskimo.Assets({}),
+      Assets = require("../src/Assets"),
+      assets = new Assets({}),
       audioElement = {
         play: function() {},
         get: function() {

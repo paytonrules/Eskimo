@@ -1,9 +1,12 @@
 Eskimo.LevelLoader = (function() {
-  var imageAssets, soundAssets;
+  var imageAssets, 
+      soundAssets,
+      Assets = require("./assets");
+
 
   function initializeAssets(jquery) {
-    imageAssets = new Eskimo.Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
-    soundAssets = new Eskimo.Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
+    imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
+    soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
   };
 
   function addToControlList(structure, context) {

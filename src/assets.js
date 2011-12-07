@@ -1,4 +1,4 @@
-Eskimo.Assets = function(options) {
+module.exports = function(options) {
   var assetList = {},
       jquery = options['jquery'],
       tag = options['tag'],

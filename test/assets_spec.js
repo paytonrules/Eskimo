@@ -2,7 +2,8 @@ describe("Eskimo.Assets", function() {
   var assets, 
       spiedJQuery, 
       $,
-      should = require('should');
+      should = require('should'),
+      Assets = require("../src/assets");
 
   function prepareHTML5() {
     var dom = require('jsdom').jsdom(),
@@ -20,7 +21,6 @@ describe("Eskimo.Assets", function() {
   }
 
   beforeEach(function() {
-    var Assets;
     prepareHTML5();
 
     spiedJQuery = (function () {
@@ -31,7 +31,6 @@ describe("Eskimo.Assets", function() {
       };
     })();
 
-    Assets = require("./spec_helper").Eskimo.Assets;
     assets = new Assets({jquery: spiedJQuery, 
                          tag: 'img',
                          loadEvent: 'loadEvent'});

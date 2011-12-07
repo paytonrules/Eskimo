@@ -6,7 +6,7 @@ Eskimo = function(depend) {
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || Eskimo.Screen,
       Jukebox = Eskimo.Jukebox,
-      UpdaterList = require("../src/updater_list");
+      UpdaterList = require("./updater_list");
 
   function bindEventsOn(eventList, element, updater) {
     _(eventList).each(function(eventName) {
