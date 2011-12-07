@@ -1,5 +1,5 @@
 describe("Eskimo.IntervalWrapper", function() {
-  var IntervalWrapper = require('./spec_helper').Eskimo.IntervalWrapper,
+  var IntervalWrapper = require('../src/interval_wrapper'),
       should = require('should'),
       Spies = require('./spies');
   

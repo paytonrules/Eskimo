@@ -1,5 +1,5 @@
-describe("Eskimo#Jukebox", function() {
-  var Jukebox, 
+describe("Jukebox", function() {
+  var Jukebox = require("../src/JukeBox"),
       Assets = require("../src/Assets"),
       assets = new Assets({}),
       audioElement = {
@@ -9,24 +9,25 @@ describe("Eskimo#Jukebox", function() {
         }
       },
       should = require('should'),
-      Spies = require('./spies');
+      Spies = require('./spies'),
+      jukebox; 
 
   beforeEach(function() {
-    Jukebox = Eskimo.Jukebox(assets);
+    jukebox = Jukebox(assets);
     
     Spies.stub(audioElement, "play");
   });
 
   it("should play a sound from the asset list", function() {
     var assetsSpy = Spies.spyOn(assets, "get", audioElement);
-    Jukebox.play("bang");
+    jukebox.play("bang");
 
     assetsSpy.wasCalled().should.be.true;
   });
 
   it("gets the right sound from the asset list", function() {
     var assetsSpy = Spies.spyOn(assets, "get", audioElement);
-    Jukebox.play("bang");
+    jukebox.play("bang");
 
     assetsSpy.wasCalled().should.be.true;
   });
@@ -34,7 +35,7 @@ describe("Eskimo#Jukebox", function() {
   it("does not throw an exception if the sound doesnt exist", function() {
     Spies.stub(assets, "get", null);
     
-    Jukebox.play("yo momma");
+    jukebox.play("yo momma");
   });
 
 });

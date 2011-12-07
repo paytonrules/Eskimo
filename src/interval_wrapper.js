@@ -1,4 +1,4 @@
-Eskimo.IntervalWrapper = {
+module.exports = {
   setInterval: function(fn, timeout) {
     return setInterval(fn, timeout);
   },

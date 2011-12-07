@@ -1,3 +1,4 @@
-Eskimo.Point = function(x, y) {
-  return Eskimo.Vector.create2DVector(x, y);
+var Vector = require("./vector");
+module.exports = function(x, y) {
+  return Vector.create2DVector(x, y);
 }

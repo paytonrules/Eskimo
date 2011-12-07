@@ -1,6 +1,6 @@
-describe("Eskimo#scheduler", function() {
-  var Eskimo, 
-      counter;
+describe("Scheduler", function() {
+  var counter,
+      Scheduler = require("../src/scheduler");
   
   var CallCounterUpTo = function(maximum) {
     var calls = 0;
@@ -25,12 +25,11 @@ describe("Eskimo#scheduler", function() {
   };
   
   beforeEach( function() {
-    Eskimo = require('./spec_helper').Eskimo;
     counter = new CallCounterUpTo(2);
   });
 
   it('schedules method called for repeated calls', function(done) {
-    var scheduler = new Eskimo.Scheduler(100);
+    var scheduler = new Scheduler(100);
     counter.scheduler = scheduler;
     
     scheduler.start(function() {
@@ -45,7 +44,7 @@ describe("Eskimo#scheduler", function() {
     var TestInterval = {
       clearInterval: function() {this.cleared = true;}
     };
-    var scheduler = new Eskimo.Scheduler(100);
+    var scheduler = new Scheduler(100);
     scheduler.setIntervalWrapper(TestInterval);
 
     scheduler.stop();
@@ -55,7 +54,7 @@ describe("Eskimo#scheduler", function() {
 
   it('calls that method with the tick rate', function() {
     var framesPerSecond = 10;
-    var scheduler = new Eskimo.Scheduler(framesPerSecond);
+    var scheduler = new Scheduler(framesPerSecond);
     counter.scheduler = scheduler;
     var startTime;
 
@@ -72,13 +71,13 @@ describe("Eskimo#scheduler", function() {
   });
 
   it('returns the time for tics', function() {
-    var scheduler = new Eskimo.Scheduler(100);
+    var scheduler = new Scheduler(100);
 
     scheduler.getTicks().should.equal((new Date()).getTime());
   });
 
   it('returns its tick time', function() {
-    var scheduler = new Eskimo.Scheduler(23);
+    var scheduler = new Scheduler(23);
 
     scheduler.getTickTime().should.equal(1000 / 23);
   });

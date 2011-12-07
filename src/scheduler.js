@@ -1,6 +1,6 @@
-Eskimo.Scheduler = function(framesPerSecond) {
+module.exports = function(framesPerSecond) {
   var timer, 
-      intervalWrapper = Eskimo.IntervalWrapper; 
+      intervalWrapper = require('./interval_wrapper');
 
   this.start = function(method) {
     timer = intervalWrapper.setInterval(function() { method(); }, this.getTickTime());
@@ -19,6 +19,6 @@ Eskimo.Scheduler = function(framesPerSecond) {
   };
 };
 
-Eskimo.Scheduler.prototype.getTicks = function() {
+module.exports.prototype.getTicks = function() {
   return (new Date()).getTime();
 };

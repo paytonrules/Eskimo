@@ -1,8 +1,9 @@
 describe("Eskimo Screen", function() {
-  var assets, Eskimo, Context, context, screen, 
+  var assets, Eskimo, Context, context, screen, Screen,
       Spies = require('./spies'),
       should = require('should'),
       Image = require('../src/image'),
+      LevelLoader,
       helper = {};
 
   // Mixed styles here.  Are you gonna spy on this, or simulate.
@@ -64,10 +65,12 @@ describe("Eskimo Screen", function() {
     }());
 
     Eskimo = require("./spec_helper").Eskimo;
+    Screen = require("../src/screen");
+    LevelLoader = require("../src/level_loader");
 
-    Spies.stub(Eskimo.LevelLoader, "getImageAssets",assets);
+    Spies.stub(LevelLoader, "getImageAssets",assets);
     context = new Context();
-    screen = new Eskimo.Screen(canvas);
+    screen = new Screen(canvas);
 
     helper.screenClearedTo = function(context, color) {
       context.fillStyle.should.equal(color);
@@ -122,7 +125,7 @@ describe("Eskimo Screen", function() {
   });
 
   it("clears the screen to the configured clear color", function() {
-    Eskimo.Screen.BACKGROUND_COLOR = "#aaaabb";
+    Screen.BACKGROUND_COLOR = "#aaaabb";
 
     screen.render();
 

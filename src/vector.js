@@ -1,22 +1,26 @@
-Eskimo.Vector = {
-  create2DVector: function(x, y) {
-    function normalized() {
-      var length = Math.sqrt(this.lengthSquared);
+function create2DVector(x, y) {
+  function normalized() {
+    var length = Math.sqrt(this.lengthSquared);
 
-      return Eskimo.Vector.create2DVector(this.x / length, this.y / length);
-    };
+    return create2DVector(this.x / length, this.y / length);
+  };
 
-    function scaled(scaleAmt) {
-      var normalizedVector = this.normalized();
+  function scaled(scaleAmt) {
+    var normalizedVector = this.normalized();
 
-      return Eskimo.Vector.create2DVector(normalizedVector.x * scaleAmt,
-                                        normalizedVector.y * scaleAmt);
-    };
+    return create2DVector(normalizedVector.x * scaleAmt,
+                          normalizedVector.y * scaleAmt);
+  };
 
-    return {x: x,
-      y: y,
-      lengthSquared: x*x + y*y,
-      normalized: normalized,
-      scaled: scaled };
-  }
+  return {
+    x: x,
+    y: y,
+    lengthSquared: x*x + y*y,
+    normalized: normalized,
+    scaled: scaled 
+  };
+}
+
+module.exports = {
+  create2DVector: create2DVector
 }

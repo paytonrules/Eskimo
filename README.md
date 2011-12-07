@@ -2,8 +2,9 @@
 
 Eskimo is a framework for developing 2D games in JavaScript using the HTML5 canvas.  The framework is being actively extracted from game development, and such is under very active development.  The goals for it are:
 
-  * Easy to get started - cause I wanna make a lot of games
-  * Testable without a browser (using node)
+  * Testable without a browser (node)
+  * Simple to Install
+  * Loose coupling to the application logic
   * Hides the boilerplate of creating numerous games
   * An opinionated architecture.  You should do things the right way.
 
@@ -20,7 +21,6 @@ Eskimo is at version -0.200 at this time, because it is far from finished.  The 
 
   * Sounds
   * Sprite Sheets
-  * Generators to get started 
   * A "keystate" so that your game doesn't need to think about input.
   * Particles
   * All kinds of awesomeness I haven't thought of yet

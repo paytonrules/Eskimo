@@ -1,4 +1,4 @@
-Eskimo.FixedGameLoop = (function() {
+module.exports = (function() {
   var scheduler,
       nextGameTick,
       originalUpdateList,

@@ -1,13 +1,14 @@
 describe("Eskimo", function() {
   // Think you got enough dependencies here?  (sigh)
-  var Eskimo, 
+  var Eskimo = require('../src/main'), 
       canvas,
-      domCanvas,
       Spies = require('./spies'),
       should = require('should'),
       emptyFunction = function() {},
       emptyDocument = {documentElement: null},
       jquery = require("jquery"),
+      LevelLoader = require("../src/level_loader"),
+      FixedGameLoop = require("../src/fixed-game-loop"),
       levels = {};
 
   function dependencies(customConfig) {
@@ -38,11 +39,10 @@ describe("Eskimo", function() {
   }
 
   beforeEach(function() {
-    Eskimo = require("./spec_helper").Eskimo;
-    Spies.stub(Eskimo.FixedGameLoop, "start").andCallFake(function(spy, args) {
-      Eskimo.FixedGameLoop.updaterList = args["1"];
+    Spies.stub(FixedGameLoop, "start").andCallFake(function(spy, args) {
+      FixedGameLoop.updaterList = args["1"];
     });
-    domCanvas = {getContext: function() {}}; 
+    var domCanvas = {getContext: function() {}}; 
     canvas = [domCanvas];
   });
 
@@ -73,12 +73,12 @@ describe("Eskimo", function() {
     it("configures the level loader with the configured levels, and an empty update list", function() {
       Eskimo(dependencies({jquery: jquery})).start(configuration({levels: levels}));
 
-      Eskimo.LevelLoader.levels.should.equal(levels);
-      Eskimo.LevelLoader.countUpdaters().should.equal(0);
+      LevelLoader.levels.should.equal(levels);
+      LevelLoader.countUpdaters().should.equal(0);
     });
 
     it("initializes the level loader", function() {
-      var initializeAssets = Spies.spyOn(Eskimo.LevelLoader, "initializeAssets");
+      var initializeAssets = Spies.spyOn(LevelLoader, "initializeAssets");
 
       Eskimo(dependencies()).start(configuration());
 
@@ -100,7 +100,7 @@ describe("Eskimo", function() {
       var FakeScheduler = function(frameRate) {
         return sched;
       };
-      var starter = Spies.spyOn(Eskimo.FixedGameLoop, "start");
+      var starter = Spies.spyOn(FixedGameLoop, "start");
 
       Eskimo(dependencies({scheduler: FakeScheduler})).start(configuration());
 
@@ -122,7 +122,7 @@ describe("Eskimo", function() {
       var FakeScreen = function() {
         return fakeScreen;
       };
-      var starter = Spies.spyOn(Eskimo.FixedGameLoop, "start");
+      var starter = Spies.spyOn(FixedGameLoop, "start");
 
       Eskimo(dependencies({screen: FakeScreen})).start(configuration());
 
@@ -136,8 +136,8 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies({updater: GameUpdater})).start(configuration());
 
-      Eskimo.FixedGameLoop.updaterList.size().should.equal(1);
-      //expect(Eskimo.FixedGameLoop.updaterList.get(0)).toEqual(GameUpdater.theUpdater);
+      FixedGameLoop.updaterList.size().should.equal(1);
+      FixedGameLoop.updaterList.get(0).should.eql(GameUpdater.theUpdater);
     });
 
     describe("binding events", function() {

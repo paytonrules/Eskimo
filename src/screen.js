@@ -1,9 +1,10 @@
-Eskimo.Screen = function(canvas) {
+module.exports = function(canvas) {
   var context = canvas[0].getContext("2d"),
+      LevelLoader = require('./level_loader'),
       imageList = [];
 
   function clearScreen() {
-    context.fillStyle = Eskimo.Screen.BACKGROUND_COLOR;
+    context.fillStyle = module.exports.BACKGROUND_COLOR;
     context.fillRect(0, 0, canvas.width(), canvas.height());
   };
 
@@ -18,7 +19,7 @@ Eskimo.Screen = function(canvas) {
   };
 
   this.render = function() {
-    var assets = Eskimo.LevelLoader.getImageAssets(); // THIS MUST BE FAST!
+    var assets = LevelLoader.getImageAssets(); // THIS MUST BE FAST!
     clearScreen();
     _(imageList).each(function(image) {
       var asset = assets.get(image.name);
@@ -33,4 +34,4 @@ Eskimo.Screen = function(canvas) {
   };
 };
 
-Eskimo.Screen.BACKGROUND_COLOR = "#aaaabb";
+module.exports.BACKGROUND_COLOR = "#aaaabb";

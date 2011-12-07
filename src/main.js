@@ -1,12 +1,12 @@
-Eskimo = function(depend) {
+module.exports = function(depend) {
   var dependencies = depend || {}, 
-      Scheduler = dependencies['scheduler'] || Eskimo.Scheduler,
-      Assets = dependencies['assets'] || Eskimo.Assets,
+      Scheduler = dependencies['scheduler'] || require('./scheduler'),
+      Assets = dependencies['assets'] || require('./assets'),
       Updater = dependencies["updater"],
       jquery = dependencies["jquery"],
-      Screen = dependencies["screen"] || Eskimo.Screen,
-      Jukebox = Eskimo.Jukebox,
-      UpdaterList = require("./updater_list");
+      Screen = dependencies["screen"] || require("./screen"),
+      UpdaterList = require("./updater_list"),
+      FixedGameLoop = require("./fixed-game-loop");
 
   function bindEventsOn(eventList, element, updater) {
     _(eventList).each(function(eventName) {
@@ -20,15 +20,16 @@ Eskimo = function(depend) {
 
   // NOTE: This is probalby wrong - you should probably bind to the updater list
   function bindAllEvents(document, canvas, updater) {
-    bindEventsOn(Eskimo.DOCUMENT_EVENTS, document.documentElement, updater);
-    bindEventsOn(Eskimo.CANVAS_EVENTS, canvas, updater);
+    bindEventsOn(module.exports.DOCUMENT_EVENTS, document.documentElement, updater);
+    bindEventsOn(module.exports.CANVAS_EVENTS, canvas, updater);
   };
 
   // Main needs to get streamlined.
   return {
     start: function(configuration) {
-      Eskimo.LevelLoader.levels = configuration.levels;
-      Eskimo.LevelLoader.initializeAssets(jquery);
+      var LevelLoader = require("./level_loader");
+      LevelLoader.levels = configuration.levels;
+      LevelLoader.initializeAssets(jquery);
 
       var FRAME_RATE = configuration.FRAME_RATE || 60,
           updaterList = new UpdaterList(),
@@ -40,10 +41,10 @@ Eskimo = function(depend) {
 
       bindAllEvents(configuration.document, configuration.canvas, updater); 
 
-      Eskimo.FixedGameLoop.start(scheduler, updaterList, screen);
+      FixedGameLoop.start(scheduler, updaterList, screen);
     }
   };
 };
 
-Eskimo.DOCUMENT_EVENTS = ['keydown', 'keyup'];
-Eskimo.CANVAS_EVENTS = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'];
+module.exports.DOCUMENT_EVENTS = ['keydown', 'keyup'];
+module.exports.CANVAS_EVENTS = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'];

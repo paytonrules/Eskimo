@@ -1,7 +1,9 @@
-Eskimo.LevelLoader = (function() {
+var Jukebox = require('./jukebox');
+module.exports = (function() {
   var imageAssets, 
       soundAssets,
-      Assets = require("./assets");
+      Assets = require("./assets"),
+      FixedGameLoop = require("./fixed-game-loop");
 
 
   function initializeAssets(jquery) {
@@ -13,7 +15,7 @@ Eskimo.LevelLoader = (function() {
     var control;
     if (structure.control) {
       control = eval(structure.control); //Security risk
-      Eskimo.FixedGameLoop.updaterList.add(control.create(structure, context)); 
+      FixedGameLoop.updaterList.add(control.create(structure, context)); 
     }
   };
 
@@ -53,7 +55,7 @@ Eskimo.LevelLoader = (function() {
     },
 
     getJukebox: function() {
-      return Eskimo.Jukebox(soundAssets);
+      return Jukebox(soundAssets);
     },
 
     getImageAssets: function() {

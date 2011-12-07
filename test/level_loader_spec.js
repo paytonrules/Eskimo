@@ -1,10 +1,11 @@
 // Weird - where the hell is spec helper being required?  And yet this works!
 // It's in the global
-describe("Eskimo.LevelLoader", function() {
+describe("LevelLoader", function() {
   var levelLoader,
       Spies = require('./spies'),
       should = require('should'),
-      Eskimo = require('./spec_helper').Eskimo,
+      LevelLoader = require('../src/level_loader'),
+      FixedGameLoop = require('../src/fixed-game-loop'),
       spiedJQuery;
 
   function spyOnJQueryCapturingElements() {
@@ -47,7 +48,7 @@ describe("Eskimo.LevelLoader", function() {
 
   beforeEach(function() {
     spiedJQuery = spyOnJQueryCapturingElements();
-    levelLoader = Eskimo.LevelLoader;
+    levelLoader = LevelLoader;
     levelLoader.initializeAssets(spiedJQuery.jquery);
   });
 
@@ -232,17 +233,17 @@ describe("Eskimo.LevelLoader", function() {
 
     beforeEach(function() {
       jquery = require('jquery');
-      levelLoader = Eskimo.LevelLoader;
+      levelLoader = LevelLoader;
       levelLoader.initializeAssets(jquery);
       var UpdaterList = require("../src/updater_list");
-      Eskimo.FixedGameLoop.updaterList = new UpdaterList()
+      FixedGameLoop.updaterList = new UpdaterList()
       levelLoader.levels = levelsWithControl;
     });
 
     it("adds to the update list for any controls", function() {
       levelLoader.load("levelOne");
 
-      Eskimo.FixedGameLoop.updaterList.get(0).should.be.an.instanceof(String);
+      FixedGameLoop.updaterList.get(0).should.be.an.instanceof(String);
     });
 
     it("passes in any other data to the structure field", function() {

@@ -1,7 +1,7 @@
 describe('Eskimo#loop', function() {
   var gameLoop, 
       scheduler, 
-      FixedGameLoop,
+      FixedGameLoop = require("../src/fixed-game-loop"),
       Spies = require('./spies');
 
   var MockScheduler = function() {
@@ -37,7 +37,6 @@ describe('Eskimo#loop', function() {
   };
 
   beforeEach( function() {
-    FixedGameLoop = require("./spec_helper").Eskimo.FixedGameLoop;
     scheduler = new MockScheduler();
   });
 

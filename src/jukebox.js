@@ -1,4 +1,4 @@
-Eskimo.Jukebox = function(assets) {
+module.exports = function(assets) {
 
   function play(assetName) {
     var asset = this.assets.get(assetName);
