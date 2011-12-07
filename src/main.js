@@ -17,6 +17,7 @@ Eskimo = function(depend) {
     });
   }
 
+  // NOTE: This is probalby wrong - you should probably bind to the updater list
   function bindAllEvents(document, canvas, updater) {
     bindEventsOn(Eskimo.DOCUMENT_EVENTS, document.documentElement, updater);
     bindEventsOn(Eskimo.CANVAS_EVENTS, canvas, updater);

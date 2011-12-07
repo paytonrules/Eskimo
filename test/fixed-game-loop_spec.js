@@ -42,13 +42,13 @@ describe('Eskimo#loop', function() {
   });
 
   it('executes screen.render', function() {
-    var updater = {update: function() {}};
+    var updateList = {update: function() {}};
     var screen = {
       render: function() {}
     };
     var screenSpy = Spies.spyOn(screen, "render")
 
-    FixedGameLoop.start(scheduler, updater, screen);
+    FixedGameLoop.start(scheduler, updateList, screen);
     FixedGameLoop.loop();
 
     screenSpy.wasCalled().should.be.true;
@@ -56,10 +56,10 @@ describe('Eskimo#loop', function() {
 
   it('Executes update, provided time has passed since the last loop call', function() {
     var screen = {render: function() {}};
-    var updater = { update: function() {} };
-    var updateSpy = Spies.spyOn(updater, "update");
+    var updateList = { update: function() {} };
+    var updateSpy = Spies.spyOn(updateList, "update");
 
-    FixedGameLoop.start(scheduler, updater, screen);
+    FixedGameLoop.start(scheduler, updateList, screen);
     scheduler.tick();
     FixedGameLoop.loop();
 
@@ -73,9 +73,9 @@ describe('Eskimo#loop', function() {
 
     var updates = new CallCounter();
     var screen = {render: renders.call};
-    var updater = {update: updates.call};
+    var updateList = {update: updates.call};
 
-    FixedGameLoop.start(scheduler, updater, screen);
+    FixedGameLoop.start(scheduler, updateList, screen);
     scheduler.tick();
     FixedGameLoop.loop();
     scheduler.tick();
@@ -106,11 +106,11 @@ describe('Eskimo#loop', function() {
     scheduler.loop.should.eql(FixedGameLoop.loop);
   });
 
-  it('will update a second updater', function() {
+  it('will add a second updater', function() {
     var newUpdater = {update: function() {}};
     var updateSpy = Spies.spyOn(newUpdater, "update");
 
-    FixedGameLoop.start(scheduler, {update: function() {}}, {render: function() {}});
+    FixedGameLoop.start(scheduler, new Eskimo.UpdaterList({update: function() {}}), {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
 
     scheduler.tick();
@@ -119,8 +119,8 @@ describe('Eskimo#loop', function() {
     updateSpy.wasCalled().should.be.true;
   });
 
-  it('reset the update list to the original updater', function() {
-    var originalUpdater = {update: function() {}};
+  it('reset the update list to the original update list', function() {
+    var originalUpdater = new Eskimo.UpdaterList({update: function() {}});
     var newUpdater = {update: function() {}};
     var newUpdaterSpy = Spies.spyOn(newUpdater, "update");
     var originalUpdaterSpy = Spies.spyOn(originalUpdater, "update");

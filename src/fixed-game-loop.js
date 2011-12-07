@@ -1,16 +1,18 @@
 Eskimo.FixedGameLoop = (function() {
   var scheduler,
       nextGameTick,
-      originalUpdater,
+      originalUpdateList,
       updaterList,
       screen;
 
-  function init(newScheduler, newUpdater, newScreen) {
+  // You're using the composite pattern, this probably doesn't need to know
+    // that this is a list of updaters
+  function init(newScheduler, newUpdateList, newScreen) {
     scheduler = newScheduler;
     nextGameTick = newScheduler.getTicks();
-    updaterList = new Eskimo.UpdaterList(newUpdater); // Pretty sure this is wrong
+    updaterList = newUpdateList;
     screen = newScreen;
-    originalUpdater = newUpdater;
+    originalUpdateList = newUpdateList;
   }
 
   return {
@@ -28,8 +30,8 @@ Eskimo.FixedGameLoop = (function() {
       scheduler.stop();
     },
 
-    start: function(newScheduler, newUpdater, newScreen) {
-      init(newScheduler, newUpdater, newScreen);
+    start: function(newScheduler, newUpdateList, newScreen) {
+      init(newScheduler, newUpdateList, newScreen);
       scheduler.start(this.loop);
     },
 
@@ -41,7 +43,7 @@ Eskimo.FixedGameLoop = (function() {
     },
 
     clearUpdaters: function() {
-      updaterList = new Eskimo.UpdaterList(originalUpdater);
+      updaterList = originalUpdateList;
     }
   }
 })();
