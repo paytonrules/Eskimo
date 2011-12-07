@@ -1,8 +1,10 @@
 // Weird - where the hell is spec helper being required?  And yet this works!
+// It's in the global
 describe("Eskimo.LevelLoader", function() {
   var levelLoader,
       Spies = require('./spies'),
       should = require('should'),
+      Eskimo = require('./spec_helper').Eskimo,
       spiedJQuery;
 
   function spyOnJQueryCapturingElements() {

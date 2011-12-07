@@ -6,7 +6,7 @@ Eskimo.FixedGameLoop = (function() {
       screen;
 
   // You're using the composite pattern, this probably doesn't need to know
-    // that this is a list of updaters
+  // that this is a list of updaters
   function init(newScheduler, newUpdateList, newScreen) {
     scheduler = newScheduler;
     nextGameTick = newScheduler.getTicks();
