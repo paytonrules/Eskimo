@@ -2,6 +2,7 @@ describe("Eskimo Screen", function() {
   var assets, Eskimo, Context, context, screen, 
       Spies = require('./spies'),
       should = require('should'),
+      Image = require('../src/image'),
       helper = {};
 
   // Mixed styles here.  Are you gonna spy on this, or simulate.
@@ -85,7 +86,7 @@ describe("Eskimo Screen", function() {
   it("draws a asset you put on it", function() {
     var contextSpy = Spies.spyOn(context, "drawImage");
     assets.load("background", "background.src");
-    var image = Eskimo.Image("background",10, 20);
+    var image = Image("background",10, 20);
     
     screen.put(image);
     screen.render();
@@ -98,8 +99,8 @@ describe("Eskimo Screen", function() {
     assets.load("background", "one");
     assets.load("joe", "joe momma");
 
-    screen.put(Eskimo.Image("background", 0, 0));
-    screen.put(Eskimo.Image("joe", 20, 30));
+    screen.put(Image("background", 0, 0));
+    screen.put(Image("joe", 20, 30));
     screen.render();
 
     drawSpy.passedArguments().should.eql(asArgs(assets.get("joe"), 20, 30))
@@ -113,8 +114,8 @@ describe("Eskimo Screen", function() {
     assets.load("one", "one");
     assets.load("two", "two");
 
-    screen.put(Eskimo.Image("two", 0, 0));
-    screen.put(Eskimo.Image("one", 0, 0));
+    screen.put(Image("two", 0, 0));
+    screen.put(Image("one", 0, 0));
     screen.render();
 
     images.should.eql(['two', 'one']);
@@ -132,7 +133,7 @@ describe("Eskimo Screen", function() {
     var drawSpy = Spies.spyOn(context, "drawImage");
     assets.load("one", "blah");
     
-    screen.put(Eskimo.Image("one", 10, 20));
+    screen.put(Image("one", 10, 20));
     screen.remove("one");
 
     screen.render();
@@ -143,7 +144,7 @@ describe("Eskimo Screen", function() {
   it("doesnt draw if the image isnt in the asset list", function() {
     var drawSpy = Spies.spyOn(context, "drawImage");
 
-    screen.put(Eskimo.Image("one", 10, 20));
+    screen.put(Image("one", 10, 20));
     screen.render();
 
     drawSpy.wasCalled().should.be.false;
@@ -153,7 +154,7 @@ describe("Eskimo Screen", function() {
     var drawSpy = Spies.spyOn(context, "drawImage");
     assets.load("one", "blah");
 
-    screen.put(Eskimo.Image("one", 10, 20));
+    screen.put(Image("one", 10, 20));
     screen.clear();
     screen.render();
 

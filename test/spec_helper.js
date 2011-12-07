@@ -1,5 +1,4 @@
 require("../src/main");
-require("../src/image");
 require("../src/point");
 require("../src/fixed-game-loop");
 require("../src/scheduler");

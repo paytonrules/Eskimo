@@ -1,4 +1,4 @@
-Eskimo.Image = function(assetName, x, y) {
+module.exports = function(assetName, x, y) {
   var location = Eskimo.Point(x,y);
   return {
     name: assetName,
