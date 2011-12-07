@@ -107,10 +107,11 @@ describe('Eskimo#loop', function() {
   });
 
   it('will add a second updater', function() {
+    var UpdaterList = require('../src/updater_list');
     var newUpdater = {update: function() {}};
     var updateSpy = Spies.spyOn(newUpdater, "update");
 
-    FixedGameLoop.start(scheduler, new Eskimo.UpdaterList({update: function() {}}), {render: function() {}});
+    FixedGameLoop.start(scheduler, new UpdaterList({update: function() {}}), {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
 
     scheduler.tick();
@@ -120,7 +121,8 @@ describe('Eskimo#loop', function() {
   });
 
   it('reset the update list to the original update list', function() {
-    var originalUpdater = new Eskimo.UpdaterList({update: function() {}});
+    var UpdaterList = require('../src/updater_list');
+    var originalUpdater = new UpdaterList({update: function() {}});
     var newUpdater = {update: function() {}};
     var newUpdaterSpy = Spies.spyOn(newUpdater, "update");
     var originalUpdaterSpy = Spies.spyOn(originalUpdater, "update");

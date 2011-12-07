@@ -1,4 +1,4 @@
-Eskimo.UpdaterList = function(updater) {
+module.exports = function(updater) {
   var list = [];
 
   function add(updater) {

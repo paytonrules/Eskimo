@@ -5,7 +5,8 @@ Eskimo = function(depend) {
       Updater = dependencies["updater"],
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || Eskimo.Screen,
-      Jukebox = Eskimo.Jukebox;
+      Jukebox = Eskimo.Jukebox,
+      UpdaterList = require("../src/updater_list");
 
   function bindEventsOn(eventList, element, updater) {
     _(eventList).each(function(eventName) {
@@ -30,7 +31,7 @@ Eskimo = function(depend) {
       Eskimo.LevelLoader.initializeAssets(jquery);
 
       var FRAME_RATE = configuration.FRAME_RATE || 60,
-          updaterList = new Eskimo.UpdaterList(),
+          updaterList = new UpdaterList(),
           screen = new Screen(configuration.canvas),
           updater = new Updater(screen),
           scheduler = new Scheduler(FRAME_RATE);

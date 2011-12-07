@@ -234,7 +234,8 @@ describe("Eskimo.LevelLoader", function() {
       jquery = require('jquery');
       levelLoader = Eskimo.LevelLoader;
       levelLoader.initializeAssets(jquery);
-      Eskimo.FixedGameLoop.updaterList = new Eskimo.UpdaterList()
+      var UpdaterList = require("../src/updater_list");
+      Eskimo.FixedGameLoop.updaterList = new UpdaterList()
       levelLoader.levels = levelsWithControl;
     });
 
