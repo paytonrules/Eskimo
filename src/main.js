@@ -1,3 +1,4 @@
+var _ = require("underscore");
 module.exports = function(depend) {
   var dependencies = depend || {}, 
       Scheduler = dependencies['scheduler'] || require('./scheduler'),

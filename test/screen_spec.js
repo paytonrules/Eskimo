@@ -1,8 +1,9 @@
-describe("Eskimo Screen", function() {
-  var assets, Eskimo, Context, context, screen, Screen,
+describe("Screen", function() {
+  var assets, Context, context, screen, Screen,
       Spies = require('./spies'),
       should = require('should'),
       Image = require('../src/image'),
+      _ = require("underscore"),
       LevelLoader,
       helper = {};
 
@@ -64,7 +65,6 @@ describe("Eskimo Screen", function() {
       };
     }());
 
-    Eskimo = require("./spec_helper").Eskimo;
     Screen = require("../src/screen");
     LevelLoader = require("../src/level_loader");
 

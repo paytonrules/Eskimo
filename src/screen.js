@@ -1,3 +1,4 @@
+var _ = require("underscore");
 module.exports = function(canvas) {
   var context = canvas[0].getContext("2d"),
       LevelLoader = require('./level_loader'),

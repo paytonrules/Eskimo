@@ -1,4 +1,4 @@
-describe('Eskimo#loop', function() {
+describe('FixedGameLoop', function() {
   var gameLoop, 
       scheduler, 
       FixedGameLoop = require("../src/fixed-game-loop"),

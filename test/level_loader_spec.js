@@ -6,6 +6,7 @@ describe("LevelLoader", function() {
       should = require('should'),
       LevelLoader = require('../src/level_loader'),
       FixedGameLoop = require('../src/fixed-game-loop'),
+      _ = require("underscore"),
       spiedJQuery;
 
   function spyOnJQueryCapturingElements() {

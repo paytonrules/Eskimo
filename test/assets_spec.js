@@ -1,4 +1,4 @@
-describe("Eskimo.Assets", function() {
+describe("Assets", function() {
   var assets, 
       spiedJQuery, 
       $,
