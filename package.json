@@ -1,0 +1,19 @@
+{
+  "name"          : "eskimo",
+  "version"       : "0.0.1",
+  "description"   : "Node Package for the eskimo 2D game development framework",
+  "homepage"      : [ "https://github.com/paytonrules/eskimo"],
+  "repository"    : { "type" : "git", "url"  : "https://github.com/paytonrules/eskimo.git" },
+  "keywords"      : ["games", "HTML5"],
+  "author"        : "Eric Smith <esmith@8thlight.com>",
+  "maintainers"   : "Eric Smith <esmith@8thlight.com>",
+  "engines": {
+    "node": ">=0.6.5"
+  },
+  "dependencies" : {
+    "jquery" : "*",
+    "underscore" : "*" 
+  },
+  "main" : "./src/index.js",
+  "directories" : {"lib": "src"}
+}
