@@ -1,7 +1,9 @@
 describe('FixedGameLoop', function() {
   var gameLoop, 
       scheduler, 
+      gameObject,
       FixedGameLoop = require("../src/fixed-game-loop"),
+      UpdaterList = require('../src/updater_list'),
       Spies = require('./spies');
 
   var MockScheduler = function() {
@@ -36,33 +38,38 @@ describe('FixedGameLoop', function() {
     };
   };
 
+  var GameObject = function() {
+    this.update = function() {
+      this.updated = true;
+    }
+    this.updated = false;
+  };
+
   beforeEach( function() {
     scheduler = new MockScheduler();
+    gameObject = new GameObject();
   });
 
   it('executes screen.render', function() {
-    var updateList = {update: function() {}};
     var screen = {
       render: function() {}
     };
     var screenSpy = Spies.spyOn(screen, "render")
 
-    FixedGameLoop.start(scheduler, updateList, screen);
+    FixedGameLoop.start(scheduler, gameObject, screen);
     FixedGameLoop.loop();
 
     screenSpy.wasCalled().should.be.true;
   });
 
-  it('Executes update, provided time has passed since the last loop call', function() {
+  it('Executes update on the game object, provided time has passed since the last loop call', function() {
     var screen = {render: function() {}};
-    var updateList = { update: function() {} };
-    var updateSpy = Spies.spyOn(updateList, "update");
-
-    FixedGameLoop.start(scheduler, updateList, screen);
+    
+    FixedGameLoop.start(scheduler, gameObject, screen);
     scheduler.tick();
     FixedGameLoop.loop();
 
-    updateSpy.wasCalled().should.be.true;
+    gameObject.updated.should.be.true;
   });
 
   it('executes multiple updates to catch up if the draw takes a long time', function() {
@@ -72,9 +79,9 @@ describe('FixedGameLoop', function() {
 
     var updates = new CallCounter();
     var screen = {render: renders.call};
-    var updateList = {update: updates.call};
+    gameObject.update = updates.call;
 
-    FixedGameLoop.start(scheduler, updateList, screen);
+    FixedGameLoop.start(scheduler, gameObject, screen);
     scheduler.tick();
     FixedGameLoop.loop();
     scheduler.tick();
@@ -105,36 +112,30 @@ describe('FixedGameLoop', function() {
     scheduler.loop.should.eql(FixedGameLoop.loop);
   });
 
-  it('will add a second updater', function() {
-    var UpdaterList = require('../src/updater_list');
-    var newUpdater = {update: function() {}};
-    var updateSpy = Spies.spyOn(newUpdater, "update");
+  it('will add a second object for updating', function() {
+    var newGameObject = {update: function() {this.updated = true;}};
 
-    FixedGameLoop.start(scheduler, new UpdaterList({update: function() {}}), {render: function() {}});
-    FixedGameLoop.addUpdater(newUpdater);
+    FixedGameLoop.start(scheduler, gameObject, {render: function() {}});
+    FixedGameLoop.addUpdater(newGameObject);
 
     scheduler.tick();
     FixedGameLoop.loop();
 
-    updateSpy.wasCalled().should.be.true;
+    newGameObject.updated.should.be.true;
   });
 
-  it('reset the update list to the original update list', function() {
-    var UpdaterList = require('../src/updater_list');
-    var originalUpdater = new UpdaterList({update: function() {}});
-    var newUpdater = {update: function() {}};
-    var newUpdaterSpy = Spies.spyOn(newUpdater, "update");
-    var originalUpdaterSpy = Spies.spyOn(originalUpdater, "update");
+  it('clears the added entities', function() {
+    var newUpdater = new GameObject();
 
-    FixedGameLoop.start(scheduler, originalUpdater, {render: function() {}});
+    FixedGameLoop.start(scheduler, gameObject, {render: function() {}});
     FixedGameLoop.addUpdater(newUpdater);
     FixedGameLoop.clearUpdaters();
 
     scheduler.tick();
     FixedGameLoop.loop();
 
-    newUpdaterSpy.wasCalled().should.be.false;
-    originalUpdaterSpy.wasCalled().should.be.true;
+    gameObject.updated.should.be.true;
+    newUpdater.updated.should.be.false;
   });
 
 });

@@ -28,15 +28,16 @@ module.exports = function(depend) {
   // Main needs to get streamlined.
   return {
     start: function(configuration) {
+      // TODO - this doesn't feel right here 
       var LevelLoader = require("./level_loader");
       LevelLoader.levels = configuration.levels;
       LevelLoader.initializeAssets(jquery);
 
-      var FRAME_RATE = configuration.FRAME_RATE || 60,
-          updaterList = new UpdaterList(),
-          screen = new Screen(configuration.canvas),
-          updater = new Updater(screen),
-          scheduler = new Scheduler(FRAME_RATE);
+      var FRAME_RATE = configuration.FRAME_RATE || 60;
+      var updaterList = new UpdaterList();
+      var screen = new Screen(configuration.canvas);
+      var updater = new Updater(screen);
+      var scheduler = new Scheduler(FRAME_RATE);
 
       updaterList.add(updater);
 

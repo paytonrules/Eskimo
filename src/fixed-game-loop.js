@@ -1,5 +1,7 @@
 module.exports = (function() {
   var scheduler,
+      game,
+      UpdaterList = require("./updater_list"),
       nextGameTick,
       originalUpdateList,
       updaterList,
@@ -7,17 +9,18 @@ module.exports = (function() {
 
   // You're using the composite pattern, this probably doesn't need to know
   // that this is a list of updaters
-  function init(newScheduler, newUpdateList, newScreen) {
+  function init(newScheduler, newGame, newScreen) {
     scheduler = newScheduler;
     nextGameTick = newScheduler.getTicks();
-    updaterList = newUpdateList;
     screen = newScreen;
-    originalUpdateList = newUpdateList;
+    game = newGame;
+    updaterList = new UpdaterList();
   }
 
   return {
     loop: function() {
       while (scheduler.getTicks() > nextGameTick) {
+        game.update();
         updaterList.update();
 
         nextGameTick += scheduler.getTickTime();
@@ -29,8 +32,8 @@ module.exports = (function() {
       scheduler.stop();
     },
 
-    start: function(newScheduler, newUpdateList, newScreen) {
-      init(newScheduler, newUpdateList, newScreen);
+    start: function(newScheduler, newGame, newScreen) {
+      init(newScheduler, newGame, newScreen);
       scheduler.start(this.loop);
     },
 
@@ -42,7 +45,7 @@ module.exports = (function() {
     },
 
     clearUpdaters: function() {
-      updaterList = originalUpdateList;
+      updaterList = new UpdaterList();
     }
   }
 })();

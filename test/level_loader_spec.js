@@ -222,13 +222,18 @@ describe("LevelLoader", function() {
         create: function(structure, context) {
           this.structure = structure;
           this.context = context;
-          return new String(); // Ha - bad practice - but perfect for this test
+          return {
+            name: "MyControl",
+          };
         }
       },
       MySoundControl: {
         create: function(structure, context) {
           this.structure = structure;
-          return {};
+          this.context = context;
+          return {
+            name: "MySoundControl",
+          };
         }
       }
     };
@@ -237,17 +242,24 @@ describe("LevelLoader", function() {
       jquery = require('jquery');
       levelLoader = LevelLoader;
       levelLoader.initializeAssets(jquery);
-      var UpdaterList = require("../src/updater_list");
-      updaterList = new UpdaterList()
-      var emptyFunction = function() {};
-      FixedGameLoop.start({start: emptyFunction, getTicks: emptyFunction}, updaterList, {});
       levelLoader.levels = levelsWithControl;
     });
 
     it("adds to the update list for any controls", function() {
-      levelLoader.load("levelOne");
+      var controls = [];
+      var _ = require("underscore");
+      Spies.spyOn(FixedGameLoop, "addUpdater").andCallFake(function(spy, params) {
+        console.log("Hey Momma");
+        console.log(params['0']);
+        controls.push(params['0']);
+      });
 
-      updaterList.get(0).should.be.an.instanceof(String);
+      levelLoader.load("levelOne");
+      console.log("Ultimate controls");
+      console.log(controls);
+
+      should.exist(_(controls).find(function(elem) { return elem.name === "MyControl"}));
+      should.exist(_(controls).find(function(elem) { return elem.name === "MySoundControl"}));
     });
 
     it("passes in any other data to the structure field", function() {
