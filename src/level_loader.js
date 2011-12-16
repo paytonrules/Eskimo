@@ -15,7 +15,7 @@ module.exports = (function() {
     var control;
     if (structure.control) {
       control = eval(structure.control); //Security risk
-      FixedGameLoop.updaterList.add(control.create(structure, context)); 
+      FixedGameLoop.addUpdater(control.create(structure, context)); 
     }
   };
 

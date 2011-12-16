@@ -16,7 +16,6 @@ module.exports = (function() {
   }
 
   return {
-    //init: init,
     loop: function() {
       while (scheduler.getTicks() > nextGameTick) {
         updaterList.update();

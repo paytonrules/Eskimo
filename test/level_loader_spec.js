@@ -7,6 +7,7 @@ describe("LevelLoader", function() {
       LevelLoader = require('../src/level_loader'),
       FixedGameLoop = require('../src/fixed-game-loop'),
       _ = require("underscore"),
+      updaterList,
       spiedJQuery;
 
   function spyOnJQueryCapturingElements() {
@@ -237,14 +238,16 @@ describe("LevelLoader", function() {
       levelLoader = LevelLoader;
       levelLoader.initializeAssets(jquery);
       var UpdaterList = require("../src/updater_list");
-      FixedGameLoop.updaterList = new UpdaterList()
+      updaterList = new UpdaterList()
+      var emptyFunction = function() {};
+      FixedGameLoop.start({start: emptyFunction, getTicks: emptyFunction}, updaterList, {});
       levelLoader.levels = levelsWithControl;
     });
 
     it("adds to the update list for any controls", function() {
       levelLoader.load("levelOne");
 
-      FixedGameLoop.updaterList.get(0).should.be.an.instanceof(String);
+      updaterList.get(0).should.be.an.instanceof(String);
     });
 
     it("passes in any other data to the structure field", function() {
