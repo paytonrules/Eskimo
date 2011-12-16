@@ -249,14 +249,10 @@ describe("LevelLoader", function() {
       var controls = [];
       var _ = require("underscore");
       Spies.spyOn(FixedGameLoop, "addUpdater").andCallFake(function(spy, params) {
-        console.log("Hey Momma");
-        console.log(params['0']);
         controls.push(params['0']);
       });
 
       levelLoader.load("levelOne");
-      console.log("Ultimate controls");
-      console.log(controls);
 
       should.exist(_(controls).find(function(elem) { return elem.name === "MyControl"}));
       should.exist(_(controls).find(function(elem) { return elem.name === "MySoundControl"}));

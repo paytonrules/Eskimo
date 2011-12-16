@@ -13,7 +13,7 @@ describe("Eskimo", function() {
 
   function dependencies(customConfig) {
     var dependencyConfig = {
-      updater: emptyFunction,
+      game: emptyFunction,
       jquery: jquery
     };
 
@@ -39,9 +39,7 @@ describe("Eskimo", function() {
   }
 
   beforeEach(function() {
-    Spies.stub(FixedGameLoop, "start").andCallFake(function(spy, args) {
-      FixedGameLoop.updaterList = args["1"];
-    });
+    Spies.stub(FixedGameLoop, "start");
     var domCanvas = {getContext: function() {}}; 
     canvas = [domCanvas];
   });
@@ -107,14 +105,12 @@ describe("Eskimo", function() {
       starter.passedArguments()['0'].should.eql(sched);
     });
 
-    it("sets up the updater with the screen", function() {
-      var Updater = function(screen) {
-        Updater.screen = screen;
-      };
+    it("assigns the game the screen", function() {
+      var game = {};
 
-      Eskimo(dependencies({updater: Updater})).start(configuration());
+      Eskimo(dependencies({game: game})).start(configuration());
       
-      Updater.screen.put.should.be.ok;
+      game.screen.put.should.be.ok;
     });
 
     it("starts the game loop with the screen", function() {
@@ -129,15 +125,13 @@ describe("Eskimo", function() {
       starter.passedArguments()['2'].should.eql(fakeScreen);
     });
 
-    it("sends the game loop the update list - with the game updater added", function() {
-      var GameUpdater = function() {
-        GameUpdater.theUpdater = this;
-      };
+    it("sends the game loop the game", function() {
+      var gameLoopSpy = Spies.spyOn(FixedGameLoop, "start"),
+          game =  {};
 
-      Eskimo(dependencies({updater: GameUpdater})).start(configuration());
+      Eskimo(dependencies({game: game})).start(configuration());
 
-      FixedGameLoop.updaterList.size().should.equal(1);
-      FixedGameLoop.updaterList.get(0).should.eql(GameUpdater.theUpdater);
+      gameLoopSpy.passedArguments()['1'].should.eql(game);
     });
 
     describe("binding events", function() {
@@ -152,39 +146,38 @@ describe("Eskimo", function() {
         jquery = require("jquery").create(window);
       });
 
-      it("sends one DOCUMENT_EVENT to the updater", function() {
+      it("sends one DOCUMENT_EVENT to the game", function() {
         Eskimo.DOCUMENT_EVENTS = ['keydown'];
-        var Updater = function() {
-          this.keydown = function(event) {
-            Updater.event = event;
-          };
+        var game = {
+          keydown: function(event) {
+            this.event = event;
+          }
         };
-
-        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
                                                                     document: document})); 
 
         jquery(document.documentElement).keydown();
 
-        Updater.event.should.be.ok;
+        game.event.should.be.ok;
       });
 
       it("passes the correct event to the DOCUMENT EVENT", function() {
         Eskimo.DOCUMENT_EVENTS = ['keydown'];
-        var Updater = function() {
-          this.keydown = function(event) {
-            Updater.key = event.which;
+        var game = {
+          keydown: function(event) {
+            this.key = event.which;
           }
         };
 
-        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
                                                                     document: document}));
         jquery.event.trigger({type: 'keydown',
                               which: 87});
 
-        Updater.key.should.equal(87);
+        game.key.should.equal(87);
       });
       
-      it("doesn't cause an error if the updater doesn't have that event", function() {
+      it("doesn't cause an error if the game doesn't have that event", function() {
         Eskimo.DOCUMENT_EVENTS = ['keydown'];
         Eskimo(dependencies()).start(configuration({jquery: jquery,
                                                   document: document}));
@@ -194,37 +187,37 @@ describe("Eskimo", function() {
       
       it("works with multiple events", function() {
         Eskimo.DOCUMENT_EVENTS = ['keydown', 'keyup'];
-        var Updater = function() {
-          this.keyup = function(event) {
-            Updater.event = event;
-          };
+        var game = {
+          keyup: function(event) {
+            this.event = event;
+          }
         };
 
-        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
-                                                                      document: document})); 
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
+                                                                 document: document})); 
 
         jquery(document.documentElement).keyup();
 
-        Updater.event.should.be.ok;
+        game.event.should.be.ok;
       });
 
-      it("sends CANVAS_EVENTS to the updater", function() {
+      it("sends CANVAS_EVENTS to the game", function() {
         Eskimo.CANVAS_EVENTS = ['mousedown'];
-        var Updater = function() {
-          this.mousedown = function(event) {
-            Updater.mousedown = true;
+        var game = {
+          mousedown: function(event) {
+            this.mousedown = true;
           }
         };
         
-        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
                                                                       canvas: canvas}));
 
         jquery(canvas).mousedown();
 
-        Updater.mousedown.should.be.true;
+        game.mousedown.should.be.true;
       });
 
-      it("does not throw an exception if the updater uasn't defined the canvas event", function() {
+      it("does not throw an exception if the game uasn't defined the canvas event", function() {
         Eskimo.CANVAS_EVENTS = ['mousedown'];
 
         Eskimo(dependencies()).start(configuration({jquery: jquery,
@@ -235,18 +228,18 @@ describe("Eskimo", function() {
 
       it("works with multiple CANVAS_EVENTS", function() {
         Eskimo.CANVAS_EVENTS = ['mousedown', 'mouseup'];
-        var Updater = function() {
-          this.mouseup = function(event) {
-            Updater.mouseup = true;
+        var game = {
+          mouseup: function(event) {
+            this.mouseup = true;
           }
         };
         
-        Eskimo(dependencies({updater: Updater})).start(configuration({jquery: jquery,
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
                                                                       canvas: canvas}));
 
         jquery(canvas).mouseup();
 
-        Updater.mouseup.should.be.true;
+        game.mouseup.should.be.true;
       });
     });
  

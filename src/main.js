@@ -3,26 +3,24 @@ module.exports = function(depend) {
   var dependencies = depend || {}, 
       Scheduler = dependencies['scheduler'] || require('./scheduler'),
       Assets = dependencies['assets'] || require('./assets'),
-      Updater = dependencies["updater"],
+      game = dependencies["game"],
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || require("./screen"),
-      UpdaterList = require("./updater_list"),
       FixedGameLoop = require("./fixed-game-loop");
 
-  function bindEventsOn(eventList, element, updater) {
+  function bindEventsOn(eventList, element) {
     _(eventList).each(function(eventName) {
       jquery(element).bind(eventName, function(event) {
-        if (typeof(updater[eventName]) !== "undefined") {
-          updater[eventName](event);
+        if (typeof(game[eventName]) !== "undefined") {
+          game[eventName](event);
         }
       });
     });
   }
 
-  // NOTE: This is probalby wrong - you should probably bind to the updater list
-  function bindAllEvents(document, canvas, updater) {
-    bindEventsOn(module.exports.DOCUMENT_EVENTS, document.documentElement, updater);
-    bindEventsOn(module.exports.CANVAS_EVENTS, canvas, updater);
+  function bindAllEvents(document, canvas) {
+    bindEventsOn(module.exports.DOCUMENT_EVENTS, document.documentElement, game);
+    bindEventsOn(module.exports.CANVAS_EVENTS, canvas, game);
   };
 
   // Main needs to get streamlined.
@@ -34,16 +32,14 @@ module.exports = function(depend) {
       LevelLoader.initializeAssets(jquery);
 
       var FRAME_RATE = configuration.FRAME_RATE || 60;
-      var updaterList = new UpdaterList();
-      var screen = new Screen(configuration.canvas);
-      var updater = new Updater(screen);
       var scheduler = new Scheduler(FRAME_RATE);
+      var screen = new Screen(configuration.canvas);
+      
+      game.screen = screen;
 
-      updaterList.add(updater);
+      bindAllEvents(configuration.document, configuration.canvas); 
 
-      bindAllEvents(configuration.document, configuration.canvas, updater); 
-
-      FixedGameLoop.start(scheduler, updaterList, screen);
+      FixedGameLoop.start(scheduler, game, screen);
     }
   };
 };
