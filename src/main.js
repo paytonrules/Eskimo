@@ -27,6 +27,8 @@ module.exports = function(depend) {
   return {
     start: function(configuration) {
       // TODO - this doesn't feel right here 
+      // It isn't right - you should have to initialize the level loader with assets and jquery to use it
+      // JQuery pattern? You can pass a constructor or just use the object
       var LevelLoader = require("./level_loader");
       LevelLoader.levels = configuration.levels;
       LevelLoader.initializeAssets(jquery);
@@ -35,8 +37,6 @@ module.exports = function(depend) {
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
       
-      game.screen = screen;
-
       bindAllEvents(configuration.document, configuration.canvas); 
 
       FixedGameLoop.start(scheduler, game, screen);

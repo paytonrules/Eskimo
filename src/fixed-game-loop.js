@@ -18,6 +18,7 @@ module.exports = (function() {
 
         nextGameTick += scheduler.getTickTime();
       }
+      game.draw(screen);
       screen.render();
     },
 

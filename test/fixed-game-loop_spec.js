@@ -2,6 +2,7 @@ describe('FixedGameLoop', function() {
   var gameLoop, 
       scheduler, 
       gameObject,
+      should = require('should'),
       FixedGameLoop = require("../src/fixed-game-loop"),
       Spies = require('./spies');
 
@@ -38,10 +39,16 @@ describe('FixedGameLoop', function() {
   };
 
   var GameObject = function() {
+    var _ = require('underscore');
     this.update = function() {
       this.updated = true;
     }
     this.updated = false;
+
+    this.draw = function(screen) {
+      this.screen = {};
+      _.extend(this.screen, screen);
+    };
   };
 
   beforeEach( function() {
@@ -69,6 +76,15 @@ describe('FixedGameLoop', function() {
     FixedGameLoop.loop();
 
     gameObject.updated.should.be.true;
+  });
+
+  it('calls draw on the game object, passing the screen, before render', function() {
+    var screen = {render: function() {this.rendered = true;}};
+
+    FixedGameLoop.start(scheduler, gameObject, screen);
+    FixedGameLoop.loop();
+
+    should.not.exist(gameObject.screen.rendered);
   });
 
   it('executes multiple updates to catch up if the draw takes a long time', function() {

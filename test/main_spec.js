@@ -105,14 +105,6 @@ describe("Eskimo", function() {
       starter.passedArguments()['0'].should.eql(sched);
     });
 
-    it("assigns the game the screen", function() {
-      var game = {};
-
-      Eskimo(dependencies({game: game})).start(configuration());
-      
-      game.screen.put.should.be.ok;
-    });
-
     it("starts the game loop with the screen", function() {
       var fakeScreen = {fake: 'screen'};
       var FakeScreen = function() {
