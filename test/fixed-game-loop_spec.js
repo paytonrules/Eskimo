@@ -3,7 +3,6 @@ describe('FixedGameLoop', function() {
       scheduler, 
       gameObject,
       FixedGameLoop = require("../src/fixed-game-loop"),
-      UpdaterList = require('../src/updater_list'),
       Spies = require('./spies');
 
   var MockScheduler = function() {
@@ -111,31 +110,4 @@ describe('FixedGameLoop', function() {
 
     scheduler.loop.should.eql(FixedGameLoop.loop);
   });
-
-  it('will add a second object for updating', function() {
-    var newGameObject = {update: function() {this.updated = true;}};
-
-    FixedGameLoop.start(scheduler, gameObject, {render: function() {}});
-    FixedGameLoop.addUpdater(newGameObject);
-
-    scheduler.tick();
-    FixedGameLoop.loop();
-
-    newGameObject.updated.should.be.true;
-  });
-
-  it('clears the added entities', function() {
-    var newUpdater = new GameObject();
-
-    FixedGameLoop.start(scheduler, gameObject, {render: function() {}});
-    FixedGameLoop.addUpdater(newUpdater);
-    FixedGameLoop.clearUpdaters();
-
-    scheduler.tick();
-    FixedGameLoop.loop();
-
-    gameObject.updated.should.be.true;
-    newUpdater.updated.should.be.false;
-  });
-
 });
