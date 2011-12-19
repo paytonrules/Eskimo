@@ -62,13 +62,15 @@ describe("LevelLoader", function() {
     levelLoader.getImageAssets().size().should.equal(0);
   });
 
-  it("creates image assets for any images in the level", function() {
+  it("creates image assets for any images on the objects in the level", function() {
     var imageAssets;
     levelLoader.levels = {
       "newLevel": {
-        "images" : {
-          "imageName" : {
-            "src" : "background.jpg"
+        "gameObject" : {
+          "images" : {
+            "imageName" : {
+              "src" : "background.jpg"
+            }
           }
         }
       }
@@ -82,16 +84,18 @@ describe("LevelLoader", function() {
     imageAssets.get("imageName").src.should.equal('background.jpg');
   });
 
-  it("creates a jukebox from the sounds in the level", function() {
+  it("creates a jukebox from the sounds on the objects in the level", function() {
     var jukebox;
     levelLoader.levels = {
       "newLevel": {
-        "sounds": {
-          "soundOne": {
-            "src": "sound.mp3"
-          },
-          "soundTwo": {
-            "src": "secondSound.mp3"
+        "gameObject" : {
+          "sounds": {
+            "soundOne": {
+              "src": "sound.mp3"
+            },
+            "soundTwo": {
+              "src": "secondSound.mp3"
+            }
           }
         }
       }
@@ -110,16 +114,20 @@ describe("LevelLoader", function() {
     var imageAssets;
     levelLoader.levels = {
       "levelOne": {
-        "images": {
-          "oldImage": {
-            "src": "witchDoctor.png"
+        "gameObject" : {
+          "images": {
+            "oldImage": {
+              "src": "witchDoctor.png"
+            }
           }
         }
       },
       "levelTwo": {
-        "images": {
-          "newImage": {
-            "src": "christmasSong.png"
+        "gameObject" : {
+          "images": {
+            "newImage": {
+              "src": "christmasSong.png"
+            }
           }
         }
       }
@@ -140,16 +148,21 @@ describe("LevelLoader", function() {
 
     levelLoader.levels = {
       "levelOne": {
-        "sounds": {
-          "oldSound": {
-            "src": "witchDoctor.mp3"
+        "gameObject" : {
+          "sounds": {
+            "oldSound": {
+              "src": "witchDoctor.mp3"
+            }
           }
         }
       },
       "levelTwo": {
-        "sounds": {
-          "newSound": {
-            "src": "christmasSong.mp3"
+        "gameObject" : {
+          "sounds": {
+            "newSound": {
+
+              "src": "christmasSong.mp3"
+            }
           }
         }
       }
@@ -170,14 +183,16 @@ describe("LevelLoader", function() {
     
     levelLoader.levels = {
       "levelOne": {
-        "sounds": {
-          "sound": {
-            "src": "soundy.mp3"
-          }
-        },
-        "images": {
-          "image": {
-            "src": "image.jpg"
+        "gameObject" : {
+          "sounds": {
+            "sound": {
+              "src": "soundy.mp3"
+            }
+          },
+          "images": {
+            "image": {
+              "src": "image.jpg"
+            }
           }
         }
       }
@@ -195,88 +210,18 @@ describe("LevelLoader", function() {
     imageAssets.get("image").should.exist;
   });
 
-  describe("The controls", function() {
-    var levelsWithControl = {
-          "levelOne": {
-            "images": {
-              "image": {
-                "src": "src.jpg",
-                "control": "Tests.MyControl",
-                "data": "data"
-              }
-            },
-            "sounds": {
-              "sound": {
-                "control": "Tests.MySoundControl",
-                "extraSoundData": "soundData"
-              }
-            }
-          }
-        },
-        jquery,
-        updateList,
-        levelLoader;
-
-    Tests = {
-      MyControl: {
-        create: function(structure, context) {
-          this.structure = structure;
-          this.context = context;
-          return {
-            name: "MyControl",
-          };
-        }
-      },
-      MySoundControl: {
-        create: function(structure, context) {
-          this.structure = structure;
-          this.context = context;
-          return {
-            name: "MySoundControl",
-          };
+  it("allows access to the currentLevel game objects", function() {
+    levelLoader.levels = {
+      "levelOne": {
+        "gameObject" : {
+          "property" : 2
         }
       }
     };
+     
+    levelLoader.load("levelOne");
 
-    beforeEach(function() {
-      jquery = require('jquery');
-      levelLoader = LevelLoader;
-      levelLoader.initializeAssets(jquery);
-      levelLoader.levels = levelsWithControl;
-    });
-
-    it("adds to the update list for any controls", function() {
-      var controls = [];
-      var _ = require("underscore");
-      Spies.spyOn(FixedGameLoop, "addUpdater").andCallFake(function(spy, params) {
-        controls.push(params['0']);
-      });
-
-      levelLoader.load("levelOne");
-
-      should.exist(_(controls).find(function(elem) { return elem.name === "MyControl"}));
-      should.exist(_(controls).find(function(elem) { return elem.name === "MySoundControl"}));
-    });
-
-    it("passes in any other data to the structure field", function() {
-      levelLoader.load("levelOne");
-
-      Tests.MyControl.structure.data.should.equal('data');
-    });
-
-    it("does this for sounds as well - ugh this stupid duplication", function() {
-      levelLoader.load("levelOne");
-      
-      Tests.MySoundControl.structure.extraSoundData.should.equal('soundData');
-    });
-
-    it("optionally takes a context that is passed to any created controls", function() {
-      var context = "test";
-
-      levelLoader.load("levelOne", context);
-
-      Tests.MyControl.context.should.equal('test');
-    });
+    levelLoader.gameObject('gameObject').property.should.equal(2);
   });
 
 });

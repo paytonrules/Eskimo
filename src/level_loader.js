@@ -2,51 +2,41 @@ var Jukebox = require('./jukebox');
 module.exports = (function() {
   var imageAssets, 
       soundAssets,
-      Assets = require("./assets"),
-      FixedGameLoop = require("./fixed-game-loop");
-
+      currentLevel,
+      Assets = require("./assets");
 
   function initializeAssets(jquery) {
     imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
     soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
   };
 
-  function addToControlList(structure, context) {
-    var control;
-    if (structure.control) {
-      control = eval(structure.control); //Security risk
-      FixedGameLoop.addUpdater(control.create(structure, context)); 
+  function loadSounds(object) {
+    for (var soundName in object['sounds']) {
+      soundAssets.load(soundName, object['sounds'][soundName]['src']);
     }
-  };
+  }
 
-  function addImages(images, context) {
-    var imageName,
-        imageStruct,
-        control;
+  function loadImages(object) {
+    for (var imageName in object['images']) {
+      imageAssets.load(imageName, object['images'][imageName]['src']);
+    }
+  }
 
-    for(imageName in images) {
-      imageStruct = images[imageName];
-      imageAssets.load(imageName, imageStruct.src);
-      addToControlList(imageStruct, context);
-    };
-  };
+  function loadAssets(callbacks) {
+    for(var object in currentLevel) {
+      for(var callback in callbacks) {
+        if (currentLevel[object][callback]) {
+          callbacks[callback](currentLevel[object]);
+        }
+      }
+    }
+  }
 
-  function addSounds(sounds, context) {
-    var soundName,
-    soundStruct;
-
-    for(soundName in sounds) {
-      soundStruct = sounds[soundName];
-      soundAssets.load(soundName, soundStruct.src);
-      addToControlList(soundStruct, context);
-    };
-  };
-
-  function addAssetsForLevel(level, context) {
+  function addAssetsForCurrentLevel() {
     imageAssets.clear();
     soundAssets.clear();
-    addImages(level['images'], context);
-    addSounds(level['sounds'], context);
+    loadAssets({'sounds' : loadSounds,
+                'images' : loadImages});
   };
 
   return {
@@ -62,10 +52,15 @@ module.exports = (function() {
       return imageAssets;
     },
 
-    load: function(levelName, context) {
+    load: function(levelName) {
       if (this.levels[levelName]) {
-        addAssetsForLevel(this.levels[levelName], context);
+        currentLevel = this.levels[levelName];
+        addAssetsForCurrentLevel();
       }
+    },
+
+    gameObject: function(objectName) {
+      return currentLevel[objectName];
     },
 
     initializeAssets: function(jquery) {
