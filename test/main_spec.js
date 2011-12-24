@@ -227,11 +227,34 @@ describe("Eskimo", function() {
         };
         
         Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
-                                                                      canvas: canvas}));
+                                                                canvas: canvas}));
 
         jquery(canvas).mouseup();
 
         game.mouseup.should.be.true;
+      });
+
+      it("normalizes CANVAS event locations to the canvas", function() {
+        Eskimo.CANVAS_EVENTS = ['mouseup'];
+        var game = {
+          mouseup: function(location) {
+            this.location = location;
+          }
+        };
+
+        canvas.offset = function() {
+          return {left: 10, top: 10};
+        };
+
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
+                                                                canvas: canvas}));
+
+        jquery(canvas).trigger({ type: 'mouseup', 
+                                 pageX: 15,
+                                 pageY: 20});
+
+        game.location.x.should.equal(5);
+        game.location.y.should.equal(10);
       });
     });
  

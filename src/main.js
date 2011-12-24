@@ -20,7 +20,24 @@ module.exports = function(depend) {
 
   function bindAllEvents(document, canvas) {
     bindEventsOn(module.exports.DOCUMENT_EVENTS, document.documentElement, game);
-    bindEventsOn(module.exports.CANVAS_EVENTS, canvas, game);
+  
+    _(module.exports.CANVAS_EVENTS).each(function(eventName) {
+      jquery(canvas).bind(eventName, function(event) {
+
+        if (typeof(game[eventName]) !== "undefined") {
+          if (typeof(canvas['offset']) !== "undefined") {
+
+            game[eventName]({x: event.pageX - canvas.offset().left,
+                             y: event.pageY - canvas.offset().top});
+
+          } else {
+            game[eventName](event);
+          }
+        }
+
+      });
+    });
+
   };
 
   // Main needs to get streamlined.
