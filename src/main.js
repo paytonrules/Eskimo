@@ -1,4 +1,5 @@
 var _ = require("underscore");
+
 module.exports = function(depend) {
   var dependencies = depend || {}, 
       Scheduler = dependencies['scheduler'] || require('./scheduler'),
@@ -8,19 +9,26 @@ module.exports = function(depend) {
       Screen = dependencies["screen"] || require("./screen"),
       FixedGameLoop = require("./fixed-game-loop");
 
-  function bindEventsOn(eventList, element) {
-    _(eventList).each(function(eventName) {
-      jquery(element).bind(eventName, function(event) {
+  function bindAllEvents(document, canvas) {
+    _(module.exports.DOCUMENT_EVENTS).each(function(eventName) {
+      jquery(canvas).bind(eventName, function(event) {
         if (typeof(game[eventName]) !== "undefined") {
           game[eventName](event);
         }
       });
-    });
-  }
 
-  function bindAllEvents(document, canvas) {
-    bindEventsOn(module.exports.DOCUMENT_EVENTS, document.documentElement, game);
-    bindEventsOn(module.exports.CANVAS_EVENTS, canvas, game);
+    _(module.exports.CANVAS_EVENTS).each(function(eventName) {
+      jquery(canvas).bind(eventName, function(event) {
+        if (typeof(game[eventName]) !== "undefined") {
+          if (typeof(canvas.offset) !== "undefined") {
+            game[eventName]({x: event.pageX - canvas.offset().left,
+                             y: event.pageY - canvas.offset().top});
+          } else {
+            game[eventName](event);
+          }
+        }
+      });
+    });
   };
 
   // Main needs to get streamlined.
@@ -36,7 +44,7 @@ module.exports = function(depend) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
-      
+
       bindAllEvents(configuration.document, configuration.canvas); 
 
       FixedGameLoop.start(scheduler, game, screen);

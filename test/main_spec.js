@@ -197,6 +197,7 @@ describe("Eskimo", function() {
         Eskimo.CANVAS_EVENTS = ['mousedown'];
         var game = {
           mousedown: function(event) {
+            console.log("oh fuck");
             this.mousedown = true;
           }
         };
@@ -227,12 +228,36 @@ describe("Eskimo", function() {
         };
         
         Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
-                                                                      canvas: canvas}));
+                                                                canvas: canvas}));
 
         jquery(canvas).mouseup();
 
         game.mouseup.should.be.true;
       });
+
+      it("sends the x and y location of the mouseevent - relative to the upper left corner of the canfas", function() {
+        Eskimo.CANVAS_EVENTS = ['mousedown'];
+        var game = {
+          mousedown: function(location) {
+            this.location = location;
+          }
+        };
+
+        canvas.offset = function() {
+          return {top: 10, left: 20};
+        };
+
+        Eskimo(dependencies({game: game})).start(configuration({jquery: jquery,
+                                                                canvas: canvas}));
+
+        jquery(canvas).trigger({type: 'mousedown',
+                               pageX: 20,
+                               pageY: 40});
+
+        game.location.x.should.equal(0);
+        game.location.y.should.equal(30);
+      });
+ 
     });
  
     it("uses a intelligent defaults", function() {
