@@ -1,8 +1,9 @@
-var Main = require('./main'),
-    _ = require('underscore');
+var Main = _ = require('underscore');
 
 
 module.exports = {
+  CAnVAS_EVENTS: ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'],
+  DOCUMENT_EVENTS: ['keydown', 'keyup'],
   bind: function(configuration) {
     var jquery = configuration.jquery,
         canvas = configuration.canvas,
@@ -37,6 +38,3 @@ module.exports = {
     });
   }
 };
-
-module.exports.DOCUMENT_EVENTS = ['keydown', 'keyup'];
-module.exports.CANVAS_EVENTS = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'];

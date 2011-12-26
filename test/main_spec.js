@@ -126,6 +126,14 @@ describe("Eskimo", function() {
       gameLoopSpy.passedArguments()['1'].should.eql(game);
     });
 
+    it("binds to the events", function() {
+      var Events = require('../src/events');
+      var eventSpy = Spies.spyOn(Events, 'bind');
+
+      Eskimo(dependencies({game: 'game'})).start(configuration());
+
+      eventSpy.wasCalled().should.be.true;
+    });
  
     it("uses a intelligent defaults", function() {
       Eskimo(dependencies()).start(configuration());
