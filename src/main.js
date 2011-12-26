@@ -8,19 +8,17 @@ module.exports = function(depend) {
       Screen = dependencies["screen"] || require("./screen"),
       FixedGameLoop = require("./fixed-game-loop");
 
-  function bindEventsOn(eventList, element) {
-    _(eventList).each(function(eventName) {
-      jquery(element).bind(eventName, function(event) {
+  function bindAllEvents(document, canvas) {
+    _(module.exports.DOCUMENT_EVENTS).each(function(eventName) {
+      jquery(document.documentElement).bind(eventName, function(event) {
+
         if (typeof(game[eventName]) !== "undefined") {
           game[eventName](event);
         }
+
       });
     });
-  }
 
-  function bindAllEvents(document, canvas) {
-    bindEventsOn(module.exports.DOCUMENT_EVENTS, document.documentElement, game);
-  
     _(module.exports.CANVAS_EVENTS).each(function(eventName) {
       jquery(canvas).bind(eventName, function(event) {
 
