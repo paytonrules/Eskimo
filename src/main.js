@@ -6,37 +6,8 @@ module.exports = function(depend) {
       game = dependencies["game"],
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || require("./screen"),
-      FixedGameLoop = require("./fixed-game-loop");
-
-  function bindAllEvents(document, canvas) {
-    _(module.exports.DOCUMENT_EVENTS).each(function(eventName) {
-      jquery(document.documentElement).bind(eventName, function(event) {
-
-        if (typeof(game[eventName]) !== "undefined") {
-          game[eventName](event);
-        }
-
-      });
-    });
-
-    _(module.exports.CANVAS_EVENTS).each(function(eventName) {
-      jquery(canvas).bind(eventName, function(event) {
-
-        if (typeof(game[eventName]) !== "undefined") {
-          if (typeof(canvas['offset']) !== "undefined") {
-
-            game[eventName]({x: event.pageX - canvas.offset().left,
-                             y: event.pageY - canvas.offset().top});
-
-          } else {
-            game[eventName](event);
-          }
-        }
-
-      });
-    });
-
-  };
+      FixedGameLoop = require("./fixed-game-loop"),
+      Events = require('./events');
 
   // Main needs to get streamlined.
   return {
@@ -52,12 +23,13 @@ module.exports = function(depend) {
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
       
-      bindAllEvents(configuration.document, configuration.canvas); 
+      Events.bind({jquery: jquery,
+                  document: configuration.document.documentElement,
+                  game: game,
+                  canvas: configuration.canvas});
 
       FixedGameLoop.start(scheduler, game, screen);
     }
   };
 };
 
-module.exports.DOCUMENT_EVENTS = ['keydown', 'keyup'];
-module.exports.CANVAS_EVENTS = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'];
