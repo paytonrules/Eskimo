@@ -7,7 +7,7 @@ describe("Eskimo", function() {
       emptyFunction = function() {},
       emptyDocument = {documentElement: null},
       jquery = require("jquery"),
-      LevelLoader = require("../src/level_loader"),
+      level = require("../src/level"),
       FixedGameLoop = require("../src/fixed-game-loop"),
       levels = {};
 
@@ -71,12 +71,12 @@ describe("Eskimo", function() {
     it("configures the level loader with the configured levels, and an empty update list", function() {
       Eskimo(dependencies({jquery: jquery})).start(configuration({levels: levels}));
 
-      LevelLoader.levels.should.equal(levels);
-      LevelLoader.countUpdaters().should.equal(0);
+      level.levels.should.equal(levels);
+      level.countUpdaters().should.equal(0);
     });
 
     it("initializes the level loader", function() {
-      var initializeAssets = Spies.spyOn(LevelLoader, "initializeAssets");
+      var initializeAssets = Spies.spyOn(level, "initializeAssets");
 
       Eskimo(dependencies()).start(configuration());
 

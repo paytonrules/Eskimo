@@ -1,7 +1,7 @@
 var _ = require("underscore");
 module.exports = function(canvas) {
   var context = canvas[0].getContext("2d"),
-      LevelLoader = require('./level_loader'),
+      level = require('./level'),
       imageList = [];
 
   function clearScreen() {
@@ -20,7 +20,7 @@ module.exports = function(canvas) {
   };
 
   this.render = function() {
-    var assets = LevelLoader.getImageAssets(); // THIS MUST BE FAST!
+    var assets = level.getImageAssets(); // THIS MUST BE FAST!
     clearScreen();
     _(imageList).each(function(image) {
       var asset = assets.get(image.name);

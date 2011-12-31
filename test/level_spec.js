@@ -1,10 +1,7 @@
-// Weird - where the hell is spec helper being required?  And yet this works!
-// It's in the global
-describe("LevelLoader", function() {
-  var levelLoader,
-      Spies = require('./spies'),
+describe("Level", function() {
+  var Spies = require('./spies'),
       should = require('should'),
-      LevelLoader = require('../src/level_loader'),
+      level = require('../src/level'),
       FixedGameLoop = require('../src/fixed-game-loop'),
       _ = require("underscore"),
       updaterList,
@@ -50,21 +47,20 @@ describe("LevelLoader", function() {
 
   beforeEach(function() {
     spiedJQuery = spyOnJQueryCapturingElements();
-    levelLoader = LevelLoader;
-    levelLoader.initializeAssets(spiedJQuery.jquery);
+    level.initializeAssets(spiedJQuery.jquery);
   });
 
   it("loads no assets when the levels passed in is empty", function() {
-    levelLoader.levels = {};
+    level.levels = {};
 
-    levelLoader.load("monkey");
+    level.load("monkey");
 
-    levelLoader.getImageAssets().size().should.equal(0);
+    level.getImageAssets().size().should.equal(0);
   });
 
   it("creates image assets for any images on the objects in the level", function() {
     var imageAssets;
-    levelLoader.levels = {
+    level.levels = {
       "newLevel": {
         "gameObject" : {
           "images" : {
@@ -76,17 +72,17 @@ describe("LevelLoader", function() {
       }
     };
 
-    levelLoader.load("newLevel");
+    level.load("newLevel");
     spiedJQuery.triggerEvent("load");
 
-    imageAssets = levelLoader.getImageAssets();
+    imageAssets = level.getImageAssets();
 
     imageAssets.get("imageName").src.should.equal('background.jpg');
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
     var jukebox;
-    levelLoader.levels = {
+    level.levels = {
       "newLevel": {
         "gameObject" : {
           "sounds": {
@@ -101,10 +97,10 @@ describe("LevelLoader", function() {
       }
     };
 
-    levelLoader.load("newLevel");
+    level.load("newLevel");
     spiedJQuery.triggerEvent("canplaythrough");
 
-    jukebox = levelLoader.getJukebox();
+    jukebox = level.getJukebox();
 
     jukebox.assets.get('soundOne').src.should.equal('sound.mp3');
     jukebox.assets.get('soundTwo').src.should.equal('secondSound.mp3');
@@ -112,7 +108,7 @@ describe("LevelLoader", function() {
 
   it("removes the previous level images", function() {
     var imageAssets;
-    levelLoader.levels = {
+    level.levels = {
       "levelOne": {
         "gameObject" : {
           "images": {
@@ -133,11 +129,11 @@ describe("LevelLoader", function() {
       }
     };
 
-    levelLoader.load("levelOne");
-    levelLoader.load("levelTwo");
+    level.load("levelOne");
+    level.load("levelTwo");
     spiedJQuery.triggerEvent("load");
 
-    imageAssets = levelLoader.getImageAssets();
+    imageAssets = level.getImageAssets();
 
     should.not.exist(imageAssets.get("oldImage"));
     imageAssets.get("newImage").should.be.ok;
@@ -146,7 +142,7 @@ describe("LevelLoader", function() {
   it("removes the previous levels sounds as well", function() {
     var soundAssets;
 
-    levelLoader.levels = {
+    level.levels = {
       "levelOne": {
         "gameObject" : {
           "sounds": {
@@ -168,11 +164,11 @@ describe("LevelLoader", function() {
       }
     };
 
-    levelLoader.load("levelOne");
-    levelLoader.load("levelTwo");
+    level.load("levelOne");
+    level.load("levelTwo");
     spiedJQuery.triggerEvent("canplaythrough");
 
-    soundAssets = levelLoader.getJukebox().assets;
+    soundAssets = level.getJukebox().assets;
 
     should.not.exist(soundAssets.get("oldSound"));
     soundAssets.get("newSound").should.exist;
@@ -181,7 +177,7 @@ describe("LevelLoader", function() {
   it("does not clear the previous level if the requested level doesn't exist", function() {
     var soundAssets, imageAssets;
     
-    levelLoader.levels = {
+    level.levels = {
       "levelOne": {
         "gameObject" : {
           "sounds": {
@@ -198,20 +194,20 @@ describe("LevelLoader", function() {
       }
     };
 
-    levelLoader.load("levelOne");
-    levelLoader.load("badLevel");
+    level.load("levelOne");
+    level.load("badLevel");
     spiedJQuery.triggerEvent("canplaythrough");
     spiedJQuery.triggerEvent("load");
 
-    soundAssets = levelLoader.getJukebox().assets;
-    imageAssets = levelLoader.getImageAssets();
+    soundAssets = level.getJukebox().assets;
+    imageAssets = level.getImageAssets();
 
     soundAssets.get("sound").should.exist;
     imageAssets.get("image").should.exist;
   });
 
   it("allows access to the currentLevel game objects", function() {
-    levelLoader.levels = {
+    level.levels = {
       "levelOne": {
         "gameObject" : {
           "property" : 2
@@ -219,9 +215,9 @@ describe("LevelLoader", function() {
       }
     };
      
-    levelLoader.load("levelOne");
+    level.load("levelOne");
 
-    levelLoader.gameObject('gameObject').property.should.equal(2);
+    level.gameObject('gameObject').property.should.equal(2);
   });
 
 });

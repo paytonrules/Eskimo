@@ -4,7 +4,7 @@ describe("Screen", function() {
       should = require('should'),
       Image = require('../src/image'),
       _ = require("underscore"),
-      LevelLoader,
+      level,
       helper = {};
 
   // Mixed styles here.  Are you gonna spy on this, or simulate.
@@ -66,9 +66,9 @@ describe("Screen", function() {
     }());
 
     Screen = require("../src/screen");
-    LevelLoader = require("../src/level_loader");
+    level = require("../src/level");
 
-    Spies.stub(LevelLoader, "getImageAssets",assets);
+    Spies.stub(level, "getImageAssets",assets);
     context = new Context();
     screen = new Screen(canvas);
 

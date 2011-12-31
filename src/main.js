@@ -15,7 +15,7 @@ module.exports = function(depend) {
       // TODO - this doesn't feel right here 
       // It isn't right - you should have to initialize the level loader with assets and jquery to use it
       // JQuery pattern? You can pass a constructor or just use the object
-      var LevelLoader = require("./level_loader");
+      var LevelLoader = require("./level");
       LevelLoader.levels = configuration.levels;
       LevelLoader.initializeAssets(jquery);
 
