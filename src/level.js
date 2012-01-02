@@ -48,7 +48,7 @@ module.exports = (function() {
       return Jukebox(soundAssets);
     },
 
-    getImageAssets: function() {
+    images: function() {
       return imageAssets;
     },
 

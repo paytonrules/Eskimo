@@ -55,7 +55,7 @@ describe("Level", function() {
 
     level.load("monkey");
 
-    level.getImageAssets().size().should.equal(0);
+    level.images().size().should.equal(0);
   });
 
   it("creates image assets for any images on the objects in the level", function() {
@@ -75,7 +75,7 @@ describe("Level", function() {
     level.load("newLevel");
     spiedJQuery.triggerEvent("load");
 
-    imageAssets = level.getImageAssets();
+    imageAssets = level.images();
 
     imageAssets.get("imageName").src.should.equal('background.jpg');
   });
@@ -133,7 +133,7 @@ describe("Level", function() {
     level.load("levelTwo");
     spiedJQuery.triggerEvent("load");
 
-    imageAssets = level.getImageAssets();
+    imageAssets = level.images();
 
     should.not.exist(imageAssets.get("oldImage"));
     imageAssets.get("newImage").should.be.ok;
@@ -200,7 +200,7 @@ describe("Level", function() {
     spiedJQuery.triggerEvent("load");
 
     soundAssets = level.getJukebox().assets;
-    imageAssets = level.getImageAssets();
+    imageAssets = level.images();
 
     soundAssets.get("sound").should.exist;
     imageAssets.get("image").should.exist;

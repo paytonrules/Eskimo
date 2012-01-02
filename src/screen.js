@@ -20,12 +20,11 @@ module.exports = function(canvas) {
   };
 
   this.render = function() {
-    var assets = level.getImageAssets(); // THIS MUST BE FAST!
     clearScreen();
     _(imageList).each(function(image) {
-      var asset = assets.get(image.name);
+      var asset = level.images().get(image.name);
       if (asset) {
-        context.drawImage(assets.get(image.name), image.x, image.y);
+        context.drawImage(asset, image.x, image.y);
       }
     });
   };

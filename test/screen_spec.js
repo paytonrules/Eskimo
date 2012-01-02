@@ -68,7 +68,7 @@ describe("Screen", function() {
     Screen = require("../src/screen");
     level = require("../src/level");
 
-    Spies.stub(level, "getImageAssets",assets);
+    Spies.stub(level, "images", assets);
     context = new Context();
     screen = new Screen(canvas);
 
