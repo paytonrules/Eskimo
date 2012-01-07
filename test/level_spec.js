@@ -1,4 +1,4 @@
-describe("Level", function() {
+/*describe("Level", function() {
   var Spies = require('./spies'),
       should = require('should'),
       level = require('../src/level'),
@@ -220,4 +220,4 @@ describe("Level", function() {
     level.gameObject('gameObject').property.should.equal(2);
   });
 
-});
+});*/

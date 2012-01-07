@@ -1,4 +1,4 @@
-describe("Eskimo.IntervalWrapper", function() {
+/*describe("Eskimo.IntervalWrapper", function() {
   var IntervalWrapper = require('../src/interval_wrapper'),
       should = require('should'),
       Spies = require('./spies');
@@ -46,4 +46,4 @@ describe("Eskimo.IntervalWrapper", function() {
       clearIntervalSpy.passedArguments()['0'].should.equal('timer');
     });
   });
-});
+});*/

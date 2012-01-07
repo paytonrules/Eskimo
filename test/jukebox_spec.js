@@ -1,4 +1,4 @@
-describe("Jukebox", function() {
+/*describe("Jukebox", function() {
   var Jukebox = require("../src/jukebox"),
       Assets = require("../src/assets"),
       sinon = require('sinon'),
@@ -52,4 +52,4 @@ describe("Jukebox", function() {
     jukebox.stop("nonsong");
   });
 
-});
+});*/
