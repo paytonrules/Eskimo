@@ -26,6 +26,11 @@ module.exports = function(options) {
     size++;
   };
 
+  this.add = function(key, obj) {
+    assetList[key] = obj;
+    assetList[key].loaded = true;
+  };
+
   this.size = function() {
     return size;
   };

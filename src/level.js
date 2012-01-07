@@ -59,6 +59,10 @@ module.exports = (function() {
       }
     },
 
+    addImage: function(key, image) {
+      imageAssets.add(key, image);
+    },
+
     gameObject: function(objectName) {
       return currentLevel[objectName];
     },
