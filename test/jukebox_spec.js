@@ -1,41 +1,55 @@
 describe("Jukebox", function() {
   var Jukebox = require("../src/JukeBox"),
       Assets = require("../src/Assets"),
+      sinon = require('sinon'),
       assets = new Assets({}),
+      // Should be an actual HTML5 element - dis be bs
       audioElement = {
         play: function() {},
+        pause: sinon.stub(),
         get: function() {
           return this;
         }
       },
       should = require('should'),
       Spies = require('./spies'),
+      sandbox = sinon.sandbox.create(),
       jukebox; 
 
   beforeEach(function() {
     jukebox = Jukebox(assets);
-    
-    Spies.stub(audioElement, "play");
+
+    sandbox.stub(audioElement, "play");
+  });
+  
+  afterEach(function() {
+    sandbox.restore();
   });
 
-  it("should play a sound from the asset list", function() {
-    var assetsSpy = Spies.spyOn(assets, "get", audioElement);
+  it("should plays the sound from the asset list", function() {
+    assets.add("bang", audioElement);
+    
     jukebox.play("bang");
 
-    assetsSpy.wasCalled().should.be.true;
+    audioElement.play.called.should.be.true;
   });
 
-  it("gets the right sound from the asset list", function() {
-    var assetsSpy = Spies.spyOn(assets, "get", audioElement);
-    jukebox.play("bang");
+  it("plays nothing if the sound doesn't exist", function() {
+    jukebox.play("nuttin");
 
-    assetsSpy.wasCalled().should.be.true;
+    audioElement.play.called.should.be.false;
   });
 
-  it("does not throw an exception if the sound doesnt exist", function() {
-    Spies.stub(assets, "get", null);
-    
-    jukebox.play("yo momma");
+  it("stops the song when stop is called", function() {
+    assets.add("bang", audioElement);
+
+    jukebox.stop("bang");
+
+    audioElement.pause.called.should.be.true;
+  });
+
+  it("doesn't error when stopping a non-existent song", function() {
+    jukebox.stop("nonsong");
   });
 
 });

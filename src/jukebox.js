@@ -1,15 +1,29 @@
+_ = require('underscore');
 module.exports = function(assets) {
 
-  function play(assetName) {
-    var asset = this.assets.get(assetName);
+  function withAsset(assetName, fn) {
+    var asset = assets.get(assetName);
 
-    if (asset !== null) {
-      this.assets.get(assetName).play();
+    if (asset !== null ) {
+      fn(asset);
     }
+  }
+
+  function play(assetName) {
+    withAsset(assetName, function(asset) {
+      asset.play();
+    });
+  };
+  
+  function stop(assetName) {
+    withAsset(assetName, function(asset) {
+      asset.pause();
+    });
   };
 
   return {
     assets: assets,
-    play: play
+    play: play,
+    stop: stop
   };
 };
