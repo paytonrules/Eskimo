@@ -81,6 +81,7 @@ describe("Eskimo", function() {
       Eskimo(dependencies()).start(configuration());
 
       initializeAssets.passedArguments().should.eql([jquery]);
+      initializeAssets.stopSpying();
     });
 
     it("has the canvas on the game screen", function() {
