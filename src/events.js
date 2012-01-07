@@ -2,7 +2,7 @@ var Main = _ = require('underscore');
 
 
 module.exports = {
-  CAnVAS_EVENTS: ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'],
+  CANVAS_EVENTS: ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'],
   DOCUMENT_EVENTS: ['keydown', 'keyup'],
   bind: function(configuration) {
     var jquery = configuration.jquery,
