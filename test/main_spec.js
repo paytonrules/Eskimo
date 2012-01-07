@@ -1,4 +1,4 @@
-/*describe("Eskimo", function() {
+describe("Eskimo", function() {
   // Think you got enough dependencies here?  (sigh)
   var Eskimo = require('../src/main'), 
       canvas,
@@ -141,4 +141,4 @@
     });
 
   });
-});*/
+});
