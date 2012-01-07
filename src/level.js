@@ -8,6 +8,7 @@ module.exports = (function() {
   function initializeAssets(jquery) {
     console.log(Assets);
     imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
+    console.log(imageAssets);
     soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
   };
 
