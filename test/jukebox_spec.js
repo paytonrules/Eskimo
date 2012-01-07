@@ -1,6 +1,6 @@
 describe("Jukebox", function() {
-  var Jukebox = require("../src/JukeBox"),
-      Assets = require("../src/Assets"),
+  var Jukebox = require("../src/jukebox"),
+      Assets = require("../src/assets"),
       sinon = require('sinon'),
       assets = new Assets({}),
       // Should be an actual HTML5 element - dis be bs
