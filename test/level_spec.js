@@ -47,19 +47,17 @@ describe("Level", function() {
 
   beforeEach(function() {
     spiedJQuery = spyOnJQueryCapturingElements();
-    console.log("*************** Initializing Assets");
     level.initializeAssets(spiedJQuery.jquery);
   });
 
   it("loads no assets when the levels passed in is empty", function() {
-    console.log("******************Start first bad test");
     level.levels = {};
 
     level.load("monkey");
 
-    console.log(level.images());
+    console.log(level);
+    console.log(level.images);
     level.images().size().should.equal(0);
-    console.log("*****************End first bad test");
   });
 
   it("creates image assets for any images on the objects in the level", function() {
