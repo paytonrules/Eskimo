@@ -55,6 +55,7 @@ describe("Level", function() {
 
     level.load("monkey");
 
+    console.log(level.images());
     level.images().size().should.equal(0);
   });
 

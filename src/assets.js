@@ -5,7 +5,6 @@ module.exports = function(options) {
       loadEvent = options['loadEvent'],
       size = 0;
 
-  console.log("Defining get");
   this.get = function(key) {
     if ( assetList[key] && assetList[key].loaded ) {
       return assetList[key].get(0);
@@ -13,7 +12,8 @@ module.exports = function(options) {
     return null;
   };
 
-  console.log("Defining load");
+  this.name = "ASSET CLASS";
+
   this.load = function(key, src) {
     if (assetList[key]) {
       throw {name: "Eskimo.AssetAlreadyExists", message: "Asset '" + src + "' already exists"};
@@ -28,7 +28,6 @@ module.exports = function(options) {
     size++;
   };
 
-  console.log("Defining add");
   this.add = function(key, obj) {
     assetList[key] = obj;
     assetList[key].loaded = true;
