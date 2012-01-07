@@ -12,8 +12,6 @@ module.exports = function(options) {
     return null;
   };
 
-  this.name = "ASSET CLASS";
-
   this.load = function(key, src) {
     if (assetList[key]) {
       throw {name: "Eskimo.AssetAlreadyExists", message: "Asset '" + src + "' already exists"};

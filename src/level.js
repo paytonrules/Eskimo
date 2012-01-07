@@ -6,6 +6,7 @@ module.exports = (function() {
       Assets = require("./assets");
 
   function initializeAssets(jquery) {
+    console.log(Assets);
     imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
     soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
   };
