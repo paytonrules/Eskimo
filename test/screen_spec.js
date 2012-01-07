@@ -5,6 +5,7 @@ describe("Screen", function() {
       Image = require('../src/image'),
       _ = require("underscore"),
       level,
+      imagesSpy,
       helper = {};
 
   // Mixed styles here.  Are you gonna spy on this, or simulate.
@@ -68,7 +69,7 @@ describe("Screen", function() {
     Screen = require("../src/screen");
     level = require("../src/level");
 
-    Spies.stub(level, "images", assets);
+    imagesSpy = Spies.stub(level, "images", assets);
     context = new Context();
     screen = new Screen(canvas);
 
@@ -81,6 +82,11 @@ describe("Screen", function() {
 
     };
   });
+
+  afterEach(function() {
+    imagesSpy.stopSpying();
+  });
+
 
   it("is created with a canvas", function() {
     screen.should.exist;
