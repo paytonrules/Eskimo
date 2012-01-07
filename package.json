@@ -18,7 +18,8 @@
     "mocha" : "*",
     "should" : "*",
     "jsdom" : "*",
-    "html5" : "*"
+    "html5" : "*",
+    "sinon" : "*"
   },
   "scripts" : {
    "test" : "mocha"
