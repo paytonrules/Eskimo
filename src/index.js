@@ -1,3 +1,3 @@
 module.exports = require("./main");
-module.exports.LevelLoader = require("./level");
+module.exports.Level = require("./level");
 module.exports.Image = require("./image");
