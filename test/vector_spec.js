@@ -1,4 +1,4 @@
-/*describe("Vector", function() {
+describe("Vector", function() {
   var Vector = require("../src/vector");
 
   it("creates a 2d vector", function() {
@@ -30,4 +30,4 @@
     scaledVector.y.should.equal(1.6);
   });
 
-});*/
+});
