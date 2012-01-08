@@ -1,14 +1,14 @@
-/*describe("Eskimo", function() {
+describe("Eskimo", function() {
   // Think you got enough dependencies here?  (sigh)
   var Eskimo = require('../src/main'), 
       canvas,
-      Spies = require('./spies'),
       should = require('should'),
       emptyFunction = function() {},
       emptyDocument = {documentElement: null},
       jquery = require("jquery"),
       level = require("../src/level"),
       FixedGameLoop = require("../src/fixed-game-loop"),
+      sandbox = require('sinon').sandbox.create(),
       levels = {};
 
   function dependencies(customConfig) {
@@ -39,9 +39,13 @@
   }
 
   beforeEach(function() {
-    Spies.stub(FixedGameLoop, "start");
+    sandbox.stub(FixedGameLoop, "start");
     var domCanvas = {getContext: function() {}}; 
     canvas = [domCanvas];
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
 
   describe("wiring dependencies", function() {
@@ -76,12 +80,11 @@
     });
 
     it("initializes the level loader", function() {
-      var initializeAssets = Spies.spyOn(level, "initializeAssets");
+      var initializeAssets = sandbox.spy(level, "initializeAssets").withArgs(jquery);
 
       Eskimo(dependencies()).start(configuration());
 
-      initializeAssets.passedArguments().should.eql([jquery]);
-      initializeAssets.stopSpying();
+      initializeAssets.called.should.be.true;
     });
 
     it("has the canvas on the game screen", function() {
@@ -99,11 +102,10 @@
       var FakeScheduler = function(frameRate) {
         return sched;
       };
-      var starter = Spies.spyOn(FixedGameLoop, "start");
 
       Eskimo(dependencies({scheduler: FakeScheduler})).start(configuration());
 
-      starter.passedArguments()['0'].should.eql(sched);
+      FixedGameLoop.start.calledWith(sched).should.be.true;
     });
 
     it("starts the game loop with the screen", function() {
@@ -111,29 +113,27 @@
       var FakeScreen = function() {
         return fakeScreen;
       };
-      var starter = Spies.spyOn(FixedGameLoop, "start");
 
       Eskimo(dependencies({screen: FakeScreen})).start(configuration());
 
-      starter.passedArguments()['2'].should.eql(fakeScreen);
+      FixedGameLoop.start.firstCall.args[2].should.eql(fakeScreen);
     });
 
     it("sends the game loop the game", function() {
-      var gameLoopSpy = Spies.spyOn(FixedGameLoop, "start"),
-          game =  {};
+      var game =  {};
 
       Eskimo(dependencies({game: game})).start(configuration());
 
-      gameLoopSpy.passedArguments()['1'].should.eql(game);
+      FixedGameLoop.start.firstCall.args[1].should.eql(game);
     });
 
     it("binds to the events", function() {
       var Events = require('../src/events');
-      var eventSpy = Spies.spyOn(Events, 'bind');
+      var eventSpy = sandbox.spy(Events, 'bind');
 
       Eskimo(dependencies({game: 'game'})).start(configuration());
 
-      eventSpy.wasCalled().should.be.true;
+      eventSpy.called.should.be.true;
     });
  
     it("uses a intelligent defaults", function() {
@@ -141,4 +141,4 @@
     });
 
   });
-});*/
+});
