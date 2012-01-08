@@ -1,53 +1,34 @@
-/*describe("Level", function() {
-  var Spies = require('./spies'),
-      should = require('should'),
+describe("Level", function() {
+  var should = require('should'),
       level = require('../src/level'),
-      FixedGameLoop = require('../src/fixed-game-loop'),
-      _ = require("underscore"),
-      updaterList,
-      spiedJQuery;
+      spiedJQuery,
+      window,
+      sandbox = require('sinon').sandbox.create();
 
-  function spyOnJQueryCapturingElements() {
-    var spiedJQuery = {
-      jquery: (function() {
-        var dom = require('jsdom').jsdom(),
-            define = require('../node_modules/jsdom/lib/jsdom/level2/html').define,
-            window = dom.createWindow(),
-            $ = require("jquery").create(window);
+  function setupJQueryWithASpy() {
+    var dom = require('jsdom').jsdom(),
+        define = require('../node_modules/jsdom/lib/jsdom/level2/html').define;
 
-        define("HTMLAudioElement", {
-          tagName: 'AUDIO',
-          attributes: [
-            'src'
-          ]
-        });
-     
-        return $;
-      })(),
+    window = dom.createWindow();
+    require("jquery").create(window);
 
-
-      triggerEvent: function(eventName) {
-        _(spiedJQuery.elements).each(function(element) {
-          element.trigger(eventName);
-        });
-      },
-
-      elements: []
-    };
-
-    Spies.stub(spiedJQuery, 'jquery').andCallFake(function(spy, params) {
-      var newElement = spy.originalFunction(params['0']);
-
-      spiedJQuery.elements.push(newElement);
-      return newElement;
+    define("HTMLAudioElement", {
+      tagName: 'AUDIO',
+      attributes: [
+        'src'
+      ]
     });
-
-    return spiedJQuery;
+  
+    spiedJQuery = sandbox.spy(window, 'jQuery');
   };
 
   beforeEach(function() {
-    spiedJQuery = spyOnJQueryCapturingElements();
-    level.initializeAssets(spiedJQuery.jquery);
+    setupJQueryWithASpy();
+    level.initializeAssets(window.jQuery);
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
 
   it("loads no assets when the levels passed in is empty", function() {
@@ -73,7 +54,7 @@
     };
 
     level.load("newLevel");
-    spiedJQuery.triggerEvent("load");
+    spiedJQuery.returnValues[0].trigger('load');
 
     imageAssets = level.images();
 
@@ -98,7 +79,9 @@
     };
 
     level.load("newLevel");
-    spiedJQuery.triggerEvent("canplaythrough");
+
+    spiedJQuery.returnValues[0].trigger('canplaythrough');
+    spiedJQuery.returnValues[1].trigger('canplaythrough');
 
     jukebox = level.getJukebox();
 
@@ -131,7 +114,9 @@
 
     level.load("levelOne");
     level.load("levelTwo");
-    spiedJQuery.triggerEvent("load");
+
+    // Note we trigger load on the second created jquery object (levelTwo)
+    spiedJQuery.returnValues[1].trigger('load');
 
     imageAssets = level.images();
 
@@ -166,7 +151,8 @@
 
     level.load("levelOne");
     level.load("levelTwo");
-    spiedJQuery.triggerEvent("canplaythrough");
+    
+    spiedJQuery.returnValues[1].trigger('canplaythrough');
 
     soundAssets = level.getJukebox().assets;
 
@@ -196,8 +182,8 @@
 
     level.load("levelOne");
     level.load("badLevel");
-    spiedJQuery.triggerEvent("canplaythrough");
-    spiedJQuery.triggerEvent("load");
+    spiedJQuery.returnValues[0].trigger('canplaythrough');
+    spiedJQuery.returnValues[1].trigger('load');
 
     soundAssets = level.getJukebox().assets;
     imageAssets = level.images();
@@ -220,4 +206,4 @@
     level.gameObject('gameObject').property.should.equal(2);
   });
 
-});*/
+});
