@@ -1,4 +1,4 @@
-/*describe("binding events", function() {
+describe("binding events", function() {
   var document,
       jquery,
       domCanvas = {getContext: function() {}}, 
@@ -153,4 +153,4 @@
     game.location.x.should.equal(5);
     game.location.y.should.equal(10);
   });
-});*/
+});
