@@ -1,36 +1,24 @@
 describe("Scheduler", function() {
-  var counter,
-      Scheduler = require("../src/scheduler");
+  var Scheduler = require("../src/scheduler");
   
-  var CallCounterUpTo = function(maximum) {
+  var CallCounterUpTo = function(scheduler, maximum) {
     var calls = 0;
-    var self = this;
-    self.call = function() {
+    this.call = function() {
       calls += 1;
 
-      if (calls === maximum && self.scheduler) {
-        self.scheduler.stop();
+      if (calls === maximum) {
+        scheduler.stop();
       }
     };
 
-    self.completed = function() {
+    this.completed = function() {
       return (calls === maximum);
     };
-
-    self.getCalls = function() {
-      return calls;
-    };
-
-    self.maximum = maximum;
   };
   
-  beforeEach( function() {
-    counter = new CallCounterUpTo(2);
-  });
-
   it('schedules method called for repeated calls', function(done) {
     var scheduler = new Scheduler(100);
-    counter.scheduler = scheduler;
+    var counter = new CallCounterUpTo(scheduler, 2);
     
     scheduler.start(function() {
       counter.call();
@@ -55,10 +43,9 @@ describe("Scheduler", function() {
   it('calls that method with the tick rate', function(done) {
     var framesPerSecond = 10;
     var scheduler = new Scheduler(framesPerSecond);
-    counter.scheduler = scheduler;
-    var startTime;
+    var counter = new CallCounterUpTo(scheduler, 2);
 
-    startTime = (new Date()).getTime();
+    var startTime = (new Date()).getTime();
 
     scheduler.start(function() {
       counter.call();
