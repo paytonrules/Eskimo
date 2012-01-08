@@ -1,4 +1,4 @@
-/*describe("Scheduler", function() {
+describe("Scheduler", function() {
   var counter,
       Scheduler = require("../src/scheduler");
   
@@ -81,4 +81,4 @@
 
     scheduler.getTickTime().should.equal(1000 / 23);
   });
-});*/
+});
