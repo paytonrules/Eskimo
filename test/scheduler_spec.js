@@ -8,7 +8,7 @@ describe("Scheduler", function() {
     self.call = function() {
       calls += 1;
 
-      if (calls === maximum) {
+      if (calls === maximum && self.scheduler) {
         self.scheduler.stop();
       }
     };
