@@ -1,7 +1,11 @@
-/*describe("Eskimo.IntervalWrapper", function() {
+describe("Eskimo.IntervalWrapper", function() {
   var IntervalWrapper = require('../src/interval_wrapper'),
       should = require('should'),
-      Spies = require('./spies');
+      sandbox = require('sinon').sandbox.create();
+
+  afterEach(function() {
+    sandbox.restore();
+  })
   
   describe("#setInterval", function() {
 
@@ -39,11 +43,11 @@
     // clearInterval doesn't appear to be working correctly in node.js, at least WRT this testing,
     // framework.  S I'm spying on it for now, although I don't want to.
     it('clears the passed in timer', function() {
-      var clearIntervalSpy = Spies.spyOn(global, 'clearInterval');
+      var clearIntervalSpy = sandbox.spy(global, 'clearInterval').withArgs('timer');
       
       IntervalWrapper.clearInterval('timer');
 
-      clearIntervalSpy.passedArguments()['0'].should.equal('timer');
+      clearIntervalSpy.called.should.be.true;
     });
   });
-});*/
+});
