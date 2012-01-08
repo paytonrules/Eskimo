@@ -4,7 +4,7 @@ describe('FixedGameLoop', function() {
       gameObject,
       should = require('should'),
       FixedGameLoop = require("../src/fixed-game-loop"),
-      Spies = require('./spies');
+      sandbox = require('sinon').sandbox.create();
 
   var MockScheduler = function() {
     var ticks = 0;
@@ -56,16 +56,20 @@ describe('FixedGameLoop', function() {
     gameObject = new GameObject();
   });
 
+  afterEach(function() {
+    sandbox.restore();
+  });
+
   it('executes screen.render', function() {
     var screen = {
       render: function() {}
     };
-    var screenSpy = Spies.spyOn(screen, "render")
+    var screenSpy = sandbox.spy(screen, "render")
 
     FixedGameLoop.start(scheduler, gameObject, screen);
     FixedGameLoop.loop();
 
-    screenSpy.wasCalled().should.be.true;
+    screenSpy.called.should.be.true;
   });
 
   it('Executes update on the game object, provided time has passed since the last loop call', function() {
