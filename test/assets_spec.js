@@ -1,16 +1,18 @@
 describe("Assets", function() {
-  var assets, 
-      spiedJQuery, 
-      $,
-      should = require('should'),
-      Assets = require("../src/assets");
+  var should = require('should'),
+      sinon = require('sinon'),
+      sandbox = sinon.sandbox.create(),
+      Assets = require("../src/assets"),
+      jquerySpy,
+      assets,
+      window;
 
   function prepareHTML5() {
     var dom = require('jsdom').jsdom(),
-        define = require('../node_modules/jsdom/lib/jsdom/level2/html').define,
-        window = dom.createWindow();
+        define = require('../node_modules/jsdom/lib/jsdom/level2/html').define;
+    window = dom.createWindow();
 
-    $ = require("jquery").create(window);
+    require("jquery").create(window);
 
     define("HTMLAudioElement", {
       tagName: 'AUDIO',
@@ -18,22 +20,20 @@ describe("Assets", function() {
         'src'
       ]
     });
+
+    jquerySpy = sandbox.spy(window, 'jQuery');
   }
 
   beforeEach(function() {
     prepareHTML5();
 
-    spiedJQuery = (function () {
-      var original = $;
-      return function(selector, context) {
-        spiedJQuery.returnedItem = original(selector, context);
-        return spiedJQuery.returnedItem;
-      };
-    })();
-
-    assets = new Assets({jquery: spiedJQuery, 
+    assets = new Assets({jquery: window.jQuery, 
                          tag: 'img',
                          loadEvent: 'loadEvent'});
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
   
   it("doesn't have an asset if it hasn't been loaded yet by the user", function() {
@@ -48,7 +48,7 @@ describe("Assets", function() {
 
   it("can get the asset after it's loadevent is triggered", function() {
     assets.load('key', 'src');
-    spiedJQuery.returnedItem.trigger('loadEvent');
+    jquerySpy.returnValues[0].trigger('loadEvent');
 
     var asset = assets.get('key');
 
@@ -57,7 +57,7 @@ describe("Assets", function() {
 
   it("sets up the asset with the passed in source", function() {
     assets.load('key', 'src');
-    spiedJQuery.returnedItem.trigger('loadEvent');
+    jquerySpy.returnValues[0].trigger('loadEvent');
 
     var asset = assets.get('key');
 
@@ -66,7 +66,7 @@ describe("Assets", function() {
 
   it("gives the asset the tag passed into the constructor", function() {
     assets.load('key', 'src');
-    spiedJQuery.returnedItem.trigger('loadEvent');
+    jquerySpy.returnValues[0].trigger('loadEvent');
 
     var asset = assets.get('key');
 
