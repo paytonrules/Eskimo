@@ -1,4 +1,4 @@
-/*describe('FixedGameLoop', function() {
+describe('FixedGameLoop', function() {
   var gameLoop, 
       scheduler, 
       gameObject,
@@ -126,4 +126,4 @@
 
     scheduler.loop.should.eql(FixedGameLoop.loop);
   });
-});*/
+});
