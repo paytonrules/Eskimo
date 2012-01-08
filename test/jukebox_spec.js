@@ -1,19 +1,17 @@
-/*describe("Jukebox", function() {
+describe("Jukebox", function() {
   var Jukebox = require("../src/jukebox"),
       Assets = require("../src/assets"),
-      sinon = require('sinon'),
       assets = new Assets({}),
       // Should be an actual HTML5 element - dis be bs
       audioElement = {
         play: function() {},
-        pause: sinon.stub(),
+        pause: function() {},
         get: function() {
           return this;
         }
       },
       should = require('should'),
-      Spies = require('./spies'),
-      sandbox = sinon.sandbox.create(),
+      sandbox = require('sinon').sandbox.create(),
       jukebox; 
 
   beforeEach(function() {
@@ -41,15 +39,16 @@
   });
 
   it("stops the song when stop is called", function() {
+    var pauseSpy = sandbox.spy(audioElement, 'pause');
     assets.add("bang", audioElement);
 
     jukebox.stop("bang");
 
-    audioElement.pause.called.should.be.true;
+    pauseSpy.called.should.be.true;
   });
 
   it("doesn't error when stopping a non-existent song", function() {
     jukebox.stop("nonsong");
   });
 
-});*/
+});
