@@ -52,7 +52,7 @@ describe("Scheduler", function() {
     TestInterval.cleared.should.be.true;
   });
 
-  it('calls that method with the tick rate', function() {
+  it('calls that method with the tick rate', function(done) {
     var framesPerSecond = 10;
     var scheduler = new Scheduler(framesPerSecond);
     counter.scheduler = scheduler;
