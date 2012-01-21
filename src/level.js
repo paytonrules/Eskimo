@@ -67,6 +67,11 @@ module.exports = (function() {
       return currentLevel[objectName];
     },
 
+    addGameObject: function(objectName, object) {
+      console.log(objectName);
+      currentLevel[objectName] = object;
+    },
+
     initializeAssets: function(jquery) {
       initializeAssets(jquery);
     }

@@ -206,4 +206,15 @@ describe("Level", function() {
     level.gameObject('gameObject').property.should.equal(2);
   });
 
+  it("allows adding a game object at any time to the current level", function() {
+    level.levels = {
+      "levelOne" : {}
+    }
+    level.load("levelOne");
+
+    level.addGameObject("key", {"object_id" : 2});
+
+    level.gameObject('key').object_id.should.eql(2);
+  });
+
 });
