@@ -116,14 +116,6 @@ describe("Screen", function() {
     images.should.eql(['two', 'one']);
   });
 
-  it("clears the screen to the configured clear color", function() {
-    Screen.BACKGROUND_COLOR = "#aaaabb";
-
-    screen.render();
-
-    helper.screenClearedTo(context, "#aaaabb"); //expect(context).toHaveScreenClearedTo("#aaaabb");
-  });
-
   it("doesnt draw an asset if it is remove", function() {
     var drawSpy = sandbox.stub(context, "drawImage");
     assets.load("one", "blah");

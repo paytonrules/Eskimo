@@ -68,7 +68,6 @@ module.exports = (function() {
     },
 
     addGameObject: function(objectName, object) {
-      console.log(objectName);
       currentLevel[objectName] = object;
     },
 

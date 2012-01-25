@@ -1,8 +1,7 @@
 var Point = require("./point");
 var Level = require("./level");
 
-module.exports = function(assetName, x, y) {
-  var location = Point(x,y);
+module.exports = function(asset) {
   var imageElement;
 
   function image() {
@@ -20,12 +19,20 @@ module.exports = function(assetName, x, y) {
     return image().height + y;
   }
 
+  function draw(context) {
+    var asset = Level.images().get(assetName);
+    if (asset) {
+      context.drawImage(asset, x, y);
+    }
+  }
+
   return {
     name: assetName,
     location: location,
     x: location.x,
     y: location.y,
     right: right,
-    bottom: bottom
+    bottom: bottom,
+    draw: draw
   };
 };

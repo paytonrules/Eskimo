@@ -22,10 +22,7 @@ module.exports = function(canvas) {
   this.render = function() {
     clearScreen();
     _(imageList).each(function(image) {
-      var asset = level.images().get(image.name);
-      if (asset) {
-        context.drawImage(asset, image.x, image.y);
-      }
+      image.draw(context);
     });
   };
 
