@@ -79,73 +79,63 @@ describe("Screen", function() {
   });
 
   it("draws a asset you put on it", function() {
-    var contextSpy = sandbox.stub(context, "drawImage");
-    assets.load("background", "background.src");
-    var image = Image("background",10, 20);
+    var image = Image({})
+    var imageStub = sandbox.stub(image, "draw");
     
     screen.put(image);
     screen.render();
 
-    contextSpy.calledWith(assets.get("background"), 10, 20).should.be.true;
+    imageStub.calledWith(context).should.be.true;
   });
 
   it("draws multiple assets", function() {
-    var drawSpy = sandbox.stub(context, "drawImage");
-    assets.load("background", "one");
-    assets.load("joe", "joe momma");
+    var image1 = Image({})
+    var image2 = Image({})
+    var image1Stub = sandbox.stub(image1, "draw");
+    var image2Stub = sandbox.stub(image2, "draw");
 
-    screen.put(Image("background", 0, 0));
-    screen.put(Image("joe", 20, 30));
+    screen.put(image1);
+    screen.put(image2);
     screen.render();
 
-    drawSpy.calledWith(assets.get("joe"), 20, 30).should.be.true;
+    image1Stub.called.should.be.true;
+    image2Stub.called.should.be.true;
   });
 
-  it("draws the assets in the order of puts", function() {
-    var images = [];
-    sandbox.stub(context, "drawImage", function(src) {
-      images.push(src);
-    });
-    assets.load("one", "one");
-    assets.load("two", "two");
+  it("draws the images in the order of puts", function() {
+    var image1 = Image({})
+    var image2 = Image({})
+    var image1Stub = sandbox.stub(image1, "draw");
+    var image2Stub = sandbox.stub(image2, "draw");
 
-    screen.put(Image("two", 0, 0));
-    screen.put(Image("one", 0, 0));
+    screen.put(image2);
+    screen.put(image1);
     screen.render();
 
-    images.should.eql(['two', 'one']);
+    image2Stub.calledBefore(image1Stub);
   });
 
-  it("doesnt draw an asset if it is remove", function() {
-    var drawSpy = sandbox.stub(context, "drawImage");
-    assets.load("one", "blah");
-    
-    screen.put(Image("one", 10, 20));
+  it("doesnt draw an asset if it is removed", function() {
+    var image = Image({"one" : {}});
+    var imageStub = sandbox.stub(image, "draw");
+
+    screen.put(image);
     screen.remove("one");
 
     screen.render();
 
-    drawSpy.called.should.be.false;
-  });
-
-  it("doesnt draw if the image isnt in the asset list", function() {
-    var drawSpy = sandbox.stub(context, "drawImage");
-
-    screen.put(Image("one", 10, 20));
-    screen.render();
-
-    drawSpy.called.should.be.false;
+    imageStub.called.should.be.false;
   });
 
   it("clears all placed assets from the list", function() {
-    var drawSpy = sandbox.stub(context, "drawImage");
-    assets.load("one", "blah");
+    var image = Image({});
+    var imageStub = sandbox.stub(image, "draw");
 
-    screen.put(Image("one", 10, 20));
+    screen.put(image);
     screen.clear();
     screen.render();
 
-    drawSpy.called.should.be.false;
+    imageStub.called.should.be.false;
   });
 
 });

@@ -1,7 +1,6 @@
 var _ = require("underscore");
 module.exports = function(canvas) {
   var context = canvas[0].getContext("2d"),
-      level = require('./level'),
       imageList = [];
 
   function clearScreen() {
@@ -15,8 +14,11 @@ module.exports = function(canvas) {
 
   this.put = put;
 
-  this.remove = function(assetName) {
-    imageList.pop(assetName);
+  this.remove = function(imageName) {
+    imageList = _(imageList).reject(function(image) {
+      console.log(image.name);
+      return (imageName === image.name)
+    });
   };
 
   this.render = function() {

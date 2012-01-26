@@ -1,28 +1,37 @@
 describe("Image", function() {
+  var sandbox = require('sinon').sandbox.create(),
+      Canvas = require('canvas'),
+      Image = require('../src/image'),
+      canvas = new Canvas(),
+      context = canvas.getContext('2d'),
+      jquery = require('jquery');
+
+  afterEach(function() {
+    sandbox.restore();
+  });
+
+  it("knows its name from its game object", function() {
+    var image = Image({"name" : {}});
+
+    image.name.should.eql("name");
+  });
 
   it("draws its asset", function() {
-    var Canvas = require('canvas');
-    var Image = require('../src/image');
-    var canvas = new Canvas();
-    var context = canvas.getContext('2d');
+    // Note: I'd like to get rid of these for the canvas, 
+    // instead checking what is actually on the canvas
+    var canvasSpy = sandbox.stub(context, 'drawImage');
    
-    // WRONG type of object - you have to give it an index into the assets
-    // unless you don't - see what the assets.js is really providing. 
-    var image = Image({src: "background.jpg",
+    var image = Image({"name" : {
                         location: {
                           x: 10, 
                           y: 20
-                        }
-                      });
+                        },
+                        asset: 'asset'
+                      }});
 
     image.draw(context);
-    
-/*
- *    screen.put(image);
- *    screen.render();
- *
- *    contextSpy.calledWith(assets.get("background"), 10, 20).should.be.true;
- */
+
+    canvasSpy.calledWith('asset', 10, 20).should.be.true;
   });
 
 

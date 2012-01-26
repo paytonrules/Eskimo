@@ -1,38 +1,32 @@
-var Point = require("./point");
-var Level = require("./level");
+var _ = require('underscore');
+module.exports = function(gameObject) {
+  var keys = _(gameObject).keys()
+  var name = _(keys).first();
+  var properties = gameObject[name];
 
-module.exports = function(asset) {
-  var imageElement;
-
-  function image() {
-    if (typeof(imageElement) === "undefined") {
-      imageElement = Level.images().get(assetName);
-    }
-    return imageElement;
-  }
-
-  function right() {
-    return image().width + x;
-  }
-
-  function bottom() {
-    return image().height + y;
-  }
-
+/*
+ *  function right() {
+ *    return image().width + x;
+ *  }
+ *
+ *  function bottom() {
+ *    return image().height + y;
+ *  }
+ *
+ */
   function draw(context) {
-    var asset = Level.images().get(assetName);
-    if (asset) {
-      context.drawImage(asset, x, y);
-    }
+    context.drawImage(properties.asset, properties.location.x, properties.location.y);
   }
 
   return {
-    name: assetName,
-    location: location,
-    x: location.x,
-    y: location.y,
-    right: right,
-    bottom: bottom,
+    name: name,
+    /*
+     *location: location,
+     *x: location.x,
+     *y: location.y,
+     *right: right,
+     *bottom: bottom,
+     */
     draw: draw
   };
 };
