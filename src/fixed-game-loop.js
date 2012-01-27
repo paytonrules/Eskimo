@@ -14,11 +14,10 @@ module.exports = (function() {
   return {
     loop: function() {
       while (scheduler.getTicks() > nextGameTick) {
-        game.update();
+        game.update(screen);
 
         nextGameTick += scheduler.getTickTime();
       }
-      game.draw(screen);
       screen.render();
     },
 
