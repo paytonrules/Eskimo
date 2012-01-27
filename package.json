@@ -19,7 +19,8 @@
     "should" : "*",
     "jsdom" : "*",
     "html5" : "*",
-    "sinon" : "*"
+    "sinon" : "*",
+    "canvas" : "*"
   },
   "scripts" : {
    "test" : "mocha -R spec"
