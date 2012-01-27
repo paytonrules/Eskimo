@@ -5,7 +5,7 @@ describe('FixedGameLoop', function() {
       FixedGameLoop = require("../src/fixed-game-loop"),
       sandbox = require('sinon').sandbox.create();
 
-  var MockScheduler = function() {
+  var FakeScheduler = function() {
     var ticks = 0;
     this.getTicks = function() {
       return ticks;
@@ -23,22 +23,8 @@ describe('FixedGameLoop', function() {
     }
   };
 
-  var CallCounter = function(callback) {
-    var calls = 0;
-    this.call = function(imageList) {
-      calls += 1;
-      if (typeof(callback) !== "undefined") {
-        callback();
-      }
-    };
-
-    this.calls = function() {
-      return calls;
-    };
-  };
-
   beforeEach( function() {
-    scheduler = new MockScheduler();
+    scheduler = new FakeScheduler();
   });
 
   afterEach(function() {
@@ -51,7 +37,7 @@ describe('FixedGameLoop', function() {
     };
     var screenSpy = sandbox.spy(screen, "render")
 
-    FixedGameLoop.start(scheduler, {update: sandbox.stub(), draw: sandbox.stub()}, screen);
+    FixedGameLoop.start(scheduler, {update: sandbox.stub()}, screen);
     FixedGameLoop.loop();
 
     screenSpy.called.should.be.true;
@@ -59,24 +45,24 @@ describe('FixedGameLoop', function() {
 
   it('Executes update on the game object, provided time has passed since the last loop call', function() {
     var screen = {render: function() {}};
-    var gameObject = {update: function() {}, draw: function() {}};
-    var gameObjectSpy = sandbox.spy(gameObject, 'update');
+    var gameObject = {update: sandbox.stub()};
     
     FixedGameLoop.start(scheduler, gameObject, screen);
     scheduler.tick();
     FixedGameLoop.loop();
 
-    gameObjectSpy.calledWith(screen).should.be.true;
+    gameObject.update.calledWith(screen).should.be.true;
   });
 
-  it('executes multiple updates to catch up if the draw takes a long time', function() {
-    var renders = new CallCounter(function() {
-      scheduler.tick();
-    });
-    var gameObject = {update: function() {}, draw: function() {}};
-    var gameObjectSpy = sandbox.spy(gameObject, 'update');
+  it('executes multiple updates to catch up if the render takes a long time', function() {
+    var gameObject = {update: sandbox.stub()};
 
-    var screen = {render: renders.call};
+    var screen = {
+      render: function() {
+        scheduler.tick();
+      }
+    };
+    var screenSpy = sandbox.spy(screen, 'render');
 
     FixedGameLoop.start(scheduler, gameObject, screen);
     scheduler.tick();
@@ -84,8 +70,8 @@ describe('FixedGameLoop', function() {
     scheduler.tick();
     FixedGameLoop.loop();
 
-    renders.calls().should.equal(2);
-    gameObjectSpy.callCount.should.equal(3);
+    screenSpy.callCount.should.equal(2);
+    gameObject.update.callCount.should.equal(3);
   });
 
   it('delegates stop to the scheduler', function() {
