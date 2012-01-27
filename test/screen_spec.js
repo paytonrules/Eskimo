@@ -127,6 +127,14 @@ describe("Screen", function() {
     imageStub.called.should.be.false;
   });
 
+  it("can find an object by its name", function() {
+    var object = {name: "name"};
+    screen.put(object);
+    
+    screen.findObjectNamed("name").should.eql(object);
+    should.not.exist(screen.findObjectNamed("anything else"));
+  });
+
   it("clears all placed assets from the list", function() {
     var image = Image({});
     var imageStub = sandbox.stub(image, "draw");

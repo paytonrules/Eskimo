@@ -31,6 +31,14 @@ module.exports = function(canvas) {
   this.clear = function() {
     imageList = [];
   };
+
+  this.findObjectNamed = function(name) {
+    var matchingImage = _(imageList).detect(function(image) {
+      return image.name === name;
+    });
+
+    return matchingImage;
+  };
 };
 
 module.exports.BACKGROUND_COLOR = "#aaaabb";
