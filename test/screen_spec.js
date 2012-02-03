@@ -146,4 +146,16 @@ describe("Screen", function() {
     imageStub.called.should.be.false;
   });
 
+  it("Respects changes to the object put on it", function() {
+    var thingy = {name: 'name', location: {x: 1, y: 2}};
+
+    screen.put(thingy);
+
+    thingy.x = 3;
+
+    var newThingy = screen.findObjectNamed('name');
+
+    newThingy.x.should.equal(3);
+  });
+
 });
