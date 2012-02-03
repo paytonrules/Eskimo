@@ -16,7 +16,6 @@ module.exports = function(canvas) {
 
   this.remove = function(imageName) {
     imageList = _(imageList).reject(function(image) {
-      console.log(image.name);
       return (imageName === image.name)
     });
   };
