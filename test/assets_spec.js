@@ -55,6 +55,15 @@ describe("Assets", function() {
     asset.should.be.ok;
   });
 
+  it("makes an optional callback with the asset when the object is loaded successfully", function() {
+    var callback = sandbox.stub();
+
+    assets.load('key', 'src', callback);
+    jquerySpy.returnValues[0].trigger('loadEvent');
+    
+    callback.calledWith(assets.get('key')).should.be.true;
+  });
+
   it("sets up the asset with the passed in source", function() {
     assets.load('key', 'src');
     jquerySpy.returnValues[0].trigger('loadEvent');

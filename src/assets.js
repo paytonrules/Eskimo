@@ -12,14 +12,19 @@ module.exports = function(options) {
     return null;
   };
 
-  this.load = function(key, src) {
+  this.load = function(key, src, fn) {
     if (assetList[key]) {
       throw {name: "Eskimo.AssetAlreadyExists", message: "Asset '" + src + "' already exists"};
     } else {
+      var self = this;
       assetList[key] = jquery("<" + tag + " src='" + src + "'>");
       assetList[key].bind(loadEvent, function() {
         if (assetList[key]) {
           assetList[key].loaded = true;
+          
+          if (typeof(fn) !== "undefined") {
+            fn(self.get(key));
+          } 
         }
       });
     }
