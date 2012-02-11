@@ -72,11 +72,10 @@ describe("Eskimo", function() {
       FakeScheduler.FRAME_RATE.should.equal(60);
     });
 
-    it("configures the level loader with the configured levels, and an empty update list", function() {
+    it("configures the level loader with the configured levels", function() {
       Eskimo(dependencies({jquery: jquery})).start(configuration({levels: levels}));
 
       level.levels.should.equal(levels);
-      level.countUpdaters().should.equal(0);
     });
 
     it("initializes the level loader", function() {

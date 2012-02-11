@@ -1,4 +1,5 @@
 var Jukebox = require('./jukebox'),
+    _ = require('underscore'),
     Level;
 
 AssetLoader = function(configuration) {
@@ -15,9 +16,9 @@ AssetLoader = function(configuration) {
     }
   }
 
-  function loadImages(object) {
-    for (var imageName in object[tagName]) {
-      assets.load(imageName, object[tagName][imageName]['src'], onAssetLoaded);
+  function loadAssets(object) {
+    for (var assetName in object[tagName]) {
+      assets.load(assetName, object[tagName][assetName]['src'], onAssetLoaded);
     }
   }
 
@@ -35,7 +36,7 @@ AssetLoader = function(configuration) {
     calculateTotalAssets(level);
     for(var object in level) {
       if (level[object][tagName]) {
-        loadImages(level[object]);
+        loadAssets(level[object]);
       }
     }
   }
@@ -45,9 +46,6 @@ Level = (function() {
   var imageAssets, 
       soundAssets,
       currentLevel,
-      currentImages = [],
-      totalImages,
-      _ = require('underscore'),
       Assets = require("./assets");
 
   function initializeAssets(jquery) {
@@ -55,63 +53,29 @@ Level = (function() {
     soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
   };
 
-  function loadSounds(object) {
-    for (var soundName in object['sounds']) {
-      soundAssets.load(soundName, object['sounds'][soundName]['src']);
-    }
-  }
-
-  function onImageLoaded(asset) {
-    currentImages.push(asset);
-    if (currentImages.length === totalImages && Level.allImagesLoaded) {
-      Level.allImagesLoaded(currentImages);
-    }
-  }
-
-  function loadImages(object) {
-    for (var imageName in object['images']) {
-      imageAssets.load(imageName, object['images'][imageName]['src'], onImageLoaded);
-    }
-  }
-
-  function calculateTotalImages() {
-    totalImages = 0;
-    currentImages = [];
-    for (var object in currentLevel) {
-      if (currentLevel[object]['images']) {
-        totalImages += _.keys(currentLevel[object]['images']).length;
-      }
-    }
-  } 
-
-  function loadAssets(callbacks) {
-    calculateTotalImages();
-    for(var object in currentLevel) {
-      for(var callback in callbacks) {
-        if (currentLevel[object][callback]) {
-          callbacks[callback](currentLevel[object]);
-        }
-      }
-    }
-  }
-
-  function addAssetsForCurrentLevel() {
+  function loadImageAssets() {
     imageAssets.clear();
-    soundAssets.clear();
+
     var imageAssetLoader = new AssetLoader({assets: imageAssets, 
                                             tagName: 'images',
                                             completeCallback: Level.allImagesLoaded});
     imageAssetLoader.load(currentLevel);
+  }
 
-    loadAssets({'sounds' : loadSounds});
-    soundAssets.get("sound")
+  function loadSoundAssets() {
+    soundAssets.clear();
+
+    var soundAssetLoader = new AssetLoader({assets: soundAssets,
+                                            tagName: 'sounds'});
+    soundAssetLoader.load(currentLevel);
+  }
+
+  function addAssetsForCurrentLevel() {
+    loadImageAssets();
+    loadSoundAssets();
   };
 
   return {
-    countUpdaters: function() {
-      return 0;
-    },
-
     getJukebox: function() {
       return Jukebox(soundAssets);
     },
@@ -131,17 +95,18 @@ Level = (function() {
       imageAssets.add(key, image);
     },
 
+    initializeAssets: function(jquery) {
+      initializeAssets(jquery);
+    },
+
     gameObject: function(objectName) {
       return currentLevel[objectName];
     },
 
     addGameObject: function(objectName, object) {
       currentLevel[objectName] = object;
-    },
-
-    initializeAssets: function(jquery) {
-      initializeAssets(jquery);
     }
+
   };
 })();
 
