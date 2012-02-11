@@ -8,7 +8,7 @@ AssetLoader = function(configuration) {
       tagName = configuration.tagName,
       loadingComplete = configuration.completeCallback;
   
-  function onImageLoaded(asset) {
+  function onAssetLoaded(asset) {
     loadedAssets.push(asset);
     if (loadedAssets.length === totalAssets && loadingComplete) {
       loadingComplete(loadedAssets);
@@ -17,7 +17,7 @@ AssetLoader = function(configuration) {
 
   function loadImages(object) {
     for (var imageName in object[tagName]) {
-      assets.load(imageName, object[tagName][imageName]['src'], onImageLoaded);
+      assets.load(imageName, object[tagName][imageName]['src'], onAssetLoaded);
     }
   }
 
@@ -95,7 +95,6 @@ Level = (function() {
     }
   }
 
- 
   function addAssetsForCurrentLevel() {
     imageAssets.clear();
     soundAssets.clear();
