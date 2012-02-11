@@ -5,7 +5,7 @@ module.exports = function(gameObject) {
   var properties = gameObject[name];
 
   function draw(context) {
-    context.drawImage(properties.asset, 
+    context.drawImage(properties.asset,  // This will be a DOM object 
                       properties.location.x, 
                       properties.location.y);
   }

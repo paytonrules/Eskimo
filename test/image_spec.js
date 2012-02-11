@@ -3,8 +3,7 @@ describe("Image", function() {
       Canvas = require('canvas'),
       Image = require('../src/image'),
       canvas = new Canvas(),
-      context = canvas.getContext('2d'),
-      jquery = require('jquery');
+      context = canvas.getContext('2d');
 
   afterEach(function() {
     sandbox.restore();
