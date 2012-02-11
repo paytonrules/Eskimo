@@ -1,8 +1,53 @@
-var Jukebox = require('./jukebox');
-module.exports = (function() {
+var Jukebox = require('./jukebox'),
+    Level;
+
+AssetLoader = function(configuration) {
+  var totalAssets,
+      loadedAssets,
+      assets = configuration.assets,
+      tagName = configuration.tagName,
+      loadingComplete = configuration.completeCallback;
+  
+  function onImageLoaded(asset) {
+    loadedAssets.push(asset);
+    if (loadedAssets.length === totalAssets && loadingComplete) {
+      loadingComplete(loadedAssets);
+    }
+  }
+
+  function loadImages(object) {
+    for (var imageName in object[tagName]) {
+      assets.load(imageName, object[tagName][imageName]['src'], onImageLoaded);
+    }
+  }
+
+  function calculateTotalAssets(level) {
+    totalAssets = 0;
+    loadedAssets = [];
+    for (var object in level) {
+      if (level[object][tagName]) {
+        totalAssets += _.keys(level[object][tagName]).length;
+      }
+    }
+  } 
+
+  this.load = function(level) {
+    calculateTotalAssets(level);
+    for(var object in level) {
+      if (level[object][tagName]) {
+        loadImages(level[object]);
+      }
+    }
+  }
+};
+
+Level = (function() {
   var imageAssets, 
       soundAssets,
       currentLevel,
+      currentImages = [],
+      totalImages,
+      _ = require('underscore'),
       Assets = require("./assets");
 
   function initializeAssets(jquery) {
@@ -16,13 +61,31 @@ module.exports = (function() {
     }
   }
 
-  function loadImages(object) {
-    for (var imageName in object['images']) {
-      imageAssets.load(imageName, object['images'][imageName]['src']);
+  function onImageLoaded(asset) {
+    currentImages.push(asset);
+    if (currentImages.length === totalImages && Level.allImagesLoaded) {
+      Level.allImagesLoaded(currentImages);
     }
   }
 
+  function loadImages(object) {
+    for (var imageName in object['images']) {
+      imageAssets.load(imageName, object['images'][imageName]['src'], onImageLoaded);
+    }
+  }
+
+  function calculateTotalImages() {
+    totalImages = 0;
+    currentImages = [];
+    for (var object in currentLevel) {
+      if (currentLevel[object]['images']) {
+        totalImages += _.keys(currentLevel[object]['images']).length;
+      }
+    }
+  } 
+
   function loadAssets(callbacks) {
+    calculateTotalImages();
     for(var object in currentLevel) {
       for(var callback in callbacks) {
         if (currentLevel[object][callback]) {
@@ -32,11 +95,17 @@ module.exports = (function() {
     }
   }
 
+ 
   function addAssetsForCurrentLevel() {
     imageAssets.clear();
     soundAssets.clear();
-    loadAssets({'sounds' : loadSounds,
-                'images' : loadImages});
+    var imageAssetLoader = new AssetLoader({assets: imageAssets, 
+                                            tagName: 'images',
+                                            completeCallback: Level.allImagesLoaded});
+    imageAssetLoader.load(currentLevel);
+
+    loadAssets({'sounds' : loadSounds});
+    soundAssets.get("sound")
   };
 
   return {
@@ -76,3 +145,5 @@ module.exports = (function() {
     }
   };
 })();
+
+module.exports = Level;

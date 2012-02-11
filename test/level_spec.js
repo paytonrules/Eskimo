@@ -181,9 +181,10 @@ describe("Level", function() {
     };
 
     level.load("levelOne");
+    spiedJQuery.returnValues[0].trigger('load');
+    spiedJQuery.returnValues[1].trigger('canplaythrough');
+    
     level.load("badLevel");
-    spiedJQuery.returnValues[0].trigger('canplaythrough');
-    spiedJQuery.returnValues[1].trigger('load');
 
     soundAssets = level.getJukebox().assets;
     imageAssets = level.images();
@@ -215,6 +216,71 @@ describe("Level", function() {
     level.addGameObject("key", {"object_id" : 2});
 
     level.gameObject('key').object_id.should.eql(2);
+  });
+
+  it("makes a configurable callback when all the images on a level are loaded", function() {
+    level.levels = {
+      "newLevel": {
+        "gameObject" : {
+          "images" : {
+            "imageName" : {
+              "src" : "background.jpg"
+            },
+            "imageNameTwo" : {
+              "src" : "alsoBackground.jpg"
+            }
+          }
+        }
+      }
+    };
+
+    level.allImagesLoaded = sandbox.stub();
+
+    level.load("newLevel");
+    spiedJQuery.returnValues[0].trigger('load');
+    spiedJQuery.returnValues[1].trigger('load');
+
+    var orderedImageAssets = [level.images().get('imageName'),
+                              level.images().get('imageNameTwo')];
+
+    level.allImagesLoaded.calledWith(orderedImageAssets).should.be.true;
+  });
+
+  it("makes that same call once if the images are spread over multiple objects", function() {
+    level.levels = {
+      "newLevel": {
+        "gameObject" : {
+          "images" : {
+            "imageName" : {
+              "src" : "background.jpg"
+            }
+          }
+        },
+        "gameObjectTwo" : {
+          "images" : {
+            "imageNameTwo" : {
+              "src" : "alsoBackground.jpg"
+            }
+          }
+        }
+      }
+    };
+
+    var assetsAtCallTime;
+    level.allImagesLoaded = function(assets) {
+      assetsAtCallTime = assets.slice(0);
+    }
+
+    level.load("newLevel");
+    spiedJQuery.returnValues[0].trigger('load');
+    spiedJQuery.returnValues[1].trigger('load');
+
+    var orderedImageAssets = [level.images().get('imageName'),
+                              level.images().get('imageNameTwo')];
+
+    assetsAtCallTime.length.should.equal(2);
+    assetsAtCallTime[0].should.equal(orderedImageAssets[0]);
+    assetsAtCallTime[1].should.equal(orderedImageAssets[1]);
   });
 
 });
