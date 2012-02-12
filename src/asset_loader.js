@@ -1,33 +1,40 @@
 module.exports = function(configuration) {
-  var totalAssets,
+  var assetNames,
+      totalAssets,
       loadedAssets,
+      _ = require('underscore'),
       assets = configuration.assets,
       tagName = configuration.tagName,
       loadingComplete = configuration.completeCallback;
   
   function onAssetLoaded(asset) {
+    var sortedAssets;
     loadedAssets.push(asset);
     if (loadedAssets.length === totalAssets && loadingComplete) {
-      loadingComplete(loadedAssets);
+      sortedAssets = _.collect(assetNames, function(assetName) {
+        return assets.get(assetName);
+      });
+
+      loadingComplete(sortedAssets);
     }
   }
 
   function loadAssets(object) {
+    loadedAssets = [];
     for (var assetName in object[tagName]) {
       assets.load(assetName, object[tagName][assetName]['src'], onAssetLoaded);
     }
   }
 
   function calculateTotalAssets(level) {
-    var _ = require('underscore');
-
-    totalAssets = 0;
-    loadedAssets = [];
+    assetNames = []
     for (var object in level) {
       if (level[object][tagName]) {
-        totalAssets += _.keys(level[object][tagName]).length;
+        assetNames.push(_.keys(level[object][tagName]));
       }
     }
+    assetNames = _.flatten(assetNames);
+    totalAssets = assetNames.length;
   } 
 
   this.load = function(level) {
