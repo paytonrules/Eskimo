@@ -19,18 +19,15 @@ module.exports = function(configuration) {
     }
   }
 
-  function loadAssets(object) {
-    numLoadedAssets = 0;
-    for (var assetName in object[tagName]) {
-      assets.load(assetName, object[tagName][assetName]['src'], onAssetLoaded);
-    }
+  function loadAsset(assetName, object) {
+    assets.load(assetName, object[tagName]['src'], onAssetLoaded);
   }
 
-  function calculateTotalAssets(level) {
+  function calculateTotalAssetsIn(level) {
     assetNames = []
     for (var object in level) {
       if (level[object][tagName]) {
-        assetNames.push(_.keys(level[object][tagName]));
+        assetNames.push(object);
       }
     }
     assetNames = _.flatten(assetNames);
@@ -38,10 +35,12 @@ module.exports = function(configuration) {
   } 
 
   this.load = function(level) {
-    calculateTotalAssets(level);
+    calculateTotalAssetsIn(level);
+    numLoadedAssets = 0;
+
     for(var object in level) {
       if (level[object][tagName]) {
-        loadAssets(level[object]);
+        loadAsset(object, level[object]);
       }
     }
   }

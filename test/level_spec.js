@@ -44,10 +44,8 @@ describe("Level", function() {
     level.levels = {
       "newLevel": {
         "gameObject" : {
-          "images" : {
-            "imageName" : {
-              "src" : "background.jpg"
-            }
+          "image" : {
+            "src" : "background.jpg"
           }
         }
       }
@@ -58,7 +56,7 @@ describe("Level", function() {
 
     imageAssets = level.images();
 
-    imageAssets.get("imageName").src.should.equal('background.jpg');
+    imageAssets.get("gameObject").src.should.equal('background.jpg');
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
@@ -66,13 +64,8 @@ describe("Level", function() {
     level.levels = {
       "newLevel": {
         "gameObject" : {
-          "sounds": {
-            "soundOne": {
-              "src": "sound.mp3"
-            },
-            "soundTwo": {
-              "src": "secondSound.mp3"
-            }
+          "sound": {
+            "src": "sound.mp3"
           }
         }
       }
@@ -81,32 +74,26 @@ describe("Level", function() {
     level.load("newLevel");
 
     spiedJQuery.returnValues[0].trigger('canplaythrough');
-    spiedJQuery.returnValues[1].trigger('canplaythrough');
 
     jukebox = level.getJukebox();
 
-    jukebox.assets.get('soundOne').src.should.equal('sound.mp3');
-    jukebox.assets.get('soundTwo').src.should.equal('secondSound.mp3');
+    jukebox.assets.get('gameObject').src.should.equal('sound.mp3');
   });
 
   it("removes the previous level images", function() {
     var imageAssets;
     level.levels = {
       "levelOne": {
-        "gameObject" : {
-          "images": {
-            "oldImage": {
-              "src": "witchDoctor.png"
-            }
+        "gameObject_1" : {
+          "image": {
+            "src": "witchDoctor.png"
           }
         }
       },
       "levelTwo": {
-        "gameObject" : {
-          "images": {
-            "newImage": {
-              "src": "christmasSong.png"
-            }
+        "gameObject_2" : {
+          "image": {
+            "src": "christmasSong.png"
           }
         }
       }
@@ -120,8 +107,8 @@ describe("Level", function() {
 
     imageAssets = level.images();
 
-    should.not.exist(imageAssets.get("oldImage"));
-    imageAssets.get("newImage").should.be.ok;
+    should.not.exist(imageAssets.get("gameObject_1"));
+    imageAssets.get("gameObject_2").src.should.equal("christmasSong.png");
   });
 
   it("removes the previous levels sounds as well", function() {
@@ -129,21 +116,16 @@ describe("Level", function() {
 
     level.levels = {
       "levelOne": {
-        "gameObject" : {
-          "sounds": {
-            "oldSound": {
-              "src": "witchDoctor.mp3"
-            }
+        "gameObject_1" : {
+          "sound": {
+            "src": "witchDoctor.mp3"
           }
         }
       },
       "levelTwo": {
-        "gameObject" : {
-          "sounds": {
-            "newSound": {
-
-              "src": "christmasSong.mp3"
-            }
+        "gameObject_2" : {
+          "sound": {
+            "src": "christmasSong.mp3"
           }
         }
       }
@@ -156,8 +138,8 @@ describe("Level", function() {
 
     soundAssets = level.getJukebox().assets;
 
-    should.not.exist(soundAssets.get("oldSound"));
-    soundAssets.get("newSound").should.exist;
+    should.not.exist(soundAssets.get("gameObject_1"));
+    soundAssets.get("gameObject_2").should.exist;
   });
     
   it("does not clear the previous level if the requested level doesn't exist", function() {
@@ -165,16 +147,14 @@ describe("Level", function() {
     
     level.levels = {
       "levelOne": {
-        "gameObject" : {
-          "sounds": {
-            "sound": {
-              "src": "soundy.mp3"
-            }
-          },
-          "images": {
-            "image": {
-              "src": "image.jpg"
-            }
+        "gameObject_1" : {
+          "sound": {
+            "src": "soundy.mp3"
+          }
+        },
+        "gameObject_2" : {
+          "image": {
+            "src": "image.jpg"
           }
         }
       }
@@ -189,8 +169,8 @@ describe("Level", function() {
     soundAssets = level.getJukebox().assets;
     imageAssets = level.images();
 
-    soundAssets.get("sound").should.exist;
-    imageAssets.get("image").should.exist;
+    soundAssets.get("gameObject_1").should.exist;
+    imageAssets.get("gameObject_2").should.exist;
   });
 
   it("allows access to the currentLevel game objects", function() {
@@ -221,14 +201,14 @@ describe("Level", function() {
   it("makes a configurable callback when all the images on a level are loaded", function() {
     level.levels = {
       "newLevel": {
-        "gameObject" : {
-          "images" : {
-            "imageName" : {
-              "src" : "background.jpg"
-            },
-            "imageNameTwo" : {
-              "src" : "alsoBackground.jpg"
-            }
+        "gameObject_1" : {
+          "image" : {
+            "src" : "background.jpg"
+          }
+        },
+        "gameObject_2" : {
+          "image" : {
+            "src" : "alsoBackground.jpg"
           }
         }
       }
@@ -240,47 +220,6 @@ describe("Level", function() {
     spiedJQuery.returnValues[0].trigger('load');
     spiedJQuery.returnValues[1].trigger('load');
 
-    var orderedImageAssets = [level.images().get('imageName'),
-                              level.images().get('imageNameTwo')];
-
-    level.allImagesLoaded.calledWith(orderedImageAssets).should.be.true;
+    level.allImagesLoaded.called.should.be.true;
   });
-
-  it("makes that same call once if the images are spread over multiple objects", function() {
-    level.levels = {
-      "newLevel": {
-        "gameObject" : {
-          "images" : {
-            "imageName" : {
-              "src" : "background.jpg"
-            }
-          }
-        },
-        "gameObjectTwo" : {
-          "images" : {
-            "imageNameTwo" : {
-              "src" : "alsoBackground.jpg"
-            }
-          }
-        }
-      }
-    };
-
-    var assetsAtCallTime;
-    level.allImagesLoaded = function(assets) {
-      assetsAtCallTime = assets.slice(0);
-    }
-
-    level.load("newLevel");
-    spiedJQuery.returnValues[0].trigger('load');
-    spiedJQuery.returnValues[1].trigger('load');
-
-    var orderedImageAssets = [level.images().get('imageName'),
-                              level.images().get('imageNameTwo')];
-
-    assetsAtCallTime.length.should.equal(2);
-    assetsAtCallTime[0].should.equal(orderedImageAssets[0]);
-    assetsAtCallTime[1].should.equal(orderedImageAssets[1]);
-  });
-
 });

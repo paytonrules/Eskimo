@@ -19,7 +19,7 @@ Level = (function() {
     imageAssets.clear();
 
     var imageAssetLoader = new AssetLoader({assets: imageAssets, 
-                                            tagName: 'images',
+                                            tagName: 'image',
                                             completeCallback: Level.allImagesLoaded});
     imageAssetLoader.load(currentLevel);
   }
@@ -28,7 +28,7 @@ Level = (function() {
     soundAssets.clear();
 
     var soundAssetLoader = new AssetLoader({assets: soundAssets,
-                                            tagName: 'sounds'});
+                                            tagName: 'sound'});
     soundAssetLoader.load(currentLevel);
   }
 
