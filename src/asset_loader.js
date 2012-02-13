@@ -1,7 +1,7 @@
 module.exports = function(configuration) {
   var assetNames,
       totalAssets,
-      loadedAssets,
+      numLoadedAssets,
       _ = require('underscore'),
       assets = configuration.assets,
       tagName = configuration.tagName,
@@ -9,8 +9,8 @@ module.exports = function(configuration) {
   
   function onAssetLoaded(asset) {
     var sortedAssets;
-    loadedAssets.push(asset);
-    if (loadedAssets.length === totalAssets && loadingComplete) {
+    numLoadedAssets++;
+    if (numLoadedAssets === totalAssets && loadingComplete) {
       sortedAssets = _.collect(assetNames, function(assetName) {
         return assets.get(assetName);
       });
@@ -20,7 +20,7 @@ module.exports = function(configuration) {
   }
 
   function loadAssets(object) {
-    loadedAssets = [];
+    numLoadedAssets = 0;
     for (var assetName in object[tagName]) {
       assets.load(assetName, object[tagName][assetName]['src'], onAssetLoaded);
     }
