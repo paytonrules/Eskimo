@@ -25,6 +25,8 @@ module.exports = function(configuration) {
 
   function calculateTotalAssetsIn(level) {
     assetNames = []
+    numLoadedAssets = 0;
+    
     for (var object in level) {
       if (level[object][tagName]) {
         assetNames.push(object);
@@ -36,7 +38,6 @@ module.exports = function(configuration) {
 
   this.load = function(level) {
     calculateTotalAssetsIn(level);
-    numLoadedAssets = 0;
 
     for(var object in level) {
       if (level[object][tagName]) {
