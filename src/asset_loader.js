@@ -1,5 +1,5 @@
 module.exports = function(configuration) {
-  var assetNames,
+  var objectsWithAsset,
       totalAssets,
       numLoadedAssets,
       _ = require('underscore'),
@@ -7,41 +7,39 @@ module.exports = function(configuration) {
       tagName = configuration.tagName,
       loadingComplete = configuration.completeCallback;
   
-  function onAssetLoaded(asset) {
+  function onAssetLoaded(object, asset) {
     var sortedAssets;
     numLoadedAssets++;
+    object.asset = asset;
+    
     if (numLoadedAssets === totalAssets && loadingComplete) {
-      sortedAssets = _.collect(assetNames, function(assetName) {
-        return assets.get(assetName);
-      });
-
-      loadingComplete(sortedAssets);
+      loadingComplete(objectsWithAsset);
     }
   }
 
-  function loadAsset(assetName, object) {
-    assets.load(assetName, object[tagName]['src'], onAssetLoaded);
+  function loadAsset(objectName, object) {
+    assets.load(objectName, object[tagName]['src'], _.bind(onAssetLoaded, this, object));
   }
 
   function calculateTotalAssetsIn(level) {
-    assetNames = []
+    objectsWithAsset = []
     numLoadedAssets = 0;
     
     for (var object in level) {
       if (level[object][tagName]) {
-        assetNames.push(object);
+        objectsWithAsset.push(level[object]);
       }
     }
-    assetNames = _.flatten(assetNames);
-    totalAssets = assetNames.length;
+    objectsWithAsset = _.flatten(objectsWithAsset);
+    totalAssets = objectsWithAsset.length;
   } 
 
   this.load = function(level) {
     calculateTotalAssetsIn(level);
 
-    for(var object in level) {
-      if (level[object][tagName]) {
-        loadAsset(object, level[object]);
+    for(var objectName in level) {
+      if (level[objectName][tagName]) {
+        loadAsset(objectName, level[objectName]);
       }
     }
   }

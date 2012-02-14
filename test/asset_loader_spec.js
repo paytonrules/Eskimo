@@ -51,7 +51,49 @@ describe("AssetsLoader", function() {
     assets.get("gameObject_2").should.equal("alsoBackground.jpg");
   });
 
-  it("makes the finished callback with the assets in the order they are specified in the level, not the order of the asset loading", function () {
+  it("stores a reference to the asset on the game object", function() {
+    var level = {
+      "gameObject_1" : {
+        "image" : {
+          "src" : "background.jpg"
+        }
+      }
+    };
+ 
+    var assetLoader = new AssetsLoader({assets: assets, tagName: 'image'});
+    assetLoader.load(level);
+    assets.makeCallbackFor('gameObject_1', assets.get('gameObject_1'));
+
+    level['gameObject_1'].asset.should.equal(assets.get('gameObject_1'));
+  });
+
+  it("makes a callback with all the loaded game objects", function () {
+    var completeCallback = function(objects) {
+      completeCallback.objects = objects.slice();
+    };
+    
+    var loader = new AssetsLoader({assets: assets,
+                                   tagName: 'test',
+                                   completeCallback: completeCallback});
+    var level = {
+      'object_one' : {
+        'test' : { 'src' : 'oneAsset' }
+      },
+      'object_two' : {
+        'test' : {'src' : 'twoAsset'}
+      }
+    };
+    loader.load(level);
+
+    assets.makeCallbackFor('object_one', 'oneAsset');
+    assets.makeCallbackFor('object_two', 'twoAsset');
+
+    completeCallback.objects.length.should.equal(2);
+    completeCallback.objects[0].should.equal(level['object_one']);
+    completeCallback.objects[1].should.equal(level['object_two']);
+  });
+
+  it("makes the finished callback with the objects in the order they are specified in the level, not the order of the asset loading", function () {
     var completeCallback = function(assets) {
       completeCallback.assets = assets.slice();
     };
@@ -60,20 +102,22 @@ describe("AssetsLoader", function() {
                                    tagName: 'test',
                                    completeCallback: completeCallback});
 
-    loader.load({'object_one' : {
-                  'test' : { 'src' : 'oneAsset' }
-                },
-                'object_two' : {
-                  'test' : {'src' : 'twoAsset'}
-                }}
-               );
+    var level = {
+      'object_one' : {
+        'test' : { 'src' : 'oneAsset' }
+      },
+      'object_two' : {
+        'test' : {'src' : 'twoAsset'}
+      }
+    };
+    loader.load(level);
 
     assets.makeCallbackFor('object_two', 'twoAsset');
     assets.makeCallbackFor('object_one', 'oneAsset');
 
     completeCallback.assets.length.should.equal(2);
-    completeCallback.assets[0].should.equal('oneAsset');
-    completeCallback.assets[1].should.equal('twoAsset');
+    completeCallback.assets[0].should.equal(level['object_one']);
+    completeCallback.assets[1].should.equal(level['object_two']);
   });
 
   it("doesnt make the callback if the assets are never loaded", function() {

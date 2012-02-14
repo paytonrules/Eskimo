@@ -118,6 +118,21 @@ describe("Eskimo", function() {
       FixedGameLoop.start.firstCall.args[2].should.eql(fakeScreen);
     });
 
+    it("sets the Level.allImagesLoaded method to displayVisibleObjects", function() {
+      var fakeScreen = {
+        put: sandbox.stub()
+      };
+      var FakeScreen = function() {
+        return fakeScreen;
+      };
+
+      Eskimo(dependencies({screen: FakeScreen})).start(configuration());
+
+      level.allImagesLoaded(['asset'], ['asset2']);
+
+      fakeScreen.put.called.should.be.true;
+    });
+
     it("sends the game loop the game", function() {
       var game =  {};
 

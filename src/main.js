@@ -2,7 +2,6 @@ var _ = require("underscore");
 module.exports = function(depend) {
   var dependencies = depend || {}, 
       Scheduler = dependencies['scheduler'] || require('./scheduler'),
-      Assets = dependencies['assets'] || require('./assets'),
       game = dependencies["game"],
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || require("./screen"),
@@ -22,6 +21,9 @@ module.exports = function(depend) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
+      LevelLoader.allImagesLoaded = function() {
+        screen.put();
+      };
       
       Events.bind({jquery: jquery,
                   document: configuration.document.documentElement,
