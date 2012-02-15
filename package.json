@@ -23,7 +23,7 @@
     "canvas" : "*"
   },
   "scripts" : {
-   "test" : "mocha -R spec"
+   "test" : "./run_specs"
   },
 
   "main" : "./src/index.js",
