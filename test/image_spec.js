@@ -9,8 +9,8 @@ describe("Image", function() {
     sandbox.restore();
   });
 
-  it("knows its name from its game object", function() {
-    var image = Image({"name" : {}});
+  it("takes its name from the first parameter", function() {
+    var image = Image("name", {});
 
     image.name.should.eql("name");
   });
@@ -20,13 +20,13 @@ describe("Image", function() {
     // instead checking what is actually on the canvas
     var canvasSpy = sandbox.stub(context, 'drawImage');
    
-    var image = Image({"name" : {
+    var image = Image("name", {
                         location: {
                           x: 10, 
                           y: 20
                         },
                         asset: 'asset'
-                      }});
+                      });
 
     image.draw(context);
 

@@ -1,13 +1,10 @@
 var _ = require('underscore');
-module.exports = function(gameObject) {
-  var keys = _(gameObject).keys()
-  var name = _(keys).first();
-  var properties = gameObject[name];
+module.exports = function(name, gameObject) {
 
   function draw(context) {
-    context.drawImage(properties.asset,  // This will be a DOM object 
-                      properties.location.x, 
-                      properties.location.y);
+    context.drawImage(gameObject.asset,  // This will be a DOM object 
+                      gameObject.location.x, 
+                      gameObject.location.y);
   }
 
   return {

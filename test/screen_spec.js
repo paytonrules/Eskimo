@@ -79,7 +79,7 @@ describe("Screen", function() {
   });
 
   it("draws a asset you put on it", function() {
-    var image = Image({})
+    var image = Image('name', {})
     var imageStub = sandbox.stub(image, "draw");
     
     screen.put(image);
@@ -89,8 +89,8 @@ describe("Screen", function() {
   });
 
   it("draws multiple assets", function() {
-    var image1 = Image({})
-    var image2 = Image({})
+    var image1 = Image('name', {})
+    var image2 = Image('name', {})
     var image1Stub = sandbox.stub(image1, "draw");
     var image2Stub = sandbox.stub(image2, "draw");
 
@@ -103,8 +103,8 @@ describe("Screen", function() {
   });
 
   it("draws the images in the order of puts", function() {
-    var image1 = Image({})
-    var image2 = Image({})
+    var image1 = Image('name', {})
+    var image2 = Image('name', {})
     var image1Stub = sandbox.stub(image1, "draw");
     var image2Stub = sandbox.stub(image2, "draw");
 
@@ -116,7 +116,7 @@ describe("Screen", function() {
   });
 
   it("doesnt draw an asset if it is removed", function() {
-    var image = Image({"one" : {}});
+    var image = Image("one", {});
     var imageStub = sandbox.stub(image, "draw");
 
     screen.put(image);
@@ -136,7 +136,7 @@ describe("Screen", function() {
   });
 
   it("clears all placed assets from the list", function() {
-    var image = Image({});
+    var image = Image('name', {});
     var imageStub = sandbox.stub(image, "draw");
 
     screen.put(image);
