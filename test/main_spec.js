@@ -128,7 +128,7 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies({screen: FakeScreen})).start(configuration());
 
-      level.allImagesLoaded(['asset'], ['asset2']);
+      level.allImagesLoaded({ object: {visible: {}}});
 
       fakeScreen.put.called.should.be.true;
     });

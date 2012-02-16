@@ -6,7 +6,9 @@ module.exports = function(depend) {
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || require("./screen"),
       FixedGameLoop = require("./fixed-game-loop"),
-      Events = require('./events');
+      Events = require('./events'),
+      ObjectPipeline = require('./object_pipeline/display_visible_objects.js');
+
 
   // Main needs to get streamlined.
   return {
@@ -21,9 +23,7 @@ module.exports = function(depend) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
-      LevelLoader.allImagesLoaded = function() {
-        screen.put();
-      };
+      LevelLoader.allImagesLoaded = _.bind(ObjectPipeline.displayVisibleObjects, null, screen);
       
       Events.bind({jquery: jquery,
                   document: configuration.document.documentElement,
