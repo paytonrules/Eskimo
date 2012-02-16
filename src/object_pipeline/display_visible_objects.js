@@ -1,8 +1,10 @@
 var Image = require('../image');
 module.exports = {
   displayVisibleObjects: function(screen, objects) {
-    for(var object in objects) {
-      screen.put(Image(object, objects[object]));
+    for(var objectName in objects) {
+      if (objects[objectName].visible) {
+        screen.put(Image(objectName, objects[objectName]));
+      }
     }
   }
 };
