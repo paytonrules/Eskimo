@@ -13,7 +13,7 @@ describe("Eskimo", function() {
 
   function dependencies(customConfig) {
     var dependencyConfig = {
-      game: emptyFunction,
+      game: {create: sandbox.stub().returns({})},
       jquery: jquery
     };
 
@@ -133,21 +133,32 @@ describe("Eskimo", function() {
       fakeScreen.put.called.should.be.true;
     });
 
-    it("sends the game loop the game", function() {
-      var game =  {};
+    it("sends the game loop the created game", function() {
+      var Game =  {create: sandbox.stub().returns('game')};
 
-      Eskimo(dependencies({game: game})).start(configuration());
+      Eskimo(dependencies({game: Game})).start(configuration());
 
-      FixedGameLoop.start.firstCall.args[1].should.eql(game);
+      FixedGameLoop.start.firstCall.args[1].should.eql('game');
     });
 
-    it("binds to the events", function() {
+    it("creates the game with the screen", function() {
+      var fakeScreen = { put: sandbox.stub() };
+      var FakeScreen = sandbox.stub().returns(fakeScreen);
+      var Game = {create: sandbox.stub().returns({})};
+
+      Eskimo(dependencies({screen: FakeScreen, game: Game})).start(configuration());
+
+      Game.create.calledWith(fakeScreen).should.be.true;
+    });
+
+    it("binds the game to the events", function() {
       var Events = require('../src/events');
       var eventSpy = sandbox.spy(Events, 'bind');
+      var Game = {create: sandbox.stub().returns('game')};
 
-      Eskimo(dependencies({game: 'game'})).start(configuration());
+      Eskimo(dependencies({game: Game})).start(configuration());
 
-      eventSpy.called.should.be.true;
+      eventSpy.args[0][0].game.should.equal('game');
     });
  
     it("uses a intelligent defaults", function() {

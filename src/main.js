@@ -2,7 +2,7 @@ var _ = require("underscore");
 module.exports = function(depend) {
   var dependencies = depend || {}, 
       Scheduler = dependencies['scheduler'] || require('./scheduler'),
-      game = dependencies["game"],
+      Game = dependencies["game"],
       jquery = dependencies["jquery"],
       Screen = dependencies["screen"] || require("./screen"),
       FixedGameLoop = require("./fixed-game-loop"),
@@ -24,6 +24,7 @@ module.exports = function(depend) {
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
       LevelLoader.allImagesLoaded = _.bind(ObjectPipeline.displayVisibleObjects, null, screen);
+      var game = Game.create(screen);
       
       Events.bind({jquery: jquery,
                   document: configuration.document.documentElement,
