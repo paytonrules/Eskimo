@@ -3,7 +3,9 @@ describe('FixedGameLoop', function() {
       scheduler, 
       should = require('should'),
       FixedGameLoop = require("../src/fixed-game-loop"),
-      sandbox = require('sinon').sandbox.create();
+      sandbox = require('sinon').sandbox.create(),
+      Game,
+      game;
 
   var FakeScheduler = function() {
     var ticks = 0;
@@ -25,10 +27,18 @@ describe('FixedGameLoop', function() {
 
   beforeEach( function() {
     scheduler = new FakeScheduler();
+    game =  { update: sandbox.stub() }
+    Game = {create: sandbox.stub().returns(game) };
   });
 
   afterEach(function() {
     sandbox.restore();
+  });
+
+  it('creates the game object with the screen', function() {
+    FixedGameLoop.start(scheduler, Game, 'screen');
+
+    Game.create.calledWith('screen').should.be.true;
   });
 
   it('executes screen.render', function() {
@@ -37,7 +47,7 @@ describe('FixedGameLoop', function() {
     };
     var screenSpy = sandbox.spy(screen, "render")
 
-    FixedGameLoop.start(scheduler, {update: sandbox.stub()}, screen);
+    FixedGameLoop.start(scheduler, Game, screen);
     FixedGameLoop.loop();
 
     screenSpy.called.should.be.true;
@@ -45,18 +55,15 @@ describe('FixedGameLoop', function() {
 
   it('Executes update on the game object, provided time has passed since the last loop call', function() {
     var screen = {render: function() {}};
-    var gameObject = {update: sandbox.stub()};
     
-    FixedGameLoop.start(scheduler, gameObject, screen);
+    FixedGameLoop.start(scheduler, Game, screen);
     scheduler.tick();
     FixedGameLoop.loop();
 
-    gameObject.update.calledWith(screen).should.be.true;
+    game.update.called.should.be.true;
   });
 
   it('executes multiple updates to catch up if the render takes a long time', function() {
-    var gameObject = {update: sandbox.stub()};
-
     var screen = {
       render: function() {
         scheduler.tick();
@@ -64,14 +71,14 @@ describe('FixedGameLoop', function() {
     };
     var screenSpy = sandbox.spy(screen, 'render');
 
-    FixedGameLoop.start(scheduler, gameObject, screen);
+    FixedGameLoop.start(scheduler, Game, screen);
     scheduler.tick();
     FixedGameLoop.loop();
     scheduler.tick();
     FixedGameLoop.loop();
 
     screenSpy.callCount.should.equal(2);
-    gameObject.update.callCount.should.equal(3);
+    game.update.callCount.should.equal(3);
   });
 
   it('delegates stop to the scheduler', function() {
@@ -79,7 +86,7 @@ describe('FixedGameLoop', function() {
       scheduler.stopped = true;
     };
 
-    FixedGameLoop.start(scheduler, {}, {});
+    FixedGameLoop.start(scheduler, Game, {});
     FixedGameLoop.stop();
 
     scheduler.stopped.should.be.true;
@@ -90,7 +97,7 @@ describe('FixedGameLoop', function() {
       scheduler.loop = loop;
     };
 
-    FixedGameLoop.start(scheduler, {}, {});
+    FixedGameLoop.start(scheduler, Game, {});
 
     scheduler.loop.should.eql(FixedGameLoop.loop);
   });

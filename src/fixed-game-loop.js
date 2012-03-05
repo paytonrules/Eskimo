@@ -4,17 +4,17 @@ module.exports = (function() {
       nextGameTick,
       screen;
 
-  function init(newScheduler, newGame, newScreen) {
+  function init(newScheduler, TheGame, newScreen) {
     scheduler = newScheduler;
     nextGameTick = newScheduler.getTicks();
     screen = newScreen;
-    game = newGame;
+    game = TheGame.create(screen);
   }
 
   return {
     loop: function() {
       while (scheduler.getTicks() > nextGameTick) {
-        game.update(screen);
+        game.update();
 
         nextGameTick += scheduler.getTickTime();
       }
@@ -25,8 +25,8 @@ module.exports = (function() {
       scheduler.stop();
     },
 
-    start: function(newScheduler, newGame, newScreen) {
-      init(newScheduler, newGame, newScreen);
+    start: function(newScheduler, TheGame, newScreen) {
+      init(newScheduler, TheGame, newScreen);
       scheduler.start(this.loop);
     },
   }
