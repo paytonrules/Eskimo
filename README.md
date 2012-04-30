@@ -1,3 +1,5 @@
+Please note this repo has not reached version 0.1 yet, and is on temporary hiatus.  (Until approx June).
+
 ### When Quinn the Eskimo Get's here - everybody's gonna jump for joy
 
 Eskimo is a framework for developing 2D games in JavaScript using the HTML5 canvas.  The framework is being actively extracted from game development, and such is under very active development.  The goals for it are:
