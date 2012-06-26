@@ -23,7 +23,11 @@ module.exports = function(depend) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
-      LevelLoader.allImagesLoaded = _.bind(ObjectPipeline.displayVisibleObjects, null, screen);
+
+      LevelLoader.addImageLoaderCallback(_.bind(ObjectPipeline.displayVisibleObjects, 
+                                                null, 
+                                                screen));
+      
       var game = Game.create(screen);
       
       Events.bind({jquery: jquery,

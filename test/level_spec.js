@@ -20,7 +20,7 @@ describe("Level", function() {
     });
   
     spiedJQuery = sandbox.spy(window, 'jQuery');
-  };
+  }
 
   beforeEach(function() {
     setupJQueryWithASpy();
@@ -139,7 +139,7 @@ describe("Level", function() {
     soundAssets = level.getJukebox().assets;
 
     should.not.exist(soundAssets.get("gameObject_1"));
-    soundAssets.get("gameObject_2").should.exist;
+    should.exist(soundAssets.get("gameObject_2"));
   });
     
   it("does not clear the previous level if the requested level doesn't exist", function() {
@@ -169,8 +169,8 @@ describe("Level", function() {
     soundAssets = level.getJukebox().assets;
     imageAssets = level.images();
 
-    soundAssets.get("gameObject_1").should.exist;
-    imageAssets.get("gameObject_2").should.exist;
+    should.exist(soundAssets.get("gameObject_1"));
+    should.exist(imageAssets.get("gameObject_2"));
   });
 
   it("allows access to the currentLevel game objects", function() {
@@ -190,7 +190,7 @@ describe("Level", function() {
   it("allows adding a game object at any time to the current level", function() {
     level.levels = {
       "levelOne" : {}
-    }
+    };
     level.load("levelOne");
 
     level.addGameObject("key", {"object_id" : 2});
@@ -214,12 +214,16 @@ describe("Level", function() {
       }
     };
 
-    level.allImagesLoaded = sandbox.stub();
+    var callback = function callback(objects) {
+      callback.objects = objects;
+    };
+    level.addImageLoaderCallback(callback);
 
     level.load("newLevel");
     spiedJQuery.returnValues[0].trigger('load');
     spiedJQuery.returnValues[1].trigger('load');
 
-    level.allImagesLoaded.called.should.be.true;
+    // 'what' is being tested elsewhere, just make sure you're sending something
+    callback.objects[0].image.should.eql({src: "background.jpg"});
   });
 });

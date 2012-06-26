@@ -8,19 +8,30 @@ Level = (function() {
   var imageAssets, 
       soundAssets,
       currentLevel,
+      imageLoaderCallbacks = [],
       Assets = require("./assets");
 
   function initializeAssets(jquery) {
     imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
     soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
-  };
+  }
+
+  function addImageLoaderCallback(callback) {
+    imageLoaderCallbacks.push(callback);
+  }
+
+  function runImageLoaderCallbacks(objects) {
+    _.each(imageLoaderCallbacks, function(callback) {
+      callback(objects);
+    });
+  }
 
   function loadImageAssets() {
     imageAssets.clear();
 
     var imageAssetLoader = new AssetLoader({assets: imageAssets, 
                                             tagName: 'image',
-                                            completeCallback: Level.allImagesLoaded});
+                                            completeCallback: runImageLoaderCallbacks});
     imageAssetLoader.load(currentLevel);
   }
 
@@ -35,7 +46,7 @@ Level = (function() {
   function addAssetsForCurrentLevel() {
     loadImageAssets();
     loadSoundAssets();
-  };
+  }
 
   return {
     getJukebox: function() {
@@ -67,7 +78,13 @@ Level = (function() {
 
     addGameObject: function(objectName, object) {
       currentLevel[objectName] = object;
-    }
+    },
+    
+    addImageLoaderCallback: function(callback) {
+      addImageLoaderCallback(callback);
+    },
+
+    runImageLoaderCallbacks: runImageLoaderCallbacks
 
   };
 })();

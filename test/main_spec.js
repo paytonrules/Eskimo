@@ -8,6 +8,7 @@ describe("Eskimo", function() {
       jquery = require("jquery"),
       level = require("../src/level"),
       FixedGameLoop = require("../src/fixed-game-loop"),
+      ObjectPipeline = require('../src/object_pipeline/display_visible_objects.js'),
       sandbox = require('sinon').sandbox.create(),
       levels = {};
 
@@ -29,7 +30,7 @@ describe("Eskimo", function() {
       canvas: canvas,
       document: emptyDocument,
       levels: levels
-    }
+    };
 
     if (config !== null) {
       jquery.extend(standardConfig, config);
@@ -83,7 +84,7 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies()).start(configuration());
 
-      initializeAssets.called.should.be.true;
+      initializeAssets.called.should.eql(true);
     });
 
     it("has the canvas on the game screen", function() {
@@ -104,7 +105,7 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies({scheduler: FakeScheduler})).start(configuration());
 
-      FixedGameLoop.start.calledWith(sched).should.be.true;
+      FixedGameLoop.start.calledWith(sched).should.eql(true);
     });
 
     it("starts the game loop with the screen", function() {
@@ -118,19 +119,19 @@ describe("Eskimo", function() {
       FixedGameLoop.start.firstCall.args[2].should.eql(fakeScreen);
     });
 
-    it("sets the Level.allImagesLoaded method to displayVisibleObjects", function() {
+    it("the LevelLoader is configured with displayVisibleObjects", function() {
       var fakeScreen = {
         put: sandbox.stub()
       };
       var FakeScreen = function() {
         return fakeScreen;
       };
-
+      var objectPipelineSpy = sandbox.spy(ObjectPipeline, 'displayVisibleObjects');
       Eskimo(dependencies({screen: FakeScreen})).start(configuration());
 
-      level.allImagesLoaded({ object: {visible: {}}});
+      level.runImageLoaderCallbacks();
 
-      fakeScreen.put.called.should.be.true;
+      objectPipelineSpy.calledWith(fakeScreen).should.eql(true);
     });
 
     it("sends the game loop the created game", function() {
@@ -148,7 +149,7 @@ describe("Eskimo", function() {
 
       Eskimo(dependencies({screen: FakeScreen, game: Game})).start(configuration());
 
-      Game.create.calledWith(fakeScreen).should.be.true;
+      Game.create.calledWith(fakeScreen).should.eql(true);
     });
 
     it("binds the game to the events", function() {
