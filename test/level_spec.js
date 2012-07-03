@@ -226,4 +226,33 @@ describe("Level", function() {
     // 'what' is being tested elsewhere, just make sure you're sending something
     callback.objects[0].image.should.eql({src: "background.jpg"});
   });
+
+  it("calls the complete callback after all images and sounds are loaded", function() {
+    level.levels = {
+      "newLevel": {
+        "gameObject_1" : {
+          "image" : {
+            "src" : "background.jpg"
+          }
+        },
+        "gameObject_2" : {
+          "sound" : {
+            "src" : "soundy.mp3"
+          }
+        }
+      }
+    };
+
+    var imageCallback = sandbox.stub();
+    level.addImageLoaderCallback(imageCallback);
+
+    var loadCallback = sandbox.stub();
+    level.load("newLevel", loadCallback);
+    
+    spiedJQuery.returnValues[0].trigger('load');
+    loadCallback.called.should.eql(false);
+
+    spiedJQuery.returnValues[1].trigger('canplaythrough');
+    loadCallback.called.should.eql(true);
+  });
 });

@@ -3,17 +3,19 @@ var Jukebox = require('./jukebox'),
     AssetLoader = require('./asset_loader'),
     Level;
 
-
 Level = (function() {
   var imageAssets, 
       soundAssets,
       currentLevel,
       imageLoaderCallbacks = [],
+      imagesComplete = false,
+      soundsComplete = false,
+      allCompleteCallback,
       Assets = require("./assets");
 
   function initializeAssets(jquery) {
-    imageAssets = new Assets({jquery: jquery, tag: 'IMG', loadEvent: 'load'});
-    soundAssets = new Assets({jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough'});
+    imageAssets = new Assets({ jquery: jquery, tag: 'IMG', loadEvent: 'load' });
+    soundAssets = new Assets({ jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough' });
   }
 
   function addImageLoaderCallback(callback) {
@@ -26,20 +28,38 @@ Level = (function() {
     });
   }
 
+  function checkAssetsComplete() {
+    if (imagesComplete && soundsComplete && typeof(allCompleteCallback) !== "undefined") {
+      allCompleteCallback();
+    }
+  }
+
+  function completeImageLoading(objects) {
+    imagesComplete = true;
+    runImageLoaderCallbacks(objects);
+    checkAssetsComplete();
+  }
+
   function loadImageAssets() {
     imageAssets.clear();
 
-    var imageAssetLoader = new AssetLoader({assets: imageAssets, 
-                                            tagName: 'image',
-                                            completeCallback: runImageLoaderCallbacks});
+    var imageAssetLoader = new AssetLoader({ assets: imageAssets, 
+                                             tagName: 'image',
+                                             completeCallback: completeImageLoading });
     imageAssetLoader.load(currentLevel);
+  }
+
+  function completeSoundLoading(objects) {
+    soundsComplete = true;
+    checkAssetsComplete();
   }
 
   function loadSoundAssets() {
     soundAssets.clear();
 
-    var soundAssetLoader = new AssetLoader({assets: soundAssets,
-                                            tagName: 'sound'});
+    var soundAssetLoader = new AssetLoader({ assets: soundAssets,
+                                             tagName: 'sound',
+                                             completeCallback: completeSoundLoading });
     soundAssetLoader.load(currentLevel);
   }
 
@@ -57,9 +77,12 @@ Level = (function() {
       return imageAssets;
     },
 
-    load: function(levelName) {
+    load: function(levelName, onComplete) {
+      imagesComplete = false;
+      soundsComplete = false;
       if (this.levels[levelName]) {
         currentLevel = this.levels[levelName];
+        allCompleteCallback = onComplete;
         addAssetsForCurrentLevel();
       }
     },
@@ -80,9 +103,7 @@ Level = (function() {
       currentLevel[objectName] = object;
     },
     
-    addImageLoaderCallback: function(callback) {
-      addImageLoaderCallback(callback);
-    },
+    addImageLoaderCallback: addImageLoaderCallback,
 
     runImageLoaderCallbacks: runImageLoaderCallbacks
 
