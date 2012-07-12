@@ -37,9 +37,13 @@ module.exports = function(configuration) {
   this.load = function(level) {
     calculateTotalAssetsIn(level);
 
-    for(var objectName in level) {
-      if (level[objectName][tagName]) {
-        loadAsset(objectName, level[objectName]);
+    if (totalAssets <= 0) {
+      loadingComplete({});
+    } else {
+      for(var objectName in level) {
+        if (level[objectName][tagName]) {
+          loadAsset(objectName, level[objectName]);
+        }
       }
     }
   };

@@ -150,13 +150,24 @@ describe("AssetsLoader", function() {
                                    completeCallback: completeCallback});
 
     loader.load({'object_one' : {},
-                'object_two' : {
+                 'object_two' : {
                   'test' : { 'src' : 'oneAsset'}
                 }});
     
     assets.makeCallbackFor('object_two', 'bleh');
 
-    completeCallback.called.should.be.true;
+    completeCallback.called.should.eql(true);
   });
- 
+
+  it("makes the callback immediately when there are no matching assets", function() {
+    var completeCallback = sandbox.stub();
+    var loader = new AssetsLoader({assets: assets,
+                                  tagName: 'test',
+                                  completeCallback: completeCallback});
+
+    loader.load({'object_one' : {} });
+
+    completeCallback.called.should.eql(true);
+  });
+
 });
