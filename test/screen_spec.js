@@ -53,7 +53,7 @@ describe("Screen", function() {
     }());
 
     Screen = require("../src/screen");
-    level = require("../src/levels");
+    level = require("../src/game_specification");
 
     sandbox.stub(level, "images").returns(assets);
     context = new Context();

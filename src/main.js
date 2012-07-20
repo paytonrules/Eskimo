@@ -20,7 +20,7 @@ module.exports = function(depend) {
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
 
-      var LevelLoader = require("./levels");
+      var LevelLoader = require("./game_specification");
       LevelLoader.addImageLoaderCallback(_.bind(ObjectPipeline.displayVisibleObjects, 
                                                 null, 
                                                 screen));

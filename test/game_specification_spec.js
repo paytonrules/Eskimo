@@ -1,6 +1,6 @@
 describe("Level", function() {
   var should = require('should'),
-      level = require('../src/levels'),
+      level = require('../src/game_specification'),
       spiedJQuery,
       window,
       sandbox = require('sinon').sandbox.create();
