@@ -24,7 +24,6 @@ describe("Level", function() {
 
   beforeEach(function() {
     setupJQueryWithASpy();
-    level.initializeAssets(window.jQuery);
   });
 
   afterEach(function() {
