@@ -1,6 +1,6 @@
-describe("Level", function() {
+describe("GameSpecification", function() {
   var should = require('should'),
-      level = require('../src/game_specification'),
+      GameSpec = require('../src/game_specification'),
       spiedJQuery,
       window,
       sandbox = require('sinon').sandbox.create();
@@ -31,20 +31,20 @@ describe("Level", function() {
   });
 
   it("creates the gameSpec", function() {
-    var gameSpec = level.createGameSpec({}, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec({}, spiedJQuery, 'screen');
 
     should.exist(gameSpec);
   });
 
-  it("loads no assets when the levels passed in is empty", function() {
-    var gameSpec = level.createGameSpec({}, spiedJQuery, 'screen');
+  it("loads no assets when the definition passed in is empty", function() {
+    var gameSpec = GameSpec.createGameSpec({}, spiedJQuery, 'screen');
 
     var thisLevel = gameSpec.load("monkey");
 
     thisLevel.images().size().should.equal(0);
   });
 
-  it("creates image assets for any images on the objects in the level", function() {
+  it("creates image assets for any images on the objects in the game specification", function() {
     var imageAssets;
     var gameDescription = {
       "newLevel": {
@@ -55,7 +55,7 @@ describe("Level", function() {
         }
       }
     };
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     
     var thisLevel = gameSpec.load("newLevel");
     spiedJQuery.returnValues[0].trigger('load');
@@ -77,7 +77,7 @@ describe("Level", function() {
       }
     };
     
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
 
     var thisLevel = gameSpec.load("newLevel");
 
@@ -107,7 +107,7 @@ describe("Level", function() {
       }
     };
 
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     var levelOne =  gameSpec.load("levelOne");
     var levelTwo = gameSpec.load("levelTwo");
 
@@ -140,7 +140,7 @@ describe("Level", function() {
       }
     };
 
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     var levelOne = gameSpec.load("levelOne");
     var levelTwo = gameSpec.load("levelTwo");
     
@@ -170,7 +170,7 @@ describe("Level", function() {
       }
     };
 
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     var levelOne = gameSpec.load("levelOne");
     spiedJQuery.returnValues[0].trigger('load');
     spiedJQuery.returnValues[1].trigger('canplaythrough');
@@ -193,7 +193,7 @@ describe("Level", function() {
       }
     };
      
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     var levelOne = gameSpec.load("levelOne");
 
     levelOne.gameObject('gameObject').property.should.equal(2);
@@ -204,7 +204,7 @@ describe("Level", function() {
       "levelOne" : {}
     };
     
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     var levelOne = gameSpec.load("levelOne");
 
     levelOne.addGameObject("key", {"object_id" : 2});
@@ -231,8 +231,8 @@ describe("Level", function() {
     var callback = function callback(objects) {
       callback.objects = objects;
     };
-    level.addImageLoaderCallback(callback);
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    GameSpec.addImageLoaderCallback(callback);
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
 
     gameSpec.load("newLevel");
     spiedJQuery.returnValues[0].trigger('load');
@@ -259,8 +259,8 @@ describe("Level", function() {
     };
 
     var imageCallback = sandbox.stub();
-    level.addImageLoaderCallback(imageCallback);
-    var gameSpec = level.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    GameSpec.addImageLoaderCallback(imageCallback);
+    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
     
     var loadCallback = sandbox.stub();
     gameSpec.load("newLevel", loadCallback);
