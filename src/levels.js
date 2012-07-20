@@ -68,6 +68,12 @@ Level = (function() {
     loadSoundAssets();
   }
 
+  function createGameSpec(assetDefinition, jquery, screen) {
+    initializeAssets(jquery); 
+    this.levels = assetDefinition;
+    return this;
+  }
+
   return {
     getJukebox: function() {
       return Jukebox(soundAssets);
@@ -80,11 +86,13 @@ Level = (function() {
     load: function(levelName, onComplete) {
       imagesComplete = false;
       soundsComplete = false;
-      if (this.levels[levelName]) {
+      var levels = this.levels;
+      if (levels[levelName]) {
         currentLevel = this.levels[levelName];
         allCompleteCallback = onComplete;
         addAssetsForCurrentLevel();
       }
+      return this;
     },
 
     addImage: function(key, image) {
@@ -104,9 +112,8 @@ Level = (function() {
     },
     
     addImageLoaderCallback: addImageLoaderCallback,
-
-    runImageLoaderCallbacks: runImageLoaderCallbacks
-
+    runImageLoaderCallbacks: runImageLoaderCallbacks,
+    createGameSpec: createGameSpec
   };
 })();
 
