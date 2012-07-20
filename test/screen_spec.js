@@ -53,7 +53,7 @@ describe("Screen", function() {
     }());
 
     Screen = require("../src/screen");
-    level = require("../src/level");
+    level = require("../src/levels");
 
     sandbox.stub(level, "images").returns(assets);
     context = new Context();

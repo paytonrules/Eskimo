@@ -16,18 +16,17 @@ module.exports = function(depend) {
       // TODO - this doesn't feel right here 
       // It isn't right - you should have to initialize the level loader with assets and jquery to use it
       // JQuery pattern? You can pass a constructor or just use the object
-      var LevelLoader = require("./level");
-      LevelLoader.levels = configuration.levels;
-      LevelLoader.initializeAssets(jquery);
-
       var FRAME_RATE = configuration.FRAME_RATE || 60;
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
 
+      var LevelLoader = require("./levels");
       LevelLoader.addImageLoaderCallback(_.bind(ObjectPipeline.displayVisibleObjects, 
                                                 null, 
                                                 screen));
-      
+      LevelLoader.levels = configuration.levels;
+      LevelLoader.initializeAssets(jquery);
+
       var game = Game.create(screen);
       
       Events.bind({jquery: jquery,
