@@ -1,9 +1,9 @@
 var Jukebox = require('./jukebox'),
     _ = require('underscore'),
     AssetLoader = require('./asset_loader'),
-    Level;
+    GameSpecFactory;
 
-Level = (function() {
+GameSpecFactory = (function() {
   var imageAssets, 
       soundAssets,
       currentLevel,
@@ -67,54 +67,52 @@ Level = (function() {
     loadImageAssets();
     loadSoundAssets();
   }
+  
 
   function createGameSpec(assetDefinition, jquery, screen) {
     initializeAssets(jquery); 
-    this.levels = assetDefinition;
-    return this;
+    return (function() {
+      function load(levelName, onComplete) {
+        imagesComplete = false;
+        soundsComplete = false;
+        var levels = this.levels;
+        if (levels[levelName]) {
+          currentLevel = this.levels[levelName];
+          allCompleteCallback = onComplete;
+          addAssetsForCurrentLevel();
+        }
+        return this;
+      }
+
+      return {
+        levels: assetDefinition, 
+        getJukebox: function() {
+          return Jukebox(soundAssets);
+        },
+        load: load, 
+        gameObject: function(objectName) {
+          return currentLevel[objectName];
+        },
+        addGameObject: function(objectName, object) {
+          currentLevel[objectName] = object;
+        },
+        images: function() {
+          return imageAssets;
+        }
+      };
+    })();
   }
 
   return {
-    getJukebox: function() {
-      return Jukebox(soundAssets);
-    },
-
-    images: function() {
-      return imageAssets;
-    },
-
-    load: function(levelName, onComplete) {
-      imagesComplete = false;
-      soundsComplete = false;
-      var levels = this.levels;
-      if (levels[levelName]) {
-        currentLevel = this.levels[levelName];
-        allCompleteCallback = onComplete;
-        addAssetsForCurrentLevel();
-      }
-      return this;
-    },
-
-    addImage: function(key, image) {
-      imageAssets.add(key, image);
-    },
 
     initializeAssets: function(jquery) {
       initializeAssets(jquery);
     },
 
-    gameObject: function(objectName) {
-      return currentLevel[objectName];
-    },
-
-    addGameObject: function(objectName, object) {
-      currentLevel[objectName] = object;
-    },
-    
     addImageLoaderCallback: addImageLoaderCallback,
     runImageLoaderCallbacks: runImageLoaderCallbacks,
     createGameSpec: createGameSpec
   };
 })();
 
-module.exports = Level;
+module.exports = GameSpecFactory;
