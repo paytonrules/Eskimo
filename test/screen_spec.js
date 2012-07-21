@@ -3,7 +3,6 @@ describe("Screen", function() {
       sandbox = require('sinon').sandbox.create(),
       should = require('should'),
       Image = require('../src/image'),
-      level,
       helper = {};
 
   // Mixed styles here.  Are you gonna spy on this, or simulate.
@@ -53,9 +52,7 @@ describe("Screen", function() {
     }());
 
     Screen = require("../src/screen");
-    level = require("../src/game_specification");
 
-    sandbox.stub(level, "images").returns(assets);
     context = new Context();
     screen = new Screen(canvas);
 
