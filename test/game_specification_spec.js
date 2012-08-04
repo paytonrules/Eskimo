@@ -36,15 +36,17 @@ describe("GameSpecification", function() {
     should.exist(gameSpec);
   });
 
-  it("loads no assets when the definition passed in is empty", function() {
+  it("loads no assets when the definition passed in is empty", function(done) {
     var gameSpec = GameSpec.createGameSpec({}, spiedJQuery, 'screen');
 
-    var thisLevel = gameSpec.load("monkey");
+    gameSpec.load("monkey", function(level) {
+      level.images().size().should.equal(0);
+      done();
+    });
 
-    thisLevel.images().size().should.equal(0);
   });
 
-  it("creates image assets for any images on the objects in the game specification", function() {
+  it("creates image assets for any images on the objects in the game specification", function(done) {
     var imageAssets;
     var gameDescription = {
       "newLevel": {
@@ -56,16 +58,18 @@ describe("GameSpecification", function() {
       }
     };
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    
-    var thisLevel = gameSpec.load("newLevel");
+   
+    gameSpec.load("newLevel", function(level) {
+      imageAssets = level.images();
+
+      imageAssets.get("gameObject").src.should.equal('background.jpg');
+      done();
+    });
+
     spiedJQuery.returnValues[0].trigger('load');
-
-    imageAssets = thisLevel.images();
-
-    imageAssets.get("gameObject").src.should.equal('background.jpg');
   });
 
-  it("creates a jukebox from the sounds on the objects in the level", function() {
+  it("creates a jukebox from the sounds on the objects in the level", function(done) {
     var jukebox;
     var gameDescription = {
       "newLevel": {
@@ -79,16 +83,18 @@ describe("GameSpecification", function() {
     
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
 
-    var thisLevel = gameSpec.load("newLevel");
+    gameSpec.load("newLevel", function(level) {
+      jukebox = level.getJukebox();
+
+      jukebox.assets.get('gameObject').src.should.equal('sound.mp3');
+      done();
+    });
 
     spiedJQuery.returnValues[0].trigger('canplaythrough');
-
-    jukebox = thisLevel.getJukebox();
-
-    jukebox.assets.get('gameObject').src.should.equal('sound.mp3');
   });
 
-  it("removes the previous level images", function() {
+  // Soon this test becomes obsolete
+  it("removes the previous level images", function(done) {
     var imageAssets;
     var gameDescription = {
       "levelOne": {
@@ -108,19 +114,21 @@ describe("GameSpecification", function() {
     };
 
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    var levelOne =  gameSpec.load("levelOne");
-    var levelTwo = gameSpec.load("levelTwo");
+    gameSpec.load("levelOne", function() {});
+    gameSpec.load("levelTwo", function(level) {
+      imageAssets = level.images();
 
-    // Note we trigger load on the second created jquery object (levelTwo)
+      should.not.exist(imageAssets.get("gameObject_1"));
+      imageAssets.get("gameObject_2").src.should.equal("christmasSong.png");
+
+      done();
+    });
+
+    spiedJQuery.returnValues[0].trigger('load');
     spiedJQuery.returnValues[1].trigger('load');
-
-    imageAssets = levelTwo.images();
-
-    should.not.exist(imageAssets.get("gameObject_1"));
-    imageAssets.get("gameObject_2").src.should.equal("christmasSong.png");
   });
 
-  it("removes the previous levels sounds as well", function() {
+  it("removes the previous levels sounds as well", function(done) {
     var soundAssets;
 
     var gameDescription = {
@@ -141,50 +149,20 @@ describe("GameSpecification", function() {
     };
 
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    var levelOne = gameSpec.load("levelOne");
-    var levelTwo = gameSpec.load("levelTwo");
+    gameSpec.load("levelOne", function() {});
+    gameSpec.load("levelTwo", function(level) {
+      soundAssets = level.getJukebox().assets;
+
+      should.not.exist(soundAssets.get("gameObject_1"));
+      should.exist(soundAssets.get("gameObject_2"));
+      done();
+    });
     
+    spiedJQuery.returnValues[0].trigger('canplaythrough');
     spiedJQuery.returnValues[1].trigger('canplaythrough');
-
-    soundAssets = levelTwo.getJukebox().assets;
-
-    should.not.exist(soundAssets.get("gameObject_1"));
-    should.exist(soundAssets.get("gameObject_2"));
   });
-    
-  it("does not clear the previous level if the requested level doesn't exist", function() {
-    var soundAssets, imageAssets;
-    
-    var gameDescription = {
-      "levelOne": {
-        "gameObject_1" : {
-          "sound": {
-            "src": "soundy.mp3"
-          }
-        },
-        "gameObject_2" : {
-          "image": {
-            "src": "image.jpg"
-          }
-        }
-      }
-    };
-
-    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    var levelOne = gameSpec.load("levelOne");
-    spiedJQuery.returnValues[0].trigger('load');
-    spiedJQuery.returnValues[1].trigger('canplaythrough');
-    
-    var levelTwo = gameSpec.load("badLevel");
-
-    soundAssets = levelTwo.getJukebox().assets;
-    imageAssets = levelTwo.images();
-
-    should.exist(soundAssets.get("gameObject_1"));
-    should.exist(imageAssets.get("gameObject_2"));
-  });
-
-  it("allows access to the currentLevel game objects", function() {
+   
+  it("allows access to the game objects", function(done) {
     var gameDescription = {
       "levelOne": {
         "gameObject" : {
@@ -194,26 +172,30 @@ describe("GameSpecification", function() {
     };
      
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    var levelOne = gameSpec.load("levelOne");
+    gameSpec.load("levelOne", function(level) {
+      level.gameObject('gameObject').property.should.equal(2);
+      done();
+    });
 
-    levelOne.gameObject('gameObject').property.should.equal(2);
   });
 
-  it("allows adding a game object at any time to the current level", function() {
+  it("allows adding a game object at any time to the current level", function(done) {
     var gameDescription = {
       "levelOne" : {}
     };
     
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    var levelOne = gameSpec.load("levelOne");
+    gameSpec.load("levelOne", function(level) {
+      level.addGameObject("key", {"object_id" : 2});
+      level.gameObject('key').object_id.should.eql(2);
+      done();
+    });
 
-    levelOne.addGameObject("key", {"object_id" : 2});
-
-    levelOne.gameObject('key').object_id.should.eql(2);
   });
 
   it("makes a configurable callback when all the images on a level are loaded", function() {
-    var gameDescription = {
+    // This test becomes "you added everything to the screen"
+/*    var gameDescription = {
       "newLevel": {
         "gameObject_1" : {
           "image" : {
@@ -239,11 +221,12 @@ describe("GameSpecification", function() {
     spiedJQuery.returnValues[1].trigger('load');
 
     // 'what' is being tested elsewhere, just make sure you're sending something
-    callback.objects[0].image.should.eql({src: "background.jpg"});
+    callback.objects[0].image.should.eql({src: "background.jpg"});*/
   });
 
   it("calls the complete callback after all images and sounds are loaded", function() {
-    var gameDescription = {
+    // This test is "You draw the pictures after the load"
+/*    var gameDescription = {
       "newLevel": {
         "gameObject_1" : {
           "image" : {
@@ -270,5 +253,6 @@ describe("GameSpecification", function() {
 
     spiedJQuery.returnValues[1].trigger('canplaythrough');
     loadCallback.called.should.eql(true);
+    */
   });
 });

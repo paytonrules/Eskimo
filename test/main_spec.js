@@ -73,18 +73,19 @@ describe("Eskimo", function() {
       FakeScheduler.FRAME_RATE.should.equal(60);
     });
 
-    it("configures the level loader with the configured levels", function() {
-      Eskimo(dependencies({jquery: jquery})).start(configuration({levels: levels}));
+    it("creates the gamespec from the asset definition, jquery and screen", function() {
+      var theScreen = {screen: "notblank"};
+      var MyScreen = function(theCanvas) {
+        return theScreen;
+      }
 
-      level.levels.should.equal(levels);
-    });
+      var GameSpec = require("../src/game_specification");
+      var create = sandbox.stub(GameSpec, "createGameSpec").withArgs(levels, jquery, theScreen);
 
-    it("initializes the level loader", function() {
-      var initializeAssets = sandbox.spy(level, "initializeAssets").withArgs(jquery);
-
-      Eskimo(dependencies()).start(configuration());
-
-      initializeAssets.called.should.eql(true);
+      Eskimo(dependencies({jquery: jquery, 
+                           screen: MyScreen})).start(configuration({levels: levels}));
+     
+      create.called.should.eql(true); 
     });
 
     it("has the canvas on the game screen", function() {
@@ -119,21 +120,6 @@ describe("Eskimo", function() {
       FixedGameLoop.start.firstCall.args[2].should.eql(fakeScreen);
     });
 
-    it("the LevelLoader is configured with displayVisibleObjects", function() {
-      var fakeScreen = {
-        put: sandbox.stub()
-      };
-      var FakeScreen = function() {
-        return fakeScreen;
-      };
-      var objectPipelineSpy = sandbox.spy(ObjectPipeline, 'displayVisibleObjects');
-      Eskimo(dependencies({screen: FakeScreen})).start(configuration());
-
-      level.runImageLoaderCallbacks();
-
-      objectPipelineSpy.calledWith(fakeScreen).should.eql(true);
-    });
-
     it("sends the game loop the created game", function() {
       var Game =  {create: sandbox.stub().returns('game')};
 
@@ -142,14 +128,17 @@ describe("Eskimo", function() {
       FixedGameLoop.start.firstCall.args[1].should.eql('game');
     });
 
-    it("creates the game with the screen", function() {
+    it("creates the game with the spec and screen", function() {
       var fakeScreen = { put: sandbox.stub() };
       var FakeScreen = sandbox.stub().returns(fakeScreen);
       var Game = {create: sandbox.stub().returns({})};
+      var GameSpec = require("../src/game_specification");
+
+      sandbox.stub(GameSpec, 'createGameSpec').returns('spec');
 
       Eskimo(dependencies({screen: FakeScreen, game: Game})).start(configuration());
 
-      Game.create.calledWith(fakeScreen).should.eql(true);
+      Game.create.calledWith('spec', fakeScreen).should.eql(true);
     });
 
     it("binds the game to the events", function() {
