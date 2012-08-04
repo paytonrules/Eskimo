@@ -1,9 +1,8 @@
-var Jukebox = require('./jukebox'),
-    _ = require('underscore'),
-    AssetLoader = require('./asset_loader'),
-    GameSpecFactory;
+var _ = require('underscore');
 
-Level = function(imageAssets, soundAssets, levelDefinition) {
+var Level = function(imageAssets, soundAssets, levelDefinition) {
+  var Jukebox = require('./jukebox');
+
   this.images = function() {
     return imageAssets;
   };
@@ -21,11 +20,13 @@ Level = function(imageAssets, soundAssets, levelDefinition) {
   };
 };
 
-GameSpec = function(assetDefinition, jquery, screen) {
+var GameSpec = function(assetDefinition, jquery, screen) {
   var imageAssets, 
       soundAssets,
       imagesComplete = false,
       soundsComplete = false,
+      AssetLoader = require('./asset_loader'),
+      ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       Assets = require("./assets");
 
   function checkAssetsComplete(level, onComplete) {
@@ -34,9 +35,9 @@ GameSpec = function(assetDefinition, jquery, screen) {
     }
   }
 
-  // Why am I passing objects?  I don't use it
   function completeImageLoading(level, onComplete, objects) {
     imagesComplete = true;
+    ObjectPipeline.displayVisibleObjects(screen, objects);
     checkAssetsComplete(level, onComplete);
   }
 
@@ -69,8 +70,6 @@ GameSpec = function(assetDefinition, jquery, screen) {
     loadSoundAssets(level, onComplete);
   }
 
-  // Load should return nothing - onComplete should get passed the new level
-  // AssetDefinition belongs to the GameSpec
   this.load = function(levelName, onComplete) {
     imageAssets = new Assets({ jquery: jquery, tag: 'IMG', loadEvent: 'load' });
     soundAssets = new Assets({ jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough' });

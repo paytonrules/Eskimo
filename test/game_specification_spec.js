@@ -193,9 +193,8 @@ describe("GameSpecification", function() {
 
   });
 
-  it("makes a configurable callback when all the images on a level are loaded", function() {
-    // This test becomes "you added everything to the screen"
-/*    var gameDescription = {
+  it("puts all the visibile images on the screen after loading", function(done) {
+    var gameDescription = {
       "newLevel": {
         "gameObject_1" : {
           "image" : {
@@ -210,49 +209,21 @@ describe("GameSpecification", function() {
       }
     };
 
-    var callback = function callback(objects) {
-      callback.objects = objects;
-    };
-    GameSpec.addImageLoaderCallback(callback);
     var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
+    var Pipeline = require("../src/object_pipeline/display_visible_objects");
+    var displayStub = sandbox.stub(Pipeline, "displayVisibleObjects");
 
-    gameSpec.load("newLevel");
+    gameSpec.load("newLevel", function(level) {
+      var firstParam = displayStub.args[0][0]
+      firstParam.should.eql('screen');
+
+      var secondParam = displayStub.args[0][1];
+      secondParam[0].image.should.eql({src: "background.jpg"});
+      secondParam[1].image.should.eql({src: "alsoBackground.jpg"});
+
+      done();
+    });
     spiedJQuery.returnValues[0].trigger('load');
     spiedJQuery.returnValues[1].trigger('load');
-
-    // 'what' is being tested elsewhere, just make sure you're sending something
-    callback.objects[0].image.should.eql({src: "background.jpg"});*/
-  });
-
-  it("calls the complete callback after all images and sounds are loaded", function() {
-    // This test is "You draw the pictures after the load"
-/*    var gameDescription = {
-      "newLevel": {
-        "gameObject_1" : {
-          "image" : {
-            "src" : "background.jpg"
-          }
-        },
-        "gameObject_2" : {
-          "sound" : {
-            "src" : "soundy.mp3"
-          }
-        }
-      }
-    };
-
-    var imageCallback = sandbox.stub();
-    GameSpec.addImageLoaderCallback(imageCallback);
-    var gameSpec = GameSpec.createGameSpec(gameDescription, spiedJQuery, 'screen');
-    
-    var loadCallback = sandbox.stub();
-    gameSpec.load("newLevel", loadCallback);
-    
-    spiedJQuery.returnValues[0].trigger('load');
-    loadCallback.called.should.eql(false);
-
-    spiedJQuery.returnValues[1].trigger('canplaythrough');
-    loadCallback.called.should.eql(true);
-    */
   });
 });
