@@ -6,7 +6,7 @@ describe("Eskimo", function() {
       emptyFunction = function() {},
       emptyDocument = {documentElement: null},
       jquery = require("jquery"),
-      level = require("../src/game_specification"),
+      level = require("../src/game_spec_factory"),
       FixedGameLoop = require("../src/fixed-game-loop"),
       ObjectPipeline = require('../src/object_pipeline/display_visible_objects.js'),
       sandbox = require('sinon').sandbox.create(),
@@ -79,7 +79,7 @@ describe("Eskimo", function() {
         return theScreen;
       }
 
-      var GameSpec = require("../src/game_specification");
+      var GameSpec = require("../src/game_spec_factory");
       var create = sandbox.stub(GameSpec, "createGameSpec").withArgs(levels, jquery, theScreen);
 
       Eskimo(dependencies({jquery: jquery, 
@@ -132,7 +132,7 @@ describe("Eskimo", function() {
       var fakeScreen = { put: sandbox.stub() };
       var FakeScreen = sandbox.stub().returns(fakeScreen);
       var Game = {create: sandbox.stub().returns({})};
-      var GameSpec = require("../src/game_specification");
+      var GameSpec = require("../src/game_spec_factory");
 
       sandbox.stub(GameSpec, 'createGameSpec').returns('spec');
 

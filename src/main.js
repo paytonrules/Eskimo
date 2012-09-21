@@ -20,7 +20,7 @@ module.exports = function(depend) {
       var scheduler = new Scheduler(FRAME_RATE);
       var screen = new Screen(configuration.canvas);
 
-      var GameSpec = require("./game_specification");
+      var GameSpec = require("./game_spec_factory");
       var spec = GameSpec.createGameSpec(configuration.levels, jquery, screen);
       var game = Game.create(spec, screen);
       
