@@ -25,6 +25,7 @@ var GameSpec = function(assetDefinition, jquery, screen) {
       soundsComplete = false,
       AssetLoader = require('./asset_loader'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
+      _ = require('underscore'),
       Assets = require("./assets");
 
   function checkAssetsComplete(level, onComplete) {

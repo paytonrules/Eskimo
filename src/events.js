@@ -1,5 +1,4 @@
-var Main = _ = require('underscore');
-
+var _ = require('underscore');
 
 module.exports = {
   CANVAS_EVENTS: ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove'],

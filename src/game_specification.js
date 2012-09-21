@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var GameSpec = require('./game_spec');
 
 GameSpecFactory = (function() {

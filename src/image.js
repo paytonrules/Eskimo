@@ -1,4 +1,3 @@
-var _ = require('underscore');
 module.exports = function(name, gameObject) {
 
   function draw(context) {
