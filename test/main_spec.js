@@ -6,7 +6,6 @@ describe("Eskimo", function() {
       emptyFunction = function() {},
       emptyDocument = {documentElement: null},
       jquery = require("jquery"),
-      level = require("../src/game_spec_factory"),
       FixedGameLoop = require("../src/fixed-game-loop"),
       ObjectPipeline = require('../src/object_pipeline/display_visible_objects.js'),
       sandbox = require('sinon').sandbox.create(),
