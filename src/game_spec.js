@@ -18,7 +18,7 @@ var Level = function(imageAssets, soundAssets, levelDefinition) {
   };
 };
 
-var GameSpec = function(assetDefinition, jquery, screen) {
+var GameSpec = function(configuration) {
   var imageAssets, 
       soundAssets,
       imagesComplete = false,
@@ -26,6 +26,9 @@ var GameSpec = function(assetDefinition, jquery, screen) {
       AssetLoader = require('./asset_loader'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
+      assetDefinition = configuration.assetDefinition,
+      jquery = configuration.jquery,
+      screen = configuration.screen,
       Assets = require("./assets");
 
   function checkAssetsComplete(level, onComplete) {
@@ -41,9 +44,12 @@ var GameSpec = function(assetDefinition, jquery, screen) {
   }
 
   function loadImageAssets(level, onComplete) {
-    var imageAssetLoader = new AssetLoader({ assets: imageAssets, 
-                                           tagName: 'image',
-                                           completeCallback: _.bind(completeImageLoading, this, level, onComplete) });
+    var imageAssetLoader = new AssetLoader({ assets: imageAssets,
+                                             jquery: jquery,
+                                             htmlTagName: 'IMG',
+                                             loadEvent: 'loadEvent',
+                                             tagName: 'image',
+                                             completeCallback: _.bind(completeImageLoading, this, level, onComplete) });
     imageAssetLoader.load(level);
   }
 
@@ -54,6 +60,9 @@ var GameSpec = function(assetDefinition, jquery, screen) {
 
   function loadSoundAssets(level, onComplete) {
     var soundAssetLoader = new AssetLoader({ assets: soundAssets,
+                                           jquery: jquery,
+                                           htmlTagName: 'audio',
+                                           loadEvent: 'canplaythrough',
                                            tagName: 'sound',
                                            completeCallback: _.bind(completeSoundLoading, this, level, onComplete) });
     soundAssetLoader.load(level);

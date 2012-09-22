@@ -30,15 +30,17 @@ describe("GameSpecification", function() {
     sandbox.restore();
   });
 
-  // Create game spec and use a fake asset loader
   it("loads no assets when the definition passed in is empty", function(done) {
-    var gameSpec = new GameSpec({}, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: {},
+      jquery: spiedJQuery,
+      screen: 'screen'
+    });
 
     gameSpec.load("monkey", function(level) {
       Assert.equal(0, level.images().size());
       done();
     });
-
   });
 
   it("creates image assets for any images on the objects in the game specification", function(done) {
@@ -52,8 +54,12 @@ describe("GameSpecification", function() {
         }
       }
     };
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
-   
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
+
     gameSpec.load("newLevel", function(level) {
       imageAssets = level.images();
 
@@ -61,7 +67,7 @@ describe("GameSpecification", function() {
       done();
     });
 
-    spiedJQuery.returnValues[0].trigger('load');
+    spiedJQuery.returnValues[0].trigger('loadEvent');
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function(done) {
@@ -76,7 +82,11 @@ describe("GameSpecification", function() {
       }
     };
     
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
 
     gameSpec.load("newLevel", function(level) {
       jukebox = level.getJukebox();
@@ -108,8 +118,13 @@ describe("GameSpecification", function() {
       }
     };
 
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
     gameSpec.load("levelOne", function() {});
+
     gameSpec.load("levelTwo", function(level) {
       imageAssets = level.images();
 
@@ -119,8 +134,8 @@ describe("GameSpecification", function() {
       done();
     });
 
-    spiedJQuery.returnValues[0].trigger('load');
-    spiedJQuery.returnValues[1].trigger('load');
+    spiedJQuery.returnValues[0].trigger('loadEvent');
+    spiedJQuery.returnValues[1].trigger('loadEvent');
   });
 
   it("removes the previous levels sounds as well", function(done) {
@@ -143,7 +158,12 @@ describe("GameSpecification", function() {
       }
     };
 
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
+
     gameSpec.load("levelOne", function() {});
     gameSpec.load("levelTwo", function(level) {
       soundAssets = level.getJukebox().assets;
@@ -166,7 +186,12 @@ describe("GameSpecification", function() {
       }
     };
      
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
+
     gameSpec.load("levelOne", function(level) {
       Assert.equal(2, level.gameObject('gameObject').property);
       done();
@@ -179,7 +204,12 @@ describe("GameSpecification", function() {
       "levelOne" : {}
     };
     
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
+
     gameSpec.load("levelOne", function(level) {
       level.addGameObject("key", {"object_id" : 2});
       Assert.equal(2, level.gameObject('key').object_id);
@@ -204,7 +234,12 @@ describe("GameSpecification", function() {
       }
     };
 
-    var gameSpec = new GameSpec(gameDescription, spiedJQuery, 'screen');
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      jquery: spiedJQuery, 
+      screen: 'screen'
+    });
+
     var Pipeline = require("../src/object_pipeline/display_visible_objects");
     var displayStub = sandbox.stub(Pipeline, "displayVisibleObjects");
 
@@ -218,7 +253,7 @@ describe("GameSpecification", function() {
 
       done();
     });
-    spiedJQuery.returnValues[0].trigger('load');
-    spiedJQuery.returnValues[1].trigger('load');
+    spiedJQuery.returnValues[0].trigger('loadEvent');
+    spiedJQuery.returnValues[1].trigger('loadEvent');
   });
 });

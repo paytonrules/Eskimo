@@ -5,6 +5,9 @@ module.exports = function(configuration) {
       _ = require('underscore'),
       assets = configuration.assets,
       tagName = configuration.tagName,
+      htmlTagName = configuration.htmlTagName,
+      jquery = configuration.jquery,
+      loadEvent = configuration.loadEvent,
       loadingComplete = configuration.completeCallback;
   
   function onAssetLoaded(object, asset) {
@@ -18,7 +21,11 @@ module.exports = function(configuration) {
   }
 
   function loadAsset(objectName, object) {
-    assets.load(objectName, object[tagName]['src'], _.bind(onAssetLoaded, this, object));
+    var element = jquery("<" + htmlTagName + " src='" + object[tagName]['src'] + "'>");
+    element.bind(loadEvent, function() {
+      assets.add(objectName, element);
+      onAssetLoaded(object, assets.get(objectName));
+    });
   }
 
   function calculateTotalAssetsIn(level) {
