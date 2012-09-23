@@ -1,22 +1,22 @@
 module.exports = function(configuration) {
   var objectsWithAsset,
       totalAssets,
-      numLoadedAssets,
       _ = require('underscore'),
-      assets = configuration.assets,
       tagName = configuration.tagName,
       htmlTagName = configuration.htmlTagName,
       jquery = configuration.jquery,
       loadEvent = configuration.loadEvent,
-      loadingComplete = configuration.completeCallback;
+      loadingComplete = configuration.completeCallback,
+      Assets = require('./assets'),
+      assets = new Assets();
   
   function onAssetLoaded(object, asset) {
     var sortedAssets;
-    numLoadedAssets++;
     object.asset = asset;
-    
-    if (numLoadedAssets === totalAssets && loadingComplete) {
-      loadingComplete(objectsWithAsset);
+   
+    // race condition?
+    if (assets.size() === totalAssets && loadingComplete) {
+      loadingComplete(assets);
     }
   }
 
@@ -30,7 +30,6 @@ module.exports = function(configuration) {
 
   function calculateTotalAssetsIn(level) {
     objectsWithAsset = [];
-    numLoadedAssets = 0;
     
     for (var object in level) {
       if (level[object][tagName]) {
@@ -45,7 +44,7 @@ module.exports = function(configuration) {
     calculateTotalAssetsIn(level);
 
     if (totalAssets <= 0) {
-      loadingComplete({});
+      loadingComplete(new Assets());
     } else {
       for(var objectName in level) {
         if (level[objectName][tagName]) {

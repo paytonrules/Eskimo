@@ -2,11 +2,9 @@ describe("AssetsLoader", function() {
   var AssetsLoader = require('../src/asset_loader'),
       Assert = require('assert'),
       Assets = require('../src/assets'),
-      MockAssets = require('./mock_assets.js'),
       sandbox = require('sinon').sandbox.create(),
       window,
-      jquerySpy,
-      assets;
+      jquerySpy;
 
   function prepareHTML5() {
     var dom = require('jsdom').jsdom(),
@@ -27,7 +25,6 @@ describe("AssetsLoader", function() {
 
 
   beforeEach(function() {
-    assets = new MockAssets();
     prepareHTML5();
   });
 
@@ -35,11 +32,7 @@ describe("AssetsLoader", function() {
     sandbox.restore();
   })
  
-  it("loads one asset from the list", function(done) {
-    var Assets = require('../src/assets');
-    var realAssets = new Assets({jquery: jquerySpy,
-                                 tag: 'img',
-                                 loadEvent: 'loadEvent'});
+  it("loads one asset from the list", function(done) { 
     var level = {
       "gameObject" : {
         "image" : {
@@ -47,17 +40,16 @@ describe("AssetsLoader", function() {
         }
       }
     };
-    
-    var assetLoader = new AssetsLoader({assets: realAssets, 
-                                        htmlTagName: 'IMG',
+
+    var assetLoader = new AssetsLoader({ htmlTagName: 'IMG',
                                         tagName: 'image',
                                         jquery: jquerySpy,
                                         loadEvent: 'loadEvent',
-                                        completeCallback: function(objectsWithAsset) {
+                                        completeCallback: function(assets) {
+                                          Assert.equal(1, assets.size())
                                           Assert.equal('background.jpg', 
-                                                      objectsWithAsset[0]['image']['src']);
-                                          Assert.ok(objectsWithAsset[0].asset);
-                                          Assert.equal('IMG', objectsWithAsset[0].asset.tagName);
+                                                      assets.get('gameObject').src);
+                                          Assert.equal('IMG', assets.get('gameObject').tagName);
                                           done();
                                         }});
 
@@ -69,10 +61,8 @@ describe("AssetsLoader", function() {
   // Make sure you're testing the right tag, 
   // using the right jquery event, creating the right 
   // object, handling all tags
-  // why send the "object" then do "object.asset" ? Do I ever use that?
-  // Don't pass assets in
 
-  it("creates an asset for the matching tag, with the object's name", function() {
+  it("Attaches the object to the asset", function() {
     var gameObject = {
       "gameObject" : {
         "image" : {
@@ -80,18 +70,12 @@ describe("AssetsLoader", function() {
         }
       }
     };
-    var Assets = require('../src/assets');
-    var realAssets = new Assets({jquery: jquerySpy,
-                                 tag: 'img',
-                                 loadEvent: 'loadEvent'});
-
-    var assetLoader = new AssetsLoader({assets: realAssets, 
-                                        htmlTagName: 'IMG',
+    var assetLoader = new AssetsLoader({ htmlTagName: 'IMG',
                                         tagName: 'image',
                                         jquery: jquerySpy,
                                         loadEvent: 'loadEvent',
-                                        completeCallback: function(objectsWithAsset) {
-                                          Assert.equal(objectsWithAsset[0].asset,
+                                        completeCallback: function(assets) {
+                                          Assert.equal(gameObject['gameObject'].asset,
                                                        realAssets.get("gameObject"));
                                           done();
                                         }});
@@ -112,66 +96,24 @@ describe("AssetsLoader", function() {
       }
     };
 
-    var Assets = require('../src/assets');
-    var realAssets = new Assets({jquery: jquerySpy,
-                                 tag: 'img',
-                                 loadEvent: 'loadEvent'});
-
-    var assetLoader = new AssetsLoader({assets: realAssets, 
-                                        htmlTagName: 'IMG',
+    var assetLoader = new AssetsLoader({htmlTagName: 'IMG',
                                         tagName: 'image',
                                         jquery: jquerySpy,
                                         loadEvent: 'loadEvent',
-                                        completeCallback: function(objectsWithAsset) {
+                                        completeCallback: function(assets) {
                                           Assert.equal("background.jpg",
-                                              realAssets.get("gameObject_1").src);
+                                              assets.get("gameObject_1").src);
                                           Assert.equal("alsoBackground.jpg",
-                                              realAssets.get("gameObject_2").src);
+                                              assets.get("gameObject_2").src);
                                           done();
                                         }});
     
     assetLoader.load(level);
   });
 
-  it("makes the finished callback with the objects in the order they are specified in the level, not the order of the asset loading", function () {
-    var Assets = require('../src/assets');
-    var realAssets = new Assets({jquery: jquerySpy,
-                                 tag: 'img',
-                                 loadEvent: 'loadEvent'});
-
-    var assetLoader = new AssetsLoader({assets: realAssets, 
-                                        htmlTagName: 'IMG',
-                                        tagName: 'image',
-                                        jquery: jquerySpy,
-                                        loadEvent: 'loadEvent',
-                                        completeCallback: function(objectsWithAsset) {
-                                          Assert.equal('oneAsset', 
-                                                       objectsWithAsset[0].asset.src);
-                                          Assert.equal("twoAsset", 
-                                                       objectsWithAsset[1].asset.src);
-                                        }});
-    var level = {
-      'object_one' : {
-        'image' : {'src' : 'oneAsset' }
-      },
-      'object_two' : {
-        'image' : {'src' : 'twoAsset'}
-      }
-    };
-    assetLoader.load(level);
-
-    jquerySpy.returnValues[1].trigger('loadEvent');
-    jquerySpy.returnValues[0].trigger('loadEvent');
-  });
-
-  it("doesn't wait for assets that aren't there to make the callback", function() {
+  it("doesn't wait for objects without assets to make the callback", function() {
     var completeCallback = sandbox.stub();
-    var realAssets = new Assets({jquery: jquerySpy,
-                                 tag: 'img',
-                                 loadEvent: 'loadEvent'});
- 
-    var assetLoader = new AssetsLoader({assets: realAssets, 
-                                        htmlTagName: 'IMG',
+    var assetLoader = new AssetsLoader({htmlTagName: 'IMG',
                                         tagName: 'image',
                                         jquery: jquerySpy,
                                         loadEvent: 'loadEvent',
@@ -188,14 +130,15 @@ describe("AssetsLoader", function() {
   });
 
   it("makes the callback immediately when there are no matching assets", function() {
-    var completeCallback = sandbox.stub();
-    var loader = new AssetsLoader({assets: assets,
-                                  tagName: 'test',
+    var completeCallback = function(assets) {
+      completeCallback.assets = assets;
+    };
+    var loader = new AssetsLoader({tagName: 'test',
                                   completeCallback: completeCallback});
 
     loader.load({'object_one' : {} });
 
-    completeCallback.called.should.eql(true);
+    Assert.equal(0, completeCallback.assets.size());
   });
 
 });

@@ -16,4 +16,13 @@ describe("Assets", function() {
     Assert.equal("bleh", assets.get('key'));
   });
 
+  it("counts the number of assets", function() {
+    var assets = new Assets();
+
+    assets.add('key', {get: function(index) { return "bleh";}});
+    assets.add('key2', {get: function(index) { return "bleh";}});
+
+    Assert.equal(2, assets.size());
+  });
+
 });

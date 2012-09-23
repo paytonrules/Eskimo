@@ -23,13 +23,13 @@ var GameSpec = function(configuration) {
       soundAssets,
       imagesComplete = false,
       soundsComplete = false,
+      Assets = require('./assets'),
       AssetLoader = require('./asset_loader'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
       assetDefinition = configuration.assetDefinition,
       jquery = configuration.jquery,
-      screen = configuration.screen,
-      Assets = require("./assets");
+      screen = configuration.screen;
 
   function checkAssetsComplete(level, onComplete) {
     if (imagesComplete && soundsComplete) {
@@ -39,13 +39,19 @@ var GameSpec = function(configuration) {
 
   function completeImageLoading(level, onComplete, objects) {
     imagesComplete = true;
-    ObjectPipeline.displayVisibleObjects(screen, objects);
+    imageAssets = objects;
+    var objectsWithAssets = {};
+    for (var objectName in level) {
+      if (imageAssets.get(objectName)) {
+        objectsWithAssets[objectName] = level[objectName];
+      }
+    }
+    ObjectPipeline.displayVisibleObjects(screen, objectsWithAssets);
     checkAssetsComplete(level, onComplete);
   }
 
   function loadImageAssets(level, onComplete) {
-    var imageAssetLoader = new AssetLoader({ assets: imageAssets,
-                                             jquery: jquery,
+    var imageAssetLoader = new AssetLoader({ jquery: jquery,
                                              htmlTagName: 'IMG',
                                              loadEvent: 'loadEvent',
                                              tagName: 'image',
@@ -55,6 +61,7 @@ var GameSpec = function(configuration) {
 
   function completeSoundLoading(level, onComplete, objects) {
     soundsComplete = true;
+    soundAssets = objects;
     checkAssetsComplete(level, onComplete);
   }
 
@@ -75,15 +82,13 @@ var GameSpec = function(configuration) {
   }
 
   this.load = function(levelName, onComplete) {
-    imageAssets = new Assets({ jquery: jquery, tag: 'IMG', loadEvent: 'load' });
-    soundAssets = new Assets({ jquery: jquery, tag: 'audio', loadEvent: 'canplaythrough' });
     imagesComplete = false;
     soundsComplete = false;
 
     if (assetDefinition[levelName]) {
       addAssetsForLevel(assetDefinition[levelName], onComplete);
     } else {
-      onComplete(new Level(imageAssets, soundAssets, {}));
+      onComplete(new Level(new Assets(), new Assets(), {}));
     }
   }
 }

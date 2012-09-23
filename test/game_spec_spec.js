@@ -215,21 +215,22 @@ describe("GameSpecification", function() {
       Assert.equal(2, level.gameObject('key').object_id);
       done();
     });
-
   });
-
+  
   it("puts all the visibile images on the screen after loading", function(done) {
     var gameDescription = {
       "newLevel": {
         "gameObject_1" : {
           "image" : {
             "src" : "background.jpg"
-          }
+          },
+          "visible" : true
         },
         "gameObject_2" : {
           "image" : {
             "src" : "alsoBackground.jpg"
-          }
+          },
+          "visible" : true
         }
       }
     };
@@ -248,8 +249,8 @@ describe("GameSpecification", function() {
       Assert.equal('screen', firstParam);
 
       var secondParam = displayStub.args[0][1];
-      Assert.deepEqual(secondParam[0].image, {src: "background.jpg"});
-      Assert.deepEqual(secondParam[1].image, {src: "alsoBackground.jpg"});
+      Assert.deepEqual(secondParam['gameObject_1'].image, {src: "background.jpg"});
+      Assert.deepEqual(secondParam['gameObject_2'].image, {src: "alsoBackground.jpg"});
 
       done();
     });
