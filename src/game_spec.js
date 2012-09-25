@@ -53,11 +53,11 @@ var GameSpec = function(configuration) {
   }
 
   function loadImageAssets(level, onComplete) {
-    var imageAssetLoader = new AssetLoader({ jquery: jquery,
-                                             htmlTagName: 'IMG',
-                                             loadEvent: 'load',
-                                             tagName: 'image',
-                                             completeCallback: _.bind(completeImageLoading, this, level, onComplete) });
+    var AssetLoaderFactory = require('./asset_loader_factory');
+    
+    var imageAssetLoader = AssetLoaderFactory.create(jquery, 
+                     'image', 
+                     _.bind(completeImageLoading, this, level, onComplete) );
     imageAssetLoader.load(level);
   }
 
@@ -68,12 +68,11 @@ var GameSpec = function(configuration) {
   }
 
   function loadSoundAssets(level, onComplete) {
-    var soundAssetLoader = new AssetLoader({ assets: soundAssets,
-                                           jquery: jquery,
-                                           htmlTagName: 'audio',
-                                           loadEvent: 'canplaythrough',
-                                           tagName: 'sound',
-                                           completeCallback: _.bind(completeSoundLoading, this, level, onComplete) });
+    var AssetLoaderFactory = require('./asset_loader_factory');
+
+    var soundAssetLoader = AssetLoaderFactory.create(jquery,
+                                   'sound',
+                                   _.bind(completeSoundLoading, this, level, onComplete) );
     soundAssetLoader.load(level);
   }
 

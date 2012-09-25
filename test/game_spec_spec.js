@@ -30,6 +30,13 @@ describe("GameSpec", function() {
     sandbox.restore();
   });
 
+  it("is created by default with real jquery", function() {
+    var gameSpec = new GameSpec({assetDefinition: {},
+                                screen: ""});
+
+    Assert.equal(gameSpec.getJQuery(), require('jquery'));
+  });
+
   it("loads no assets when the definition passed in is empty", function(done) {
     var gameSpec = new GameSpec({
       assetDefinition: {},

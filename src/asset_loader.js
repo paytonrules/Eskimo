@@ -39,7 +39,27 @@ module.exports = function(configuration) {
     }
     objectsWithAsset = _.flatten(objectsWithAsset);
     totalAssets = objectsWithAsset.length;
-  } 
+  }
+
+  this.getJQuery = function() {
+    return jquery;
+  };
+
+  this.getHTMLTagName = function() {
+    return htmlTagName;
+  };
+
+  this.getLoadEvent = function() {
+    return loadEvent;
+  };
+
+  this.getTagName = function() {
+    return tagName;
+  };
+
+  this.getCompleteCallback = function() {
+    return loadingComplete;
+  };
 
   this.load = function(level) {
     calculateTotalAssetsIn(level);
