@@ -27,8 +27,8 @@ var GameSpec = function(configuration) {
       AssetLoader = require('./asset_loader'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
-      assetDefinition = configuration.assetDefinition,
       jquery = configuration.jquery,
+      assetDefinition = configuration.assetDefinition,
       screen = configuration.screen;
 
   function checkAssetsComplete(level, onComplete) {
@@ -80,6 +80,18 @@ var GameSpec = function(configuration) {
     loadImageAssets(level, onComplete);
     loadSoundAssets(level, onComplete);
   }
+  
+  this.getAssetDefinition = function() {
+    return assetDefinition;
+  };
+
+  this.getJQuery = function() {
+    return jquery;
+  };
+
+  this.getScreen = function() {
+    return screen;
+  };
 
   this.load = function(levelName, onComplete) {
     imagesComplete = false;
