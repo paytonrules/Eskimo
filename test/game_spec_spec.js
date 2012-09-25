@@ -33,7 +33,6 @@ describe("GameSpec", function() {
   it("loads no assets when the definition passed in is empty", function(done) {
     var gameSpec = new GameSpec({
       assetDefinition: {},
-      jquery: spiedJQuery,
       screen: 'screen'
     });
 

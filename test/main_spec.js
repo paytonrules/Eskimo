@@ -14,10 +14,9 @@ describe("Eskimo", function() {
   function dependencies(customConfig) {
     var dependencyConfig = {
       game: {create: sandbox.stub().returns({})},
-      jquery: jquery
     };
 
-    if (customConfig !== null) {
+   if (customConfig !== null) {
       jquery.extend(dependencyConfig, customConfig);
     }
 
@@ -72,17 +71,16 @@ describe("Eskimo", function() {
       FakeScheduler.FRAME_RATE.should.equal(60);
     });
 
-    it("creates the gamespec from the asset definition, jquery and screen", function() {
+    it("creates the gamespec from the asset definition and screen", function() {
       var theScreen = {screen: "notblank"};
       var MyScreen = function(theCanvas) {
         return theScreen;
       }
 
       var GameSpec = require("../src/game_spec_factory");
-      var create = sandbox.stub(GameSpec, "createGameSpec").withArgs(levels, jquery, theScreen);
+      var create = sandbox.stub(GameSpec, "createGameSpec").withArgs(levels, theScreen);
 
-      Eskimo(dependencies({jquery: jquery, 
-                           screen: MyScreen})).start(configuration({levels: levels}));
+      Eskimo(dependencies({ screen: MyScreen})).start(configuration({levels: levels}));
      
       create.called.should.eql(true); 
     });

@@ -27,7 +27,7 @@ var GameSpec = function(configuration) {
       AssetLoader = require('./asset_loader'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
-      jquery = configuration.jquery,
+      jquery = configuration.jquery || require('jquery'),
       assetDefinition = configuration.assetDefinition,
       screen = configuration.screen;
 

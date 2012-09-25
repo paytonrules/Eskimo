@@ -2,10 +2,9 @@ var GameSpec = require('./game_spec');
 
 GameSpecFactory = (function() {
 
-  function createGameSpec(assetDefinition, jquery, screen) {
+  function createGameSpec(assetDefinition, screen) {
     return new GameSpec({
       assetDefinition: assetDefinition,
-      jquery: jquery,
       screen: screen
     });
   }

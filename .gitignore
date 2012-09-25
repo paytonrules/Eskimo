@@ -3,3 +3,4 @@ node_modules
 eskimo.min.js
 eskimo.map
 *.swp
+*.swo
