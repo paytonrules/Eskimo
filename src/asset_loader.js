@@ -22,6 +22,7 @@ module.exports = function(configuration) {
 
   function loadAsset(objectName, object) {
     var element = jquery("<" + htmlTagName + " src='" + object[tagName]['src'] + "'>");
+
     element.bind(loadEvent, function() {
       assets.add(objectName, element);
       onAssetLoaded(object, assets.get(objectName));

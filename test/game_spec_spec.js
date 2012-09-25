@@ -1,4 +1,4 @@
-describe("GameSpecification", function() {
+describe("GameSpec", function() {
   var sandbox = require('sinon').sandbox.create(),
       GameSpec = require('../src/game_spec'),
       Assert = require('assert'),
@@ -67,7 +67,7 @@ describe("GameSpecification", function() {
       done();
     });
 
-    spiedJQuery.returnValues[0].trigger('loadEvent');
+    spiedJQuery.returnValues[0].trigger('load');
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function(done) {
@@ -134,8 +134,8 @@ describe("GameSpecification", function() {
       done();
     });
 
-    spiedJQuery.returnValues[0].trigger('loadEvent');
-    spiedJQuery.returnValues[1].trigger('loadEvent');
+    spiedJQuery.returnValues[0].trigger('load');
+    spiedJQuery.returnValues[1].trigger('load');
   });
 
   it("removes the previous levels sounds as well", function(done) {
@@ -254,7 +254,7 @@ describe("GameSpecification", function() {
 
       done();
     });
-    spiedJQuery.returnValues[0].trigger('loadEvent');
-    spiedJQuery.returnValues[1].trigger('loadEvent');
+    spiedJQuery.returnValues[0].trigger('load');
+    spiedJQuery.returnValues[1].trigger('load');
   });
 });

@@ -40,12 +40,14 @@ var GameSpec = function(configuration) {
   function completeImageLoading(level, onComplete, objects) {
     imagesComplete = true;
     imageAssets = objects;
+
     var objectsWithAssets = {};
     for (var objectName in level) {
       if (imageAssets.get(objectName)) {
         objectsWithAssets[objectName] = level[objectName];
       }
     }
+
     ObjectPipeline.displayVisibleObjects(screen, objectsWithAssets);
     checkAssetsComplete(level, onComplete);
   }
@@ -53,7 +55,7 @@ var GameSpec = function(configuration) {
   function loadImageAssets(level, onComplete) {
     var imageAssetLoader = new AssetLoader({ jquery: jquery,
                                              htmlTagName: 'IMG',
-                                             loadEvent: 'loadEvent',
+                                             loadEvent: 'load',
                                              tagName: 'image',
                                              completeCallback: _.bind(completeImageLoading, this, level, onComplete) });
     imageAssetLoader.load(level);
