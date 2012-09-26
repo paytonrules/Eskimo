@@ -83,6 +83,10 @@ var GameSpec = function(configuration) {
     return screen;
   };
 
+  this.getAssetLoaderFactory = function() {
+    return AssetLoaderFactory;
+  };
+
   this.load = function(levelName, onComplete) {
     imagesComplete = false;
     soundsComplete = false;
