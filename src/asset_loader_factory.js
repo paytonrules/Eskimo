@@ -6,12 +6,12 @@ var lookup = {
 };
 
 module.exports = {
-  create: function(jquery, type, completeCallback) {
-    return new AssetLoader({jquery: jquery,
-                            htmlTagName: lookup[type].htmlTag,
-                            loadEvent: lookup[type].loadEvent,
-                            tagName: type,
-                            completeCallback : completeCallback});
+  create: function(type, completeCallback, jquery) {
+    return new AssetLoader({ htmlTagName: lookup[type].htmlTag,
+                             loadEvent: lookup[type].loadEvent,
+                             tagName: type,
+                             jquery: jquery || require('jquery'),
+                             completeCallback : completeCallback});
 
   }
 };

@@ -12,17 +12,8 @@ describe("AssetsLoader", function() {
     window = dom.createWindow();
 
     require("jquery").create(window);
-
-    define("HTMLAudioElement", {
-      tagName: 'AUDIO',
-      attributes: [
-        'src'
-      ]
-    });
-
     jquerySpy = sandbox.spy(window, 'jQuery');
   }
-
 
   beforeEach(function() {
     prepareHTML5();
@@ -30,7 +21,13 @@ describe("AssetsLoader", function() {
 
   afterEach(function() {
     sandbox.restore();
-  })
+  });
+
+  it("defaults to real jquery", function() {
+    var assetLoader = new AssetsLoader({});
+
+    Assert.equal(require('jquery'), assetLoader.getJQuery());
+  });
  
   it("loads one asset from the list", function(done) { 
     var level = {

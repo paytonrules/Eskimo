@@ -4,9 +4,10 @@ module.exports = function(configuration) {
       _ = require('underscore'),
       tagName = configuration.tagName,
       htmlTagName = configuration.htmlTagName,
-      jquery = configuration.jquery,
+      jquery = configuration.jquery || require('jquery'),
       loadEvent = configuration.loadEvent,
       loadingComplete = configuration.completeCallback,
+      
       Assets = require('./assets'),
       assets = new Assets();
   

@@ -5,9 +5,8 @@ describe("AssetLoaderFactory", function() {
     var callback = function() {};
     var factory = require("../src/asset_loader_factory");
 
-    var loader = factory.create('jquery', 'image', callback);
+    var loader = factory.create('image', callback);
 
-    Assert.equal('jquery', loader.getJQuery());
     Assert.equal('IMG', loader.getHTMLTagName());
     Assert.equal('load', loader.getLoadEvent());
     Assert.equal('image', loader.getTagName());
@@ -18,10 +17,19 @@ describe("AssetLoaderFactory", function() {
     var callback = function() {};
     var factory = require("../src/asset_loader_factory");
 
-    var loader = factory.create('jquery', 'sound', callback);
+    var loader = factory.create('sound', callback);
 
     Assert.equal('audio', loader.getHTMLTagName());
     Assert.equal('canplaythrough', loader.getLoadEvent());
     Assert.equal('sound', loader.getTagName());
+  });
+
+  it("allows the sneaky insertion of jquery if need be", function() {
+    var callback = function() {};
+    var factory = require("../src/asset_loader_factory");
+
+    var loader = factory.create('image', 'irrelelvant', 'jquery');
+
+    Assert.equal('jquery', loader.getJQuery());
   });
 });

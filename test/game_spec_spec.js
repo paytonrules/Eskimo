@@ -105,7 +105,7 @@ describe("GameSpec", function() {
     var fakeSoundLoader = {load: function() {}};
 
     var TestAssetLoaderFactoryWithLongRunningTypes = {
-      create: function(jquery, type, callback) {
+      create: function(type, callback) {
         if (type === 'image') {
           fakeImageLoader.callback = callback;
           return fakeImageLoader;

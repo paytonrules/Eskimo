@@ -53,8 +53,7 @@ var GameSpec = function(configuration) {
   }
 
   function loadImageAssets(level, onComplete) {
-    var imageAssetLoader = AssetLoaderFactory.create(jquery, 
-                     'image', 
+    var imageAssetLoader = AssetLoaderFactory.create('image', 
                      _.bind(completeImageLoading, this, level, onComplete) );
     imageAssetLoader.load(level);
   }
@@ -66,8 +65,7 @@ var GameSpec = function(configuration) {
   }
 
   function loadSoundAssets(level, onComplete) {
-    var soundAssetLoader = AssetLoaderFactory.create(jquery,
-                                   'sound',
+    var soundAssetLoader = AssetLoaderFactory.create('sound',
                                    _.bind(completeSoundLoading, this, level, onComplete) );
     soundAssetLoader.load(level);
   }

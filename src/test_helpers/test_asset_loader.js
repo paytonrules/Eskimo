@@ -1,7 +1,8 @@
 var _ = require('underscore');
 var AssetLoaderFactory = require('../asset_loader_factory');
 
-module.exports = function(jquery, type, completeCallback) {
+module.exports = function(type, completeCallback) {
+  var jquery = require('jquery');
   var returnValues = [];
   var spiedJQuery = (function() {
     return function(element) {
@@ -11,8 +12,7 @@ module.exports = function(jquery, type, completeCallback) {
     }
   })();
 
-  var _assetLoader = AssetLoaderFactory.create(spiedJQuery, 
-                                               type, 
+  var _assetLoader = AssetLoaderFactory.create(type, 
                                                completeCallback);
 
   this.load = function(level) {
