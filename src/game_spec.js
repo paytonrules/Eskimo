@@ -27,7 +27,6 @@ var GameSpec = function(configuration) {
       AssetLoaderFactory = configuration.assetLoaderFactory || require('./asset_loader_factory'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
-      jquery = configuration.jquery || require('jquery'),
       assetDefinition = configuration.assetDefinition,
       screen = configuration.screen;
 
@@ -78,10 +77,6 @@ var GameSpec = function(configuration) {
   
   this.getAssetDefinition = function() {
     return assetDefinition;
-  };
-
-  this.getJQuery = function() {
-    return jquery;
   };
 
   this.getScreen = function() {
