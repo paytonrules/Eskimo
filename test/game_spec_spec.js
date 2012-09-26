@@ -2,10 +2,10 @@ describe("GameSpec", function() {
   var sandbox = require('sinon').sandbox.create(),
       GameSpec = require('../src/game_spec'),
       Assert = require('assert'),
-      window,
-      spiedJQuery;
+      TestAssetLoaderFactory = require('../src/test_helpers/test_asset_loader_factory'),
+      window;
 
-  function setupJQueryWithASpy() {
+  function addAudioTagToTheDOM() {
     var dom = require('jsdom').jsdom(),
         define = require('../node_modules/jsdom/lib/jsdom/level2/html').define;
 
@@ -18,23 +18,14 @@ describe("GameSpec", function() {
         'src'
       ]
     });
-  
-    spiedJQuery = sandbox.spy(window, 'jQuery');
   }
 
   beforeEach(function() {
-    setupJQueryWithASpy();
+    addAudioTagToTheDOM();
   });
 
   afterEach(function() {
     sandbox.restore();
-  });
-
-  it("is created by default with real jquery", function() {
-    var gameSpec = new GameSpec({assetDefinition: {},
-                                screen: ""});
-
-    Assert.equal(gameSpec.getJQuery(), require('jquery'));
   });
 
   it("loads no assets when the definition passed in is empty", function(done) {
@@ -45,12 +36,12 @@ describe("GameSpec", function() {
 
     gameSpec.load("monkey", function(level) {
       Assert.equal(0, level.images().size());
+      Assert.equal(0, level.getJukebox().assets.size());
       done();
     });
   });
 
-  it("creates image assets for any images on the objects in the game specification", function(done) {
-    var imageAssets;
+  it("adds image assets for any images in level", function(done) {
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
@@ -60,20 +51,19 @@ describe("GameSpec", function() {
         }
       }
     };
+
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
+      assetLoaderFactory: TestAssetLoaderFactory,
       screen: 'screen'
     });
 
     gameSpec.load("newLevel", function(level) {
-      imageAssets = level.images();
+      var imageAssets = level.images();
 
-      Assert.equal('background.jpg', imageAssets.get("gameObject").src);
+      Assert.equal('background.jpg', imageAssets.get('gameObject').src);
       done();
     });
-
-    spiedJQuery.returnValues[0].trigger('load');
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function(done) {
@@ -90,7 +80,7 @@ describe("GameSpec", function() {
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
+      assetLoaderFactory: TestAssetLoaderFactory, 
       screen: 'screen'
     });
 
@@ -100,89 +90,8 @@ describe("GameSpec", function() {
       Assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
       done();
     });
-
-    spiedJQuery.returnValues[0].trigger('canplaythrough');
   });
-
-  // Soon this test becomes obsolete
-  it("removes the previous level images", function(done) {
-    var imageAssets;
-    var gameDescription = {
-      "levelOne": {
-        "gameObject_1" : {
-          "image": {
-            "src": "witchDoctor.png"
-          }
-        }
-      },
-      "levelTwo": {
-        "gameObject_2" : {
-          "image": {
-            "src": "christmasSong.png"
-          }
-        }
-      }
-    };
-
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
-      screen: 'screen'
-    });
-    gameSpec.load("levelOne", function() {});
-
-    gameSpec.load("levelTwo", function(level) {
-      imageAssets = level.images();
-
-      Assert.ok(!imageAssets.get("gameObject_1"));
-      Assert.equal('christmasSong.png', imageAssets.get("gameObject_2").src);
-
-      done();
-    });
-
-    spiedJQuery.returnValues[0].trigger('load');
-    spiedJQuery.returnValues[1].trigger('load');
-  });
-
-  it("removes the previous levels sounds as well", function(done) {
-    var soundAssets;
-
-    var gameDescription = {
-      "levelOne": {
-        "gameObject_1" : {
-          "sound": {
-            "src": "witchDoctor.mp3"
-          }
-        }
-      },
-      "levelTwo": {
-        "gameObject_2" : {
-          "sound": {
-            "src": "christmasSong.mp3"
-          }
-        }
-      }
-    };
-
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
-      screen: 'screen'
-    });
-
-    gameSpec.load("levelOne", function() {});
-    gameSpec.load("levelTwo", function(level) {
-      soundAssets = level.getJukebox().assets;
-
-      Assert.ok(!soundAssets.get("gameObject_1"));
-      Assert.ok(soundAssets.get("gameObject_2"));
-      done();
-    });
-    
-    spiedJQuery.returnValues[0].trigger('canplaythrough');
-    spiedJQuery.returnValues[1].trigger('canplaythrough');
-  });
-   
+  
   it("allows access to the game objects", function(done) {
     var gameDescription = {
       "levelOne": {
@@ -194,7 +103,7 @@ describe("GameSpec", function() {
      
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
+      assetLoaderFactory: TestAssetLoaderFactory, 
       screen: 'screen'
     });
 
@@ -205,14 +114,14 @@ describe("GameSpec", function() {
 
   });
 
-  it("allows adding a game object at any time to the current level", function(done) {
+  it("allows adding a game object at any time", function(done) {
     var gameDescription = {
       "levelOne" : {}
     };
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
+      assetLoaderFactory: TestAssetLoaderFactory, 
       screen: 'screen'
     });
 
@@ -243,7 +152,7 @@ describe("GameSpec", function() {
 
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      jquery: spiedJQuery, 
+      assetLoaderFactory: TestAssetLoaderFactory,
       screen: 'screen'
     });
 
@@ -260,7 +169,5 @@ describe("GameSpec", function() {
 
       done();
     });
-    spiedJQuery.returnValues[0].trigger('load');
-    spiedJQuery.returnValues[1].trigger('load');
   });
 });
