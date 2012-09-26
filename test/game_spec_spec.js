@@ -41,7 +41,7 @@ describe("GameSpec", function() {
     });
   });
 
-  it("adds image assets for any images in level", function(done) {
+  it("adds image assets for any images in level", function() {
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
@@ -62,12 +62,10 @@ describe("GameSpec", function() {
       var imageAssets = level.images();
 
       Assert.equal('background.jpg', imageAssets.get('gameObject').src);
-      done();
     });
   });
 
-  it("creates a jukebox from the sounds on the objects in the level", function(done) {
-    var jukebox;
+  it("creates a jukebox from the sounds on the objects in the level", function() {
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
@@ -85,14 +83,56 @@ describe("GameSpec", function() {
     });
 
     gameSpec.load("newLevel", function(level) {
-      jukebox = level.getJukebox();
+      var jukebox = level.getJukebox();
 
       Assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
-      done();
     });
   });
+
+  it("doesnt fire the complete callback until both asset loaders are finished", function() {
+    var gameDescription = {
+      "newLevel": {
+        "gameObject" : {
+          "sound": {
+            "src": "sound.mp3"
+          }
+        }
+      }
+    };
+
+    var callback = sandbox.stub();
+    var fakeImageLoader = {load: function() {}};
+    var fakeSoundLoader = {load: function() {}};
+
+    var TestAssetLoaderFactoryWithLongRunningTypes = {
+      create: function(jquery, type, callback) {
+        if (type === 'image') {
+          fakeImageLoader.callback = callback;
+          return fakeImageLoader;
+        } else if (type === 'sound') {
+          fakeSoundLoader.callback = callback;
+          return fakeSoundLoader;
+        }
+      }
+    };
+    
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      assetLoaderFactory: TestAssetLoaderFactoryWithLongRunningTypes, 
+      screen: 'screen'
+    });
+
+    gameSpec.load("newLevel", callback);
+    Assert.ok(!callback.called);
+
+    fakeImageLoader.callback({get: function() {}});
+    Assert.ok(!callback.called);
+
+    fakeSoundLoader.callback();
+    Assert.ok(callback.called);
+  });
   
-  it("allows access to the game objects", function(done) {
+  it("allows access to the game objects", function() {
     var gameDescription = {
       "levelOne": {
         "gameObject" : {
@@ -109,12 +149,11 @@ describe("GameSpec", function() {
 
     gameSpec.load("levelOne", function(level) {
       Assert.equal(2, level.gameObject('gameObject').property);
-      done();
     });
 
   });
 
-  it("allows adding a game object at any time", function(done) {
+  it("allows adding a game object at any time", function() {
     var gameDescription = {
       "levelOne" : {}
     };
@@ -128,11 +167,10 @@ describe("GameSpec", function() {
     gameSpec.load("levelOne", function(level) {
       level.addGameObject("key", {"object_id" : 2});
       Assert.equal(2, level.gameObject('key').object_id);
-      done();
     });
   });
   
-  it("puts all the visibile images on the screen after loading", function(done) {
+  it("puts all the visible images on the screen after loading", function() {
     var gameDescription = {
       "newLevel": {
         "gameObject_1" : {
@@ -166,8 +204,6 @@ describe("GameSpec", function() {
       var secondParam = displayStub.args[0][1];
       Assert.deepEqual(secondParam['gameObject_1'].image, {src: "background.jpg"});
       Assert.deepEqual(secondParam['gameObject_2'].image, {src: "alsoBackground.jpg"});
-
-      done();
     });
   });
 });
