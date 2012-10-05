@@ -27,5 +27,5 @@
   },
 
   "main" : "./src/index.js",
-  "directories" : {"lib": "src"}
+  "directories" : {"lib": "./src"}
 }
