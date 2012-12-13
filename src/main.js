@@ -10,7 +10,6 @@ module.exports = function(depend) {
       ObjectPipeline = require('./object_pipeline/display_visible_objects.js');
 
 
-  // Main needs to get streamlined.
   return {
     start: function(configuration) {
       var FRAME_RATE = configuration.FRAME_RATE || 60;
@@ -21,10 +20,12 @@ module.exports = function(depend) {
       var spec = GameSpec.createGameSpec(configuration.levels, screen);
       var game = Game.create(spec, screen);
       
-      Events.bind({jquery: jquery,
-                  document: configuration.document.documentElement,
-                  game: game,
-                  canvas: configuration.canvas});
+      Events.bind({
+        jquery: jquery,
+        document: configuration.document.documentElement,
+        game: game,
+        canvas: configuration.canvas
+      });
 
       FixedGameLoop.start(scheduler, game, screen);
     }

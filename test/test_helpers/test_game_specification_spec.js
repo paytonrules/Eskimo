@@ -11,4 +11,20 @@ describe("TestGameSpecFactory", function() {
     Assert.equal("asset definition", gameSpec.getAssetDefinition());
     Assert.equal("screen", gameSpec.getScreen());
   });
+
+  it("proxies load through a singleton level, so tests can access the level", function() {
+    var gameSpec = TestGameSpecFactory.create("asset definition", "screen");
+
+    gameSpec.load("level", function(level) {
+      level.getJukebox().play("Hey There");
+    });
+
+    var testLevel = gameSpec.level();
+
+    Assert.ok(testLevel.playedSound("Hey There"));
+  });
+
+  it("copies the properties over", function() {
+    var gameSpec = TestGameSpecFactory.create("asset definition", "screen");
+  });
 });
