@@ -20,6 +20,8 @@ module.exports = {
     }
 
     function ProxiedLevel(level) {
+      _.extend(this, level);
+      
       var latestJukebox;
       this.playedSound = function(soundName) {
         return latestJukebox.played(soundName);
@@ -35,6 +37,7 @@ module.exports = {
 
     function ProxiedGameSpec(gameSpec) {
       var mostRecentLevel;
+      _.extend(this, gameSpec);
 
       this.load = function(name, callback) {
         gameSpec.load(name, function(level) {
@@ -46,15 +49,6 @@ module.exports = {
       this.level = function() {
         return mostRecentLevel;
       };
-
-      var that = this; // Javascript seriously - fuck off
-      _.each(_.pairs(gameSpec), function(pair) {
-        if (!that[pair[0]]) {
-            that[pair[0]] = function() {
-              return gameSpec[pair[0]].apply(gameSpec, arguments);
-            };
-        }
-      });
 
       return this;
     }

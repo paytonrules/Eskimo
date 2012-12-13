@@ -24,7 +24,11 @@ describe("TestGameSpecFactory", function() {
     Assert.ok(testLevel.playedSound("Hey There"));
   });
 
-  it("copies the properties over", function() {
-    var gameSpec = TestGameSpecFactory.create("asset definition", "screen");
+  it("proxies the level methods", function() {
+    var gameSpec = TestGameSpecFactory.create({"level" : {"object" : "the object"}});
+
+    gameSpec.load("level", function(level) {
+      Assert.equal(level.gameObject("object"), "the object");
+    });
   });
 });
