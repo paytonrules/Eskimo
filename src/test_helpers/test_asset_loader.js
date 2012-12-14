@@ -13,7 +13,8 @@ module.exports = function(type, completeCallback) {
   })();
 
   var _assetLoader = AssetLoaderFactory.create(type, 
-                                               completeCallback);
+                                               completeCallback,
+                                               spiedJQuery);
 
   this.load = function(level) {
     _assetLoader.load(level);

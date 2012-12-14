@@ -8,6 +8,7 @@ module.exports = {
       var playedSounds = [],
           stoppedSounds = [];
 
+      _.extend(this, jukebox);
       this.play = function() {
         playedSounds.push(arguments[0]);
         jukebox.play.apply(jukebox, arguments);
@@ -30,9 +31,10 @@ module.exports = {
     }
 
     function ProxiedLevel(level) {
+      var latestJukebox;
+      
       _.extend(this, level);
       
-      var latestJukebox;
       this.playedSound = function(soundName) {
         return latestJukebox.played(soundName);
       };
@@ -45,7 +47,7 @@ module.exports = {
         latestJukebox = new ProxiedJukeBox(level.getJukebox());
         return latestJukebox;
       };
-      
+
       return this;
     }
 

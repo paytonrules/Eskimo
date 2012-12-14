@@ -43,4 +43,24 @@ describe("TestGameSpecFactory", function() {
 
     Assert.ok(testLevel.stoppedSound("song"));
   });
+
+  it("proxies the other methods on jukebox", function() {
+    var levelData = {
+      "level" : { 
+        "object" : {
+          "sound" : {
+            "src" : "the object"
+          }
+        }
+      }
+    };
+
+    var gameSpec = TestGameSpecFactory.create(levelData);
+
+    gameSpec.load("level", function(level) {
+      var jukebox = level.getJukebox();
+
+      Assert.equal(jukebox.assets.get("object").src, "the object");
+    });
+  });
 });
