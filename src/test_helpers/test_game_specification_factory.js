@@ -5,7 +5,8 @@ var _ = require('underscore');
 module.exports = {
   create: function(assetDefinition, screen) {
     function ProxiedJukeBox(jukebox) {
-      var playedSounds = [];
+      var playedSounds = [],
+          stoppedSounds = [];
 
       this.play = function() {
         playedSounds.push(arguments[0]);
@@ -14,6 +15,15 @@ module.exports = {
 
       this.played = function(soundName) {
         return _.contains(playedSounds, soundName);
+      };
+      
+      this.stopped = function(soundName) {
+        return _.contains(stoppedSounds, soundName);
+      };
+
+      this.stop = function() {
+        stoppedSounds.push(arguments[0]);
+        jukebox.stop.apply(jukebox, arguments);
       };
 
       return this;
@@ -25,6 +35,10 @@ module.exports = {
       var latestJukebox;
       this.playedSound = function(soundName) {
         return latestJukebox.played(soundName);
+      };
+
+      this.stoppedSound = function(soundName) {
+        return latestJukebox.stopped(soundName);
       };
 
       this.getJukebox = function() {

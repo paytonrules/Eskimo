@@ -31,4 +31,16 @@ describe("TestGameSpecFactory", function() {
       Assert.equal(level.gameObject("object"), "the object");
     });
   });
+
+  it("keeps track of stopped songs", function() {
+    var gameSpec = TestGameSpecFactory.create({"level" : {"object" : "the object"}});
+
+    gameSpec.load("level", function(level) {
+      level.getJukebox().stop("song");
+    });
+
+    var testLevel = gameSpec.level();
+
+    Assert.ok(testLevel.stoppedSound("song"));
+  });
 });
