@@ -59,6 +59,7 @@ describe("TestGameSpecFactory", function() {
 
     gameSpec.load("level", function(level) {
       var jukebox = level.getJukebox();
+      console.log(jukebox.assets);
 
       Assert.equal(jukebox.assets.get("object").src, "the object");
     });
