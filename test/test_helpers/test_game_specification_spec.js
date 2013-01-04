@@ -45,7 +45,6 @@ describe("TestGameSpecFactory", function() {
   });
 
   it("proxies the other methods on jukebox", function() {
-    console.log("HERES a test thats a PROBLEM");
     var levelData = {
       "level" : { 
         "object" : {
@@ -60,7 +59,6 @@ describe("TestGameSpecFactory", function() {
 
     gameSpec.load("level", function(level) {
       var jukebox = level.getJukebox();
-      console.log("THE NAUGHTY ASSETS " + jukebox.assets);
 
       Assert.equal(jukebox.assets.get("object").src, "the object");
     });

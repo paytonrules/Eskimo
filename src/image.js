@@ -1,25 +1,27 @@
 module.exports = function(name, gameObject) {
+  var location = {x: gameObject.location ? gameObject.location.x : 0, 
+                 y: gameObject.location ? gameObject.location.y : 0};
 
   function draw(context) {
     context.drawImage(gameObject.asset,  // This will be a DOM object 
-                      gameObject.location.x, 
-                      gameObject.location.y);
+                      location.x, 
+                      location.y);
   }
 
   function right() {
-    return gameObject.location.x + gameObject.asset.width;
+    return location.x + gameObject.asset.width;
   }
 
   function bottom() {
-    return gameObject.location.y + gameObject.asset.height;
+    return location.y + gameObject.asset.height;
   }
 
   function withinXBounds(x) {
-    return (x >= gameObject.location.x && x <= right());
+    return (x >= location.x && x <= right());
   }
 
   function withinYBounds(y) {
-    return (y >= gameObject.location.y && y <= bottom());
+    return (y >= location.y && y <= bottom());
   }
 
   function contains(x, y) {
