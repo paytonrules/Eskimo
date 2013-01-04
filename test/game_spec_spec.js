@@ -206,4 +206,28 @@ describe("GameSpec", function() {
       Assert.deepEqual(secondParam['gameObject_2'].image, {src: "alsoBackground.jpg"});
     });
   });
+
+  it("does not change the original game spec when the level game objects are modified", function() {
+    var gameDescription = {
+      "newLevel": {
+        "gameObject_1" : { }
+      }
+    };
+    
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      assetLoaderFactory: TestAssetLoaderFactory,
+      screen: 'screen'
+    });
+
+    gameSpec.load("newLevel", function(level) {
+      var gameObject = level.gameObject("gameObject_1");
+      gameObject.x = 2;
+    });
+
+    gameSpec.load("newLevel", function(level) {
+      var gameObject = level.gameObject("gameObject_1");
+      Assert.ifError(gameObject.x);
+    });
+  });
 });

@@ -88,11 +88,12 @@ var GameSpec = function(configuration) {
   };
 
   this.load = function(levelName, onComplete) {
+    var jquery = require('jquery');
     imagesComplete = false;
     soundsComplete = false;
 
     if (assetDefinition[levelName]) {
-      addAssetsForLevel(assetDefinition[levelName], onComplete);
+      addAssetsForLevel(jquery.extend(true, {}, assetDefinition[levelName]), onComplete);
     } else {
       onComplete(new Level(new Assets(), new Assets(), {}));
     }
