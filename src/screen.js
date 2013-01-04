@@ -32,11 +32,17 @@ module.exports = function(canvas) {
   };
 
   this.findObjectNamed = function(name) {
-    var matchingImage = _(imageList).detect(function(image) {
+    return _(imageList).detect(function(image) {
       return image.name === name;
     });
 
     return matchingImage;
+  };
+
+  this.findObjectsNamed = function(name) {
+    return _(imageList).filter(function(image) {
+      return image.name === name;
+    });
   };
 };
 
