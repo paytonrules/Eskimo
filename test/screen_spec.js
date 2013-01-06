@@ -1,8 +1,10 @@
 describe("Screen", function() {
   var assets, Context, context, screen, Screen,
       sandbox = require('sinon').sandbox.create(),
-      should = require('should'),
+      assert = require('assert'),
       Image = require('../src/image'),
+      CANVAS_WIDTH = 100,
+      CANVAS_HEIGHT = 200,
       helper = {};
 
   // Mixed styles here.  Are you gonna spy on this, or simulate.
@@ -30,11 +32,11 @@ describe("Screen", function() {
     }];
     
     canvas.width = function() {
-      return 100;
+      return CANVAS_WIDTH;
     };
 
     canvas.height = function() {
-      return 200;
+      return CANVAS_HEIGHT;
     };
       
     assets = (function() {
@@ -72,7 +74,7 @@ describe("Screen", function() {
 
 
   it("is created with a canvas", function() {
-    screen.should.exist;
+    assert.ok(screen);
   });
 
   it("draws a asset you put on it", function() {
@@ -82,7 +84,7 @@ describe("Screen", function() {
     screen.put(image);
     screen.render();
 
-    imageStub.calledWith(context).should.be.true;
+    assert.ok(imageStub.calledWith(context));
   });
 
   it("draws multiple assets", function() {
@@ -95,8 +97,8 @@ describe("Screen", function() {
     screen.put(image2);
     screen.render();
 
-    image1Stub.called.should.be.true;
-    image2Stub.called.should.be.true;
+    assert.ok(image1Stub.called);
+    assert.ok(image2Stub.called);
   });
 
   it("draws the images in the order of puts", function() {
@@ -109,7 +111,7 @@ describe("Screen", function() {
     screen.put(image1);
     screen.render();
 
-    image2Stub.calledBefore(image1Stub);
+    assert.ok(image2Stub.calledBefore(image1Stub));
   });
 
   it("doesnt draw an asset if it is removed", function() {
@@ -121,15 +123,15 @@ describe("Screen", function() {
 
     screen.render();
 
-    imageStub.called.should.be.false;
+    assert.ifError(imageStub.called);
   });
 
   it("can find an object by its name", function() {
     var object = {name: "name"};
     screen.put(object);
     
-    screen.findObjectNamed("name").should.eql(object);
-    should.not.exist(screen.findObjectNamed("anything else"));
+    assert.strictEqual(screen.findObjectNamed("name"), object);
+    assert.ifError(screen.findObjectNamed("anything else"));
   });
 
   it("clears all placed assets from the list", function() {
@@ -140,7 +142,7 @@ describe("Screen", function() {
     screen.clear();
     screen.render();
 
-    imageStub.called.should.be.false;
+    assert.ifError(imageStub.called);
   });
 
   it("Respects changes to the object put on it", function() {
@@ -152,7 +154,12 @@ describe("Screen", function() {
 
     var newThingy = screen.findObjectNamed('name');
 
-    newThingy.x.should.equal(3);
+    assert.strictEqual(newThingy.x, 3);
+  });
+
+  it("Exposes the width and height from the canvas", function() {
+    assert.equal(screen.width(), CANVAS_WIDTH);
+    assert.equal(screen.height(), CANVAS_HEIGHT);
   });
 
 });
