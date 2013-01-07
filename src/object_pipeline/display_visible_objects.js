@@ -1,9 +1,11 @@
 var Image = require('../image');
+var _ = require('underscore');
+
 module.exports = {
   displayVisibleObjects: function(screen, objects) {
     for(var objectName in objects) {
       if (objects[objectName].visible) {
-        screen.put(Image(objectName, objects[objectName]));
+        screen.put(objects[objectName]);
       }
     }
   }

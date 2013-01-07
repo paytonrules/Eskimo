@@ -1,3 +1,5 @@
+var jquery = require('jquery');
+
 module.exports = function(name, gameObject) {
 
   function draw(context) {
@@ -30,9 +32,21 @@ module.exports = function(name, gameObject) {
     return false;
   }
 
-  return {
+  function width() {
+    return gameObject.asset.width();
+  }
+
+  function height() {
+    return gameObject.asset.height();
+  }
+
+  var imageProps = {
     name: name,
     draw: draw,
+    width: width,
+    height: height,
     contains: contains
   };
+
+  return jquery.extend(imageProps, gameObject);
 };

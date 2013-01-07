@@ -1,10 +1,6 @@
 var Level = function(imageAssets, soundAssets, levelDefinition) {
   var Jukebox = require('./jukebox');
 
-  this.images = function() {
-    return imageAssets;
-  };
-
   this.getJukebox = function() {
     return Jukebox(soundAssets);
   };
@@ -24,6 +20,7 @@ var GameSpec = function(configuration) {
       imagesComplete = false,
       soundsComplete = false,
       Assets = require('./assets'),
+      Image = require('./image'),
       AssetLoaderFactory = configuration.assetLoaderFactory || require('./asset_loader_factory'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
@@ -43,6 +40,7 @@ var GameSpec = function(configuration) {
     var objectsWithAssets = {};
     for (var objectName in level) {
       if (imageAssets.get(objectName)) {
+        level[objectName] = Image(objectName, level[objectName]);
         objectsWithAssets[objectName] = level[objectName];
       }
     }

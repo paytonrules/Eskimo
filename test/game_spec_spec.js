@@ -28,14 +28,13 @@ describe("GameSpec", function() {
     sandbox.restore();
   });
 
-  it("loads no assets when the definition passed in is empty", function(done) {
+  it("loads no jukebox when the definition passed in is empty", function(done) {
     var gameSpec = new GameSpec({
       assetDefinition: {},
       screen: 'screen'
     });
 
     gameSpec.load("monkey", function(level) {
-      Assert.equal(0, level.images().size());
       Assert.equal(0, level.getJukebox().assets.size());
       done();
     });
@@ -59,9 +58,8 @@ describe("GameSpec", function() {
     });
 
     gameSpec.load("newLevel", function(level) {
-      var imageAssets = level.images();
-
-      Assert.equal('background.jpg', imageAssets.get('gameObject').src);
+      var imageAsset = level.gameObject('gameObject');
+      Assert.equal('background.jpg', imageAsset.asset.src);
     });
   });
 

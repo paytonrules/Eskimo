@@ -51,4 +51,27 @@ describe("Image", function() {
     image.contains(21, 22).should.be.false;
   });
 
+  it("gets the width of the asset", function() {
+    var image = Image("name", {
+      asset: {
+        width: function() {
+          return 10;
+        }
+      }
+    });
+
+    image.width().should.equal(10);
+  });
+
+  it("gets the height of the asset", function() {
+    var image = Image("name", {
+      asset: {
+        height: function() {
+          return 10;
+        }
+      }
+    });
+
+    image.height().should.equal(10);
+  });
 });
