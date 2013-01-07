@@ -33,11 +33,11 @@ module.exports = function(name, gameObject) {
   }
 
   function width() {
-    return gameObject.asset.width();
+    return gameObject.asset.width;
   }
 
   function height() {
-    return gameObject.asset.height();
+    return gameObject.asset.height;
   }
 
   var imageProps = {

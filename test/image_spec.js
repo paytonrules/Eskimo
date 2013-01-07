@@ -54,9 +54,7 @@ describe("Image", function() {
   it("gets the width of the asset", function() {
     var image = Image("name", {
       asset: {
-        width: function() {
-          return 10;
-        }
+        width: 10
       }
     });
 
@@ -66,9 +64,7 @@ describe("Image", function() {
   it("gets the height of the asset", function() {
     var image = Image("name", {
       asset: {
-        height: function() {
-          return 10;
-        }
+        height: 10
       }
     });
 
