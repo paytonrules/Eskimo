@@ -3,6 +3,7 @@ describe("Image", function() {
       Canvas = require('canvas'),
       Image = require('../src/image'),
       canvas = new Canvas(),
+      assert = require('assert'),
       context = canvas.getContext('2d');
 
   afterEach(function() {
@@ -70,4 +71,25 @@ describe("Image", function() {
 
     image.height().should.equal(10);
   });
+
+  it("respects changes to the location", function() {
+    var image = Image("name", {
+      location: {
+        x: 0,
+        y: 1
+      },
+      asset: {
+        width: 10,
+        height: 10
+      }
+    });
+
+    image.location = {
+      x: 10,
+      y: 10
+    };
+
+    assert.ok(image.contains(11, 11));
+  });
+
 });

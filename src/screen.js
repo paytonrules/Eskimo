@@ -12,8 +12,14 @@ module.exports = function(canvas) {
     imageList.push(image);
   };
 
-  this.width = canvas.width;
-  this.height = canvas.height;
+  this.width = function() {
+    return canvas.width();
+  };
+
+  this.height = function() {
+    return canvas.height();
+  };
+
   this.put = put;
 
   this.remove = function(imageName) {

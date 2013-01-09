@@ -1,27 +1,28 @@
 var jquery = require('jquery');
 
 module.exports = function(name, gameObject) {
+  var image = jquery.extend(true, {}, gameObject);
 
   function draw(context) {
-    context.drawImage(gameObject.asset,  // This will be a DOM object 
-                      gameObject.location.x,
-                      gameObject.location.y);
+    context.drawImage(image.asset,  // This will be a DOM object 
+                      image.location.x,
+                      image.location.y);
   }
 
   function right() {
-    return gameObject.location.x + gameObject.asset.width;
+    return image.location.x + image.asset.width;
   }
 
   function bottom() {
-    return gameObject.location.y + gameObject.asset.height;
+    return image.location.y + image.asset.height;
   }
 
   function withinXBounds(x) {
-    return (x >= gameObject.location.x && x <= right());
+    return (x >= image.location.x && x <= right());
   }
 
   function withinYBounds(y) {
-    return (y >= gameObject.location.y && y <= bottom());
+    return (y >= image.location.y && y <= bottom());
   }
 
   function contains(x, y) {
@@ -33,11 +34,11 @@ module.exports = function(name, gameObject) {
   }
 
   function width() {
-    return gameObject.asset.width;
+    return image.asset.width;
   }
 
   function height() {
-    return gameObject.asset.height;
+    return image.asset.height;
   }
 
   var imageProps = {
@@ -48,5 +49,5 @@ module.exports = function(name, gameObject) {
     contains: contains
   };
 
-  return jquery.extend(imageProps, gameObject);
+  return jquery.extend(true, image, imageProps);
 };
