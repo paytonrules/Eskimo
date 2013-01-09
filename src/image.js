@@ -1,53 +1,48 @@
 var jquery = require('jquery');
 
 module.exports = function(name, gameObject) {
-  var image = jquery.extend(true, {}, gameObject);
+  var Image = function() {
+    jquery.extend(true, this, gameObject);
+    this.name = name;
+  };
 
-  function draw(context) {
-    context.drawImage(image.asset,  // This will be a DOM object 
-                      image.location.x,
-                      image.location.y);
-  }
+  Image.prototype.draw = function(context) {
+    context.drawImage(this.asset,  // This will be a DOM object 
+                      this.location.x,
+                      this.location.y);
+  };
 
-  function right() {
-    return image.location.x + image.asset.width;
-  }
+  Image.prototype.right = function() {
+    return this.location.x + this.asset.width;
+  };
 
-  function bottom() {
-    return image.location.y + image.asset.height;
-  }
+  Image.prototype.bottom = function() {
+    return this.location.y + this.asset.height;
+  };
 
-  function withinXBounds(x) {
-    return (x >= image.location.x && x <= right());
-  }
+  Image.prototype.withinXBounds = function(x) {
+    return (x >= this.location.x && x <= this.right());
+  };
 
-  function withinYBounds(y) {
-    return (y >= image.location.y && y <= bottom());
-  }
+  Image.prototype.withinYBounds = function(y) {
+    return (y >= this.location.y && y <= this.bottom());
+  };
 
-  function contains(x, y) {
-    if (withinXBounds(x) && withinYBounds(y)) {
+  Image.prototype.contains = function(x, y) {
+    if (this.withinXBounds(x) && this.withinYBounds(y)) {
       return true;
     }
 
     return false;
-  }
-
-  function width() {
-    return image.asset.width;
-  }
-
-  function height() {
-    return image.asset.height;
-  }
-
-  var imageProps = {
-    name: name,
-    draw: draw,
-    width: width,
-    height: height,
-    contains: contains
   };
 
-  return jquery.extend(true, image, imageProps);
+  Image.prototype.width = function() {
+    return this.asset.width;
+  };
+
+  Image.prototype.height = function() {
+    return this.asset.height;
+  };
+
+  return new Image(gameObject);
 };
