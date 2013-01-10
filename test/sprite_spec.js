@@ -1,7 +1,7 @@
-describe("Image", function() {
+describe("Sprite", function() {
   var sandbox = require('sinon').sandbox.create(),
       Canvas = require('canvas'),
-      Image = require('../src/image'),
+      Sprite = require('../src/sprite'),
       canvas = new Canvas(),
       assert = require('assert'),
       context = canvas.getContext('2d');
@@ -11,7 +11,7 @@ describe("Image", function() {
   });
 
   it("takes its name from the first parameter", function() {
-    var image = Image("name", {});
+    var image = Sprite("name", {});
 
     image.name.should.eql("name");
   });
@@ -21,7 +21,7 @@ describe("Image", function() {
     // instead checking what is actually on the canvas
     var canvasSpy = sandbox.stub(context, 'drawImage');
    
-    var image = Image("name", {
+    var image = Sprite("name", {
                         location: {
                           x: 10, 
                           y: 20
@@ -36,7 +36,7 @@ describe("Image", function() {
 
   it("returns whether a point is inside or outside the bounding box", function() {
     var jquery = require('jquery');
-    var image = Image("name", {
+    var image = Sprite("name", {
                         location: {
                           x: 1,
                           y: 1,
@@ -53,7 +53,7 @@ describe("Image", function() {
   });
 
   it("gets the width of the asset", function() {
-    var image = Image("name", {
+    var image = Sprite("name", {
       asset: {
         width: 10
       }
@@ -63,7 +63,7 @@ describe("Image", function() {
   });
 
   it("gets the height of the asset", function() {
-    var image = Image("name", {
+    var image = Sprite("name", {
       asset: {
         height: 10
       }
@@ -73,7 +73,7 @@ describe("Image", function() {
   });
 
   it("respects changes to the location", function() {
-    var image = Image("name", {
+    var image = Sprite("name", {
       location: {
         x: 0,
         y: 1
