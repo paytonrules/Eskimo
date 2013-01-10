@@ -3,7 +3,7 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
       $ = require('jquery'),
       Canvas = require('canvas'),
       assert = require('assert'),
-      Image = require('../../src/image'),
+      Sprite = require('../../src/sprite'),
       screen,
       ObjectPipeline;
 
@@ -14,7 +14,7 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
                 
   it("puts any visible objects on the screen", function() {
     var gameObjects = {
-      object_1:  Image("object_1", {
+      object_1:  Sprite("object_1", {
         asset: "asset",
         visible: true
       })

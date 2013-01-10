@@ -1,34 +1,34 @@
 var jquery = require('jquery');
 
 module.exports = function(name, gameObject) {
-  var Sprite = function() {
+  var Image = function() {
     jquery.extend(true, this, gameObject);
     this.name = name;
   };
 
-  Sprite.prototype.draw = function(context) {
+  Image.prototype.draw = function(context) {
     context.drawImage(this.asset,  // This will be a DOM object 
                       this.location.x,
                       this.location.y);
   };
 
-  Sprite.prototype.right = function() {
+  Image.prototype.right = function() {
     return this.location.x + this.asset.width;
   };
 
-  Sprite.prototype.bottom = function() {
+  Image.prototype.bottom = function() {
     return this.location.y + this.asset.height;
   };
 
-  Sprite.prototype.withinXBounds = function(x) {
+  Image.prototype.withinXBounds = function(x) {
     return (x >= this.location.x && x <= this.right());
   };
 
-  Sprite.prototype.withinYBounds = function(y) {
+  Image.prototype.withinYBounds = function(y) {
     return (y >= this.location.y && y <= this.bottom());
   };
 
-  Sprite.prototype.contains = function(x, y) {
+  Image.prototype.contains = function(x, y) {
     if (this.withinXBounds(x) && this.withinYBounds(y)) {
       return true;
     }
@@ -36,13 +36,13 @@ module.exports = function(name, gameObject) {
     return false;
   };
 
-  Sprite.prototype.width = function() {
+  Image.prototype.width = function() {
     return this.asset.width;
   };
 
-  Sprite.prototype.height = function() {
+  Image.prototype.height = function() {
     return this.asset.height;
   };
 
-  return new Sprite(gameObject);
+  return new Image(gameObject);
 };

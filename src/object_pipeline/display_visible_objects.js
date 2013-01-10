@@ -1,4 +1,3 @@
-var Image = require('../image');
 var _ = require('underscore');
 
 module.exports = {
