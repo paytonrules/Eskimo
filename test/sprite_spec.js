@@ -92,4 +92,142 @@ describe("Sprite", function() {
     assert.ok(image.contains(11, 11));
   });
 
+  describe("intersection", function() {
+
+    function createRectangle(x, y, right, bottom) {
+      return {
+        top: function() {
+          return y;
+        },
+        left: function() {
+          return x;
+        },
+        right: function() {
+          return right;
+        },
+        bottom: function() {
+          return bottom;
+        }
+      };
+    }
+
+    it("detects if the incoming rects lower right corner is in the upper left corner", function() {
+      var rectangle = createRectangle(0, 0, 20, 20);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 19, 
+          y: 19
+        },
+        asset: {
+          width: 1,
+          height: 1
+        }
+      });
+
+      assert.ok(sprite.intersects(rectangle));
+    });
+
+    it("does not intersect if the bottom overlaps but the right isn't over the location", function() {
+      var rectangle = createRectangle(0, 0, 20, 20);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 21,
+          y: 19
+        },
+        asset: {
+          width: 1,
+          height: 1
+        }
+      });
+
+      assert.ifError(sprite.intersects(rectangle));
+    });
+
+    it("does not intersect if the right overlaps but the bottom isn't over the location", function() {
+      var rectangle = createRectangle(0, 0, 20, 20);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 19,
+          y: 21, 
+        },
+        asset: {
+          width: 1,
+          height: 1
+        }
+      });
+
+      assert.ifError(sprite.intersects(rectangle));
+    });
+
+    it("does intersect if the bottom right of the sprite intersects the top left of the rectangle", function() {
+      var rectangle = createRectangle(19, 19, 20, 20);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 0,
+          y: 0, 
+        },
+        asset: {
+          width: 20,
+          height: 20
+        }
+      });
+
+      assert.ok(sprite.intersects(rectangle));
+    });
+
+    it("does not intersect if the leftmost portion of the sprite is beyond the width", function() {
+      var rectangle = createRectangle(21, 19, 22, 20);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 0,
+          y: 0, 
+        },
+        asset: {
+          width: 20,
+          height: 20
+        }
+      });
+      
+      assert.ifError(sprite.intersects(rectangle));
+    });
+
+    it("does not intersect if the bottom is below the height", function() {
+      var rectangle = createRectangle(19, 21, 22, 20);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 0,
+          y: 0, 
+        },
+        asset: {
+          width: 20,
+          height: 20
+        }
+      });
+      
+      assert.ifError(sprite.intersects(rectangle));
+    });
+
+    it("intersects if completely enclosed by the sprite", function() {
+      var rectangle = createRectangle(10, 10, 15, 15);
+
+      var sprite = Sprite("name", {
+        location: {
+          x: 0,
+          y: 0, 
+        },
+        asset: {
+          width: 20,
+          height: 20
+        }
+      });
+      
+      assert.ok(sprite.intersects(rectangle));
+    });
+  });
 });

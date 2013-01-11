@@ -44,5 +44,28 @@ module.exports = function(name, gameObject) {
     return this.asset.height;
   };
 
+  Image.prototype.right = function() {
+    return this.location.x + this.asset.width;
+  };
+
+  Image.prototype.left = function() {
+    return this.location.x;
+  };
+
+  Image.prototype.bottom = function() {
+    return this.location.y + this.asset.height;
+  };
+
+  Image.prototype.top = function() {
+    return this.location.y;
+  };
+
+  Image.prototype.intersects = function(rect) {
+    return !(rect.left() > this.right() ||
+             rect.right() < this.left() ||
+             rect.top() > this.bottom() ||
+             rect.bottom() < this.top() );
+  };
+
   return new Image(gameObject);
 };
