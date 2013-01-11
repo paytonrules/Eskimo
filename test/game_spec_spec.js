@@ -20,10 +20,6 @@ describe("GameSpec", function() {
     });
   }
 
-  beforeEach(function() {
-    addAudioTagToTheDOM();
-  });
-
   afterEach(function() {
     sandbox.restore();
   });
@@ -64,6 +60,7 @@ describe("GameSpec", function() {
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
+    addAudioTagToTheDOM();
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
@@ -81,6 +78,7 @@ describe("GameSpec", function() {
     });
 
     gameSpec.load("newLevel", function(level) {
+      addAudioTagToTheDOM();
       var jukebox = level.getJukebox();
 
       Assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
