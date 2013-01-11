@@ -3,6 +3,7 @@ var jquery = require('jquery');
 module.exports = function(name, gameObject) {
   var Image = function() {
     jquery.extend(true, this, gameObject);
+    jquery.extend(true, this, require('./geometry/rectangle.js'));
     this.name = name;
   };
 
@@ -58,13 +59,6 @@ module.exports = function(name, gameObject) {
 
   Image.prototype.top = function() {
     return this.location.y;
-  };
-
-  Image.prototype.intersects = function(rect) {
-    return !(rect.left() > this.right() ||
-             rect.right() < this.left() ||
-             rect.top() > this.bottom() ||
-             rect.bottom() < this.top() );
   };
 
   return new Image(gameObject);
