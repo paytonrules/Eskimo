@@ -1,3 +1,4 @@
+// Is this needed?
 module.exports = function() {
   var assetList = {},
       _ = require('underscore');
