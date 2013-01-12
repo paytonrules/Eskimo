@@ -1,4 +1,4 @@
-var AssetLoader = require('./asset_loader');
+var AssetsLoader = require('./assets_loader');
 
 var lookup = {
   image: {htmlTag: 'IMG', loadEvent: 'load'},
@@ -7,7 +7,7 @@ var lookup = {
 
 module.exports = {
   create: function(type, completeCallback, jquery) {
-    return new AssetLoader({ htmlTagName: lookup[type].htmlTag,
+    return new AssetsLoader({ htmlTagName: lookup[type].htmlTag,
                              loadEvent: lookup[type].loadEvent,
                              tagName: type,
                              jquery: jquery || require('jquery'),

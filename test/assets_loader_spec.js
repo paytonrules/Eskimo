@@ -1,5 +1,5 @@
 describe("AssetsLoader", function() {
-  var AssetsLoader = require('../src/asset_loader'),
+  var AssetsLoader = require('../src/assets_loader'),
       Assert = require('assert'),
       Assets = require('../src/assets'),
       sandbox = require('sinon').sandbox.create(),
@@ -114,7 +114,7 @@ describe("AssetsLoader", function() {
                                         tagName: 'image',
                                         jquery: jquerySpy,
                                         loadEvent: 'loadEvent',
-                                  completeCallback: completeCallback});
+                                        completeCallback: completeCallback});
 
     assetLoader.load({'object_one' : {},
                    'object_two' : {

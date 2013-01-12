@@ -1,6 +1,10 @@
 var Level = function(imageAssets, soundAssets, levelDefinition) {
   var Jukebox = require('./jukebox');
 
+  // I think you want to get rid of the jukebox, in favor of an
+  // audio object in the gameObjects.
+  // This way everything could happen in the load, possibly by registering 
+  // for an update when the level is loaded.
   this.getJukebox = function() {
     return Jukebox(soundAssets);
   };
@@ -33,7 +37,7 @@ var GameSpec = function(configuration) {
     }
   }
 
-  function completeImageLoading(level, onComplete, objects) {
+  function completeAssetLoading(level, onComplete, objects) {
     imagesComplete = true;
     imageAssets = objects;
 
@@ -46,13 +50,28 @@ var GameSpec = function(configuration) {
     }
 
     ObjectPipeline.displayVisibleObjects(screen, objectsWithAssets);
+
+    
+    
     checkAssetsComplete(level, onComplete);
   }
 
-  function loadImageAssets(level, onComplete) {
-    var imageAssetLoader = AssetLoaderFactory.create('image', 
-                     _.bind(completeImageLoading, this, level, onComplete) );
-    imageAssetLoader.load(level);
+  // callback
+  // mark asset as complete
+  // check if all  assets are done 
+
+  // catch the event
+  // if theres a registered handler - handle it - with callback
+  // if not mark asset as complete
+
+  function loadAssets(level, onComplete) {
+    // No registered things
+    // registered thing - but created synchronously
+    // registered created asynchronously
+    // throw event based on image name
+    var assetLoader = AssetLoaderFactory.create('image', 
+                     _.bind(completeAssetLoading, this, level, onComplete) );
+    assetLoader.load(level);
   }
 
   function completeSoundLoading(level, onComplete, objects) {
@@ -68,8 +87,8 @@ var GameSpec = function(configuration) {
   }
 
   // Should make this a collection
-  function addAssetsForLevel(level, onComplete) {
-    loadImageAssets(level, onComplete);
+  function loadObjectsInLevel(level, onComplete) {
+    loadAssets(level, onComplete);
     loadSoundAssets(level, onComplete);
   }
   
@@ -91,7 +110,7 @@ var GameSpec = function(configuration) {
     soundsComplete = false;
 
     if (assetDefinition[levelName]) {
-      addAssetsForLevel(jquery.extend(true, {}, assetDefinition[levelName]), onComplete);
+      loadObjectsInLevel(jquery.extend(true, {}, assetDefinition[levelName]), onComplete);
     } else {
       onComplete(new Level(new Assets(), new Assets(), {}));
     }
