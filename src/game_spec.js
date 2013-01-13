@@ -26,6 +26,7 @@ var GameSpec = function(configuration) {
       Assets = require('./assets'),
       Sprite = require('./sprite'),
       AssetLoaderFactory = configuration.assetLoaderFactory || require('./asset_loader_factory'),
+      AssetLoader = configuration.assetLoader || require('./asset_loader'),
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       _ = require('underscore'),
       assetDefinition = configuration.assetDefinition,
@@ -63,15 +64,48 @@ var GameSpec = function(configuration) {
   // catch the event
   // if theres a registered handler - handle it - with callback
   // if not mark asset as complete
-
+  //
   function loadAssets(level, onComplete) {
+    /*
+     *var assetLoader = AssetLoaderFactory.create('image', 
+     *                 _.bind(completeAssetLoading, this, level, onComplete) );
+     *assetLoader.load(level);
+     */
+    var assets = new Assets(),
+        totalImages = _(level).values().filter(function(value) {return value['image'];}).length,
+        imagesLoaded = 0,
+        callback = function(object, asset) {
+          imagesLoaded++;
+          if (imagesLoaded === totalImages) {
+            completeAssetLoading(level, onComplete, assets);
+          }
+        };
+
+    // Note this if statement isn't tested except by the test Game Spec object
+    if (totalImages <= 0) {
+      completeAssetLoading(level, onComplete, assets);
+    } else {
+      for(var objectName in level) {
+        if (level[objectName]['image']) {
+          AssetLoader({
+            objectName: objectName,
+            object: level[objectName], 
+            tagName: 'image',
+            htmlTagName: 'img',
+            loadEvent: 'load',
+            jquery: require('jquery'),
+            assets: assets,
+            onComplete: callback//_.bind(callback, this)
+          }).load();
+  //loadAsset(objectName, level[objectName]);
+        }
+      }
+    }
+
     // No registered things
     // registered thing - but created synchronously
     // registered created asynchronously
     // throw event based on image name
-    var assetLoader = AssetLoaderFactory.create('image', 
-                     _.bind(completeAssetLoading, this, level, onComplete) );
-    assetLoader.load(level);
   }
 
   function completeSoundLoading(level, onComplete, objects) {

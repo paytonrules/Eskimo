@@ -1,5 +1,6 @@
 var GameSpec = require('../game_spec');
 var TestAssetLoaderFactory = require('./test_asset_loader_factory');
+var TestAssetLoader = require('./test_asset_loader');
 var _ = require('underscore');
 
 module.exports = {
@@ -72,7 +73,8 @@ module.exports = {
     var spec = new GameSpec({
       assetDefinition: assetDefinition,
       screen: screen,
-      assetLoaderFactory: TestAssetLoaderFactory
+      assetLoaderFactory: TestAssetLoaderFactory,
+      assetLoader: TestAssetLoader
     });
 
     return new ProxiedGameSpec(spec);

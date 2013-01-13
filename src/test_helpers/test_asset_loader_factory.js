@@ -1,7 +1,7 @@
-var TestAssetLoader = require('./test_asset_loader');
+var TestAssetsLoader = require('./test_assets_loader');
 
 module.exports = {
   create: function(tag, callback) {
-    return new TestAssetLoader(tag, callback);
+    return new TestAssetsLoader(tag, callback);
   }
 }

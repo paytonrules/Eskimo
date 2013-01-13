@@ -1,25 +1,28 @@
+var AssetLoader = require('../asset_loader');
 var _ = require('underscore');
-var AssetLoaderFactory = require('../asset_loader_factory');
 
-module.exports = function(type, completeCallback) {
-  var jquery = require('jquery');
-  var returnValues = [];
-  var spiedJQuery = (function() {
+module.exports = function(config) {
+  var returnValues = [],
+      spiedJQuery = (function() {
     return function(element) {
-      var returnValue = jquery(element);
+      var returnValue = config.jquery(element);
       returnValues.push(returnValue);
       return returnValue;
     }
-  })();
+  })(),
+      newConfig = _.clone(config),
+      _assetLoader,
+      originalLoad;
+  
+  newConfig.jquery = spiedJQuery;
+  assetLoader = AssetLoader(newConfig);
+  var originalLoad = _assetLoader.load;
 
-  var _assetLoader = AssetLoaderFactory.create(type, 
-                                               completeCallback,
-                                               spiedJQuery);
-
-  this.load = function(level) {
-    _assetLoader.load(level);
+  _assetLoader.load = function() {
+    consle.log("HELLO");
+    originalLoad();
     _.each(returnValues, function(returnValue) {
-      returnValue.trigger(_assetLoader.getLoadEvent());
+      returnValue.trigger(config.loadEvent);
       for(var obj in level) {
         // NOTE this only works with test objects
         // Certainly a better way
@@ -29,5 +32,7 @@ module.exports = function(type, completeCallback) {
         }
       }
     });
-  }
+  };
+
+  return _assetLoader;
 };

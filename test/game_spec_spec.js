@@ -46,10 +46,30 @@ describe("GameSpec", function() {
         }
       }
     };
+   
+    // Just do the load without actually waiting for the 
+    // on load
+    var testAssetLoader = function(config) {
+      var AssetLoader = require('../src/asset_loader.js');
+
+      var TestAssetLoader = function(config) {
+        var loader = AssetLoader(config);
+        this.load = function() {
+          var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
+
+          config.assets.add(config.objectName, element);
+          config.object.asset = config.assets.get(config.objectName);
+          config.onComplete(config.object, config.assets.get(config.objectName));
+        };
+      };
+
+      return new TestAssetLoader(config);
+    };
 
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
       assetLoaderFactory: TestAssetLoaderFactory,
+      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
@@ -58,6 +78,11 @@ describe("GameSpec", function() {
       Assert.equal('background.jpg', imageAsset.asset.src);
     });
   });
+
+  it("calls the asset loader correctly - see if needed");
+  it("makes any registered callbacks");
+  it("waits for all those assets to be done too");
+  it("just adds the blob to the level if the callbacks arent complete");
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
     addAudioTagToTheDOM();
@@ -85,43 +110,64 @@ describe("GameSpec", function() {
     });
   });
 
-  it("doesnt fire the complete callback until both asset loaders are finished", function() {
+  it("doesnt fire the complete callback until all assets and sounds are finished", function() {
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
           "sound": {
             "src": "sound.mp3"
           }
+        },
+        "gameObject2" : {
+          "image" : {
+            "src": "image.png"
+          }
         }
       }
     };
 
     var callback = sandbox.stub();
-    var fakeImageLoader = {load: function() {}};
     var fakeSoundLoader = {load: function() {}};
+
+    // Just do the load without actually waiting for the 
+    // on load
+    var assetLoader = null;
+    var testAssetLoader = function(config) {
+      if (!assetLoader) {
+        var TestAssetLoader = function(config) {
+          this.load = function() {
+            var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
+
+            config.assets.add(config.objectName, element);
+          };
+
+          this.complete = function() {
+            config.onComplete(config.object, config.assets.get(config.objectName));
+          };
+        };
+        assetLoader = new TestAssetLoader(config);
+      }
+      return assetLoader;
+    };
 
     var TestAssetLoaderFactoryWithLongRunningTypes = {
       create: function(type, callback) {
-        if (type === 'image') {
-          fakeImageLoader.callback = callback;
-          return fakeImageLoader;
-        } else if (type === 'sound') {
-          fakeSoundLoader.callback = callback;
-          return fakeSoundLoader;
-        }
+        fakeSoundLoader.callback = callback;
+        return fakeSoundLoader;
       }
     };
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactoryWithLongRunningTypes, 
+      assetLoaderFactory: TestAssetLoaderFactoryWithLongRunningTypes,
+      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
     gameSpec.load("newLevel", callback);
     Assert.ok(!callback.called);
 
-    fakeImageLoader.callback({get: function() {}});
+    assetLoader.complete();
     Assert.ok(!callback.called);
 
     fakeSoundLoader.callback();
