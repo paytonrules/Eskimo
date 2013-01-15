@@ -79,10 +79,32 @@ describe("GameSpec", function() {
     });
   });
 
+  it("just adds the blob to the level if the type isn't registered", function() {
+    var gameDescription = {
+      "newLevel": {
+        "gameObject" : {
+          "thingy" : {
+            "prop" : "prop.thing"
+          }
+        }
+      }
+    };
+
+    var gameSpec = new GameSpec({
+      assetDefinition: gameDescription, 
+      assetLoaderFactory: TestAssetLoaderFactory,
+      screen: 'screen'
+    });
+
+    gameSpec.load("newLevel", function(level)  {
+      var asset = level.gameObject('gameObject');
+      Assert.equal('prop.thing', asset.prop);
+    });
+  });
+
   it("calls the asset loader correctly - see if needed");
   it("makes any registered callbacks");
   it("waits for all those assets to be done too");
-  it("just adds the blob to the level if the callbacks arent complete");
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
     addAudioTagToTheDOM();
@@ -178,7 +200,9 @@ describe("GameSpec", function() {
     var gameDescription = {
       "levelOne": {
         "gameObject" : {
-          "property" : 2
+          "type" : { 
+            "property" : 2
+          }
         }
       }
     };
@@ -252,7 +276,10 @@ describe("GameSpec", function() {
   it("does not change the original game spec when the level game objects are modified", function() {
     var gameDescription = {
       "newLevel": {
-        "gameObject_1" : { }
+        "gameObject_1" : {
+          "type" : {
+          }
+        }
       }
     };
     

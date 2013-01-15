@@ -19,7 +19,6 @@ module.exports = function(config) {
   var originalLoad = _assetLoader.load;
 
   _assetLoader.load = function() {
-    consle.log("HELLO");
     originalLoad();
     _.each(returnValues, function(returnValue) {
       returnValue.trigger(config.loadEvent);
