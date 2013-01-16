@@ -72,6 +72,7 @@ describe("GameSpec", function() {
       assetLoader: testAssetLoader,
       screen: 'screen'
     });
+    gameSpec.registerType('image');
 
     gameSpec.load("newLevel", function(level) {
       var imageAsset = level.gameObject('gameObject');
@@ -186,6 +187,7 @@ describe("GameSpec", function() {
       screen: 'screen'
     });
 
+    gameSpec.registerType('image');
     gameSpec.load("newLevel", callback);
     Assert.ok(!callback.called);
 
@@ -260,6 +262,7 @@ describe("GameSpec", function() {
       screen: 'screen'
     });
 
+    gameSpec.registerType('image');
     var Pipeline = require("../src/object_pipeline/display_visible_objects");
     var displayStub = sandbox.stub(Pipeline, "displayVisibleObjects");
 

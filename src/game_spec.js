@@ -28,6 +28,7 @@ var Level = function(imageAssets, soundAssets) {
 var GameSpec = function(configuration) {
   var imageAssets, 
       soundAssets,
+      registeredTypes = [],
       imagesComplete = false,
       soundsComplete = false,
       Sprite = require('./sprite'),
@@ -80,7 +81,7 @@ var GameSpec = function(configuration) {
       completeAssetLoading(levelSpec, onComplete, assets);
     } else {
       for(var objectName in levelSpec) {
-        if (levelSpec[objectName]['image']) {
+        if (_(registeredTypes).detect(function(type) { return _(levelSpec[objectName]).keys()[0] === type; } )) {
           AssetLoader({
             objectName: objectName,
             object: levelSpec[objectName], 
@@ -131,9 +132,15 @@ var GameSpec = function(configuration) {
     return AssetLoaderFactory;
   };
 
+  this.registerType = function(type) {
+    registeredTypes.push(type);
+  };
+
   this.load = function(levelName, onComplete) {
     var jquery = require('jquery'),
         level = new Level(new Assets(), new Assets());
+    
+   // registeredTypes = ["image"];
     imagesComplete = false;
     soundsComplete = false;
 
