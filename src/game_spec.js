@@ -25,6 +25,23 @@ var Level = function(imageAssets, soundAssets) {
   };
 };
 
+// AssetLoader should not be passet to load, should be part of creating 
+// sprite laoder
+var SpriteLoader = {
+  load: function(AssetLoader, objectName, object, assets, callback) {
+    AssetLoader({
+      objectName: objectName,
+      object: object, 
+      tagName: 'image',
+      htmlTagName: 'img',
+      loadEvent: 'load',
+      jquery: require('jquery'),
+      assets: assets,
+      onComplete: callback//_.bind(callback, this)
+    }).load();
+  }
+}
+
 var GameSpec = function(configuration) {
   var imageAssets, 
       soundAssets,
@@ -82,16 +99,7 @@ var GameSpec = function(configuration) {
     } else {
       for(var objectName in levelSpec) {
         if (_(registeredTypes).detect(function(type) { return _(levelSpec[objectName]).keys()[0] === type; } )) {
-          AssetLoader({
-            objectName: objectName,
-            object: levelSpec[objectName], 
-            tagName: 'image',
-            htmlTagName: 'img',
-            loadEvent: 'load',
-            jquery: require('jquery'),
-            assets: assets,
-            onComplete: callback//_.bind(callback, this)
-          }).load();
+          SpriteLoader.load(AssetLoader, objectName, levelSpec[objectName], assets, callback);
         } else { 
           assetsLoaded++;
           var typeName = _(levelSpec[objectName]).keys()[0];
@@ -140,7 +148,6 @@ var GameSpec = function(configuration) {
     var jquery = require('jquery'),
         level = new Level(new Assets(), new Assets());
     
-   // registeredTypes = ["image"];
     imagesComplete = false;
     soundsComplete = false;
 
