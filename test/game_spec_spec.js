@@ -288,9 +288,13 @@ describe("GameSpec", function() {
       var firstParam = displayStub.args[0][0]
       Assert.equal('screen', firstParam);
 
-      var secondParam = displayStub.args[0][1];
-      Assert.equal(secondParam[0].name, 'gameObject_1');
-      Assert.equal(secondParam[1].name, 'gameObject_2');
+      var levelSpec = displayStub.args[0][1];
+      Assert.ok(levelSpec['gameObject_1']);
+//      Assert.equal(gameSpec['gameObject_1'], levelSpec['gameObject_1']);
+
+      var level = displayStub.args[0][2];
+      Assert.ok(level.gameObject('gameObject_1'));
+      Assert.ok(level.gameObject('gameObject_2'));
     });
   });
 
