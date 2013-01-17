@@ -1,4 +1,5 @@
-var Assets = require('./assets');
+var Assets = require('./assets'),
+    _ = require('underscore');
 
 var Level = function(imageAssets, soundAssets) {
   var Jukebox = require('./jukebox'),
@@ -25,86 +26,55 @@ var Level = function(imageAssets, soundAssets) {
   };
 };
 
-// AssetLoader should not be passet to load, should be part of creating 
-// sprite laoder
-var SpriteLoader = {
-  load: function(AssetLoader, objectName, object, assets, callback) {
-    AssetLoader({
-      objectName: objectName,
-      object: object, 
-      tagName: 'image',
-      htmlTagName: 'img',
-      loadEvent: 'load',
-      jquery: require('jquery'),
-      assets: assets,
-      onComplete: callback//_.bind(callback, this)
-    }).load();
-  }
-}
-
 var GameSpec = function(configuration) {
-  var imageAssets, 
-      soundAssets,
-      registeredTypes = [],
-      imagesComplete = false,
+  var soundAssets,
+      registeredLoaders = {},
       soundsComplete = false,
-      Sprite = require('./sprite'),
       AssetLoaderFactory = configuration.assetLoaderFactory || require('./asset_loader_factory'),
       AssetLoader = configuration.assetLoader || require('./asset_loader'),
-      ObjectPipeline = require('./object_pipeline/display_visible_objects'),
-      _ = require('underscore'),
       assetDefinition = configuration.assetDefinition,
+      ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       screen = configuration.screen;
 
-  function checkAssetsComplete(level, onComplete) {
-    if (imagesComplete && soundsComplete) {
+  function checkAssetsComplete(levelSpec, level, onComplete) {
+    if (soundsComplete) {
+      // This bit should be in the displayVisible Objects method
+      var displayedSprites = [];
+      for (var potentialImageObject in levelSpec) {
+        if (levelSpec[potentialImageObject]['image'] ) {
+          displayedSprites.push(level.gameObject(potentialImageObject));
+        }
+      }
+      ObjectPipeline.displayVisibleObjects(screen, displayedSprites);
       onComplete( level );
     }
   }
 
-  function completeAssetLoading(levelSpec, level, onComplete, objects) {
-    imagesComplete = true;
-    imageAssets = objects;
-
-    var objectsWithAssets = {};
-    for (var objectName in levelSpec) {
-      if (imageAssets && imageAssets.get(objectName)) {
-        level.addGameObject(objectName, Sprite(objectName, levelSpec[objectName]));
-        objectsWithAssets[objectName] = level.gameObject(objectName);
-      }
-    }
-
-    ObjectPipeline.displayVisibleObjects(screen, objectsWithAssets);
-    checkAssetsComplete(level, onComplete);
-  }
-
-  function checkComplete(assetsLoaded, totalAssets, levelSpec, level, onComplete, assets) {
-    if (assetsLoaded === totalAssets) {
-      completeAssetLoading(levelSpec, level, onComplete, assets);
-    }
-  }
-
   function loadAssets(levelSpec, level, onComplete) {
-    var assets = new Assets(),
-        totalAssets = _(levelSpec).values().filter(function(value) {return !value['sound'];}).length,
+    var totalAssets = _(levelSpec).values().filter(function(value) {return !value['sound'];}).length,
         assetsLoaded = 0,
         callback = function(object, asset) {
           assetsLoaded++;
-          checkComplete(assetsLoaded, totalAssets, levelSpec, level, onComplete, assets);
+          if (assetsLoaded === totalAssets) {
+            checkAssetsComplete(levelSpec, level, onComplete);
+          }
         };
 
     // Note this if statement isn't tested except by the test Game Spec object
     if (totalAssets <= 0) {
-      completeAssetLoading(levelSpec, onComplete, assets);
+      checkAssetsComplete(levelSpec, level, onComplete);
     } else {
       for(var objectName in levelSpec) {
-        if (_(registeredTypes).detect(function(type) { return _(levelSpec[objectName]).keys()[0] === type; } )) {
-          SpriteLoader.load(AssetLoader, objectName, levelSpec[objectName], assets, callback);
+        var typeForObject = _(levelSpec[objectName]).keys()[0];
+        if (registeredLoaders[typeForObject]) {
+          registeredLoaders[typeForObject].load(levelSpec, objectName, level, callback);
         } else { 
-          assetsLoaded++;
           var typeName = _(levelSpec[objectName]).keys()[0];
           level.addGameObject(objectName, levelSpec[objectName][typeName]);
-          checkComplete(assetsLoaded, totalAssets, levelSpec, level, onComplete, assets);
+          assetsLoaded++;
+          if (assetsLoaded === totalAssets) {
+            checkAssetsComplete(levelSpec, level, onComplete);
+          }
         }
       }
     }
@@ -113,7 +83,7 @@ var GameSpec = function(configuration) {
   function completeSoundLoading(levelSpec, level, onComplete, objects) {
     soundsComplete = true;
     level.setSoundAssets(objects);
-    checkAssetsComplete(level, onComplete);
+    checkAssetsComplete(levelSpec, level, onComplete);
   }
 
   function loadSoundAssets(levelSpec, level, onComplete) {
@@ -140,15 +110,14 @@ var GameSpec = function(configuration) {
     return AssetLoaderFactory;
   };
 
-  this.registerType = function(type) {
-    registeredTypes.push(type);
+  this.registerLoader = function(type, loader) {
+    registeredLoaders[type] = loader.create(AssetLoader);
   };
 
   this.load = function(levelName, onComplete) {
     var jquery = require('jquery'),
         level = new Level(new Assets(), new Assets());
     
-    imagesComplete = false;
     soundsComplete = false;
 
     if (assetDefinition[levelName]) {

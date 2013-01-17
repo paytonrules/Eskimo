@@ -3,9 +3,8 @@ var AssetLoader = function(config) {
     var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
 
     element.bind(config.loadEvent, function() {
-      config.object.asset = config.assets.get(config.objectName);
-      config.assets.add(config.objectName, element);
-      config.onComplete(config.object, config.assets.get(config.objectName));
+      config.object.asset = element.get(0);
+      config.onComplete(config.object, element.get(0));
     });
   }
 }

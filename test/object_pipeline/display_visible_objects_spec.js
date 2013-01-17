@@ -13,12 +13,16 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
   });
                 
   it("puts any visible objects on the screen", function() {
-    var gameObjects = {
-      object_1:  Sprite("object_1", {
+    var gameObjects = [
+      Sprite("object_1", {
+        asset: "asset",
+        visible: true
+      }),
+      Sprite("object_2", {
         asset: "asset",
         visible: true
       })
-    };
+    ];
 
     ObjectPipeline.displayVisibleObjects(screen, gameObjects);
 
@@ -26,14 +30,15 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
    
     assert.equal(image.name, 'object_1');
     assert.ok(image.draw);
+    assert.ok(screen.findObjectNamed('object_2'));
   });
 
   it("only puts them if they are visibile (duh)", function() {
-    var gameObjects = {
-      object_1: {
+    var gameObjects = [
+      Sprite("object_1", {
         asset: "asset",
-      }
-    };
+      })
+    ];
 
     ObjectPipeline.displayVisibleObjects(screen, gameObjects);
 

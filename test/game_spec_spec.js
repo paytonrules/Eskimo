@@ -3,6 +3,7 @@ describe("GameSpec", function() {
       GameSpec = require('../src/game_spec'),
       Assert = require('assert'),
       TestAssetLoaderFactory = require('../src/test_helpers/test_asset_loader_factory'),
+      SpriteLoader = require('../src/object_pipeline/sprite_loader'),
       window;
 
   function addAudioTagToTheDOM() {
@@ -57,9 +58,8 @@ describe("GameSpec", function() {
         this.load = function() {
           var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
 
-          config.assets.add(config.objectName, element);
-          config.object.asset = config.assets.get(config.objectName);
-          config.onComplete(config.object, config.assets.get(config.objectName));
+          config.object.asset = element.get(0);
+          config.onComplete(config.object, element.get(0));
         };
       };
 
@@ -72,7 +72,7 @@ describe("GameSpec", function() {
       assetLoader: testAssetLoader,
       screen: 'screen'
     });
-    gameSpec.registerType('image');
+    gameSpec.registerLoader('image', SpriteLoader);
 
     gameSpec.load("newLevel", function(level) {
       var imageAsset = level.gameObject('gameObject');
@@ -158,14 +158,13 @@ describe("GameSpec", function() {
     var testAssetLoader = function(config) {
       if (!assetLoader) {
         var TestAssetLoader = function(config) {
+          var element;
           this.load = function() {
-            var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
-
-            config.assets.add(config.objectName, element);
+            element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
           };
 
           this.complete = function() {
-            config.onComplete(config.object, config.assets.get(config.objectName));
+            config.onComplete(config.object, element.get(config.objectName));
           };
         };
         assetLoader = new TestAssetLoader(config);
@@ -187,7 +186,7 @@ describe("GameSpec", function() {
       screen: 'screen'
     });
 
-    gameSpec.registerType('image');
+    gameSpec.registerLoader('image', SpriteLoader);
     gameSpec.load("newLevel", callback);
     Assert.ok(!callback.called);
 
@@ -256,13 +255,32 @@ describe("GameSpec", function() {
       }
     };
 
+    // Just do the load without actually waiting for the 
+    // on load
+    var testAssetLoader = function(config) {
+      var AssetLoader = require('../src/asset_loader.js');
+
+      var TestAssetLoader = function(config) {
+        var loader = AssetLoader(config);
+        this.load = function() {
+          var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
+
+          config.object.asset = element.get(0);
+          config.onComplete(config.object, element.get(0));
+        };
+      };
+
+      return new TestAssetLoader(config);
+    };
+
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
       assetLoaderFactory: TestAssetLoaderFactory,
+      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
-    gameSpec.registerType('image');
+    gameSpec.registerLoader('image', SpriteLoader);
     var Pipeline = require("../src/object_pipeline/display_visible_objects");
     var displayStub = sandbox.stub(Pipeline, "displayVisibleObjects");
 
@@ -271,8 +289,8 @@ describe("GameSpec", function() {
       Assert.equal('screen', firstParam);
 
       var secondParam = displayStub.args[0][1];
-      Assert.deepEqual(secondParam['gameObject_1'].image, {src: "background.jpg"});
-      Assert.deepEqual(secondParam['gameObject_2'].image, {src: "alsoBackground.jpg"});
+      Assert.equal(secondParam[0].name, 'gameObject_1');
+      Assert.equal(secondParam[1].name, 'gameObject_2');
     });
   });
 
