@@ -22,7 +22,8 @@ var GameSpec = function(configuration) {
   function loadAssets(levelSpec, level, onComplete) {
     var totalAssets = _(levelSpec).values().filter(function(value) {return !value['sound'];}).length,
         assetsLoaded = 0,
-        callback = function(object, asset) {
+        addToLevel = function(objectName, gameObject) {
+          level.addGameObject(objectName, gameObject);
           assetsLoaded++;
           if (assetsLoaded === totalAssets) {
             checkAssetsComplete(levelSpec, level, onComplete);
@@ -36,14 +37,9 @@ var GameSpec = function(configuration) {
       for(var objectName in levelSpec) {
         var typeForObject = _(levelSpec[objectName]).keys()[0];
         if (registeredLoaders[typeForObject]) {
-          registeredLoaders[typeForObject].load(levelSpec, objectName, level, callback);
+          registeredLoaders[typeForObject].load(levelSpec, objectName, addToLevel);
         } else { 
-          var typeName = _(levelSpec[objectName]).keys()[0];
-          level.addGameObject(objectName, levelSpec[objectName][typeName]);
-          assetsLoaded++;
-          if (assetsLoaded === totalAssets) {
-            checkAssetsComplete(levelSpec, level, onComplete);
-          }
+          addToLevel(objectName, levelSpec[objectName][typeForObject]);
         }
       }
     }
@@ -80,7 +76,7 @@ var GameSpec = function(configuration) {
   };
 
   this.registerLoader = function(type, loader) {
-    registeredLoaders[type] = loader.create(AssetLoader);
+    registeredLoaders[type] = loader;
   };
 
   this.load = function(levelName, onComplete) {

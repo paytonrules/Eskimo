@@ -1,9 +1,8 @@
 describe("GameSpec", function() {
   var sandbox = require('sinon').sandbox.create(),
       GameSpec = require('../src/game_spec'),
-      Assert = require('assert'),
+      assert = require('assert'),
       TestAssetLoaderFactory = require('../src/test_helpers/test_asset_loader_factory'),
-      SpriteLoader = require('../src/object_pipeline/sprite_loader'),
       window;
 
   function addAudioTagToTheDOM() {
@@ -21,7 +20,7 @@ describe("GameSpec", function() {
     });
   }
 
-  afterEach(function() {
+  beforeEach(function() {
     sandbox.restore();
   });
 
@@ -32,51 +31,35 @@ describe("GameSpec", function() {
     });
 
     gameSpec.load("monkey", function(level) {
-      Assert.equal(0, level.getJukebox().assets.size());
+      assert.equal(0, level.getJukebox().assets.size());
       done();
     });
   });
 
-  it("adds image assets for any images in level", function() {
+  it("uses an associated loader to create a level object, if one exists", function() {
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
-          "image" : {
-            "src" : "background.jpg"
-          }
+          "customObject" : {}
         }
       }
     };
-   
-    // Just do the load without actually waiting for the 
-    // on load
-    var testAssetLoader = function(config) {
-      var AssetLoader = require('../src/asset_loader.js');
 
-      var TestAssetLoader = function(config) {
-        var loader = AssetLoader(config);
-        this.load = function() {
-          var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
-
-          config.object.asset = element.get(0);
-          config.onComplete(config.object, element.get(0));
-        };
-      };
-
-      return new TestAssetLoader(config);
+    var customObjectLoader = {
+      load: function(levelSpec, objectName, callback) {
+        callback(objectName, {levelSpec: levelSpec, objectName: objectName});
+      }
     };
-
+  
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory,
-      assetLoader: testAssetLoader,
-      screen: 'screen'
+      assetLoaderFactory: TestAssetLoaderFactory
     });
-    gameSpec.registerLoader('image', SpriteLoader);
+    gameSpec.registerLoader('customObject', customObjectLoader);
 
     gameSpec.load("newLevel", function(level) {
-      var imageAsset = level.gameObject('gameObject');
-      Assert.equal('background.jpg', imageAsset.asset.src);
+      assert.deepEqual(gameDescription['newLevel'], level.gameObject('gameObject').levelSpec);
+      assert.equal('gameObject', level.gameObject('gameObject').objectName);
     });
   });
 
@@ -99,13 +82,9 @@ describe("GameSpec", function() {
 
     gameSpec.load("newLevel", function(level)  {
       var asset = level.gameObject('gameObject');
-      Assert.equal('prop.thing', asset.prop);
+      assert.equal('prop.thing', asset.prop);
     });
   });
-
-  it("calls the asset loader correctly - see if needed");
-  it("makes any registered callbacks");
-  it("waits for all those assets to be done too");
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
     addAudioTagToTheDOM();
@@ -129,11 +108,14 @@ describe("GameSpec", function() {
       addAudioTagToTheDOM();
       var jukebox = level.getJukebox();
 
-      Assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
+      assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
     });
   });
 
   it("doesnt fire the complete callback until all assets and sounds are finished", function() {
+    var Pipeline = require("../src/object_pipeline/display_visible_objects");
+    sandbox.stub(Pipeline, 'displayVisibleObjects');
+
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
@@ -152,49 +134,34 @@ describe("GameSpec", function() {
     var callback = sandbox.stub();
     var fakeSoundLoader = {load: function() {}};
 
-    // Just do the load without actually waiting for the 
-    // on load
-    var assetLoader = null;
-    var testAssetLoader = function(config) {
-      if (!assetLoader) {
-        var TestAssetLoader = function(config) {
-          var element;
-          this.load = function() {
-            element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
-          };
-
-          this.complete = function() {
-            config.onComplete(config.object, element.get(config.objectName));
-          };
-        };
-        assetLoader = new TestAssetLoader(config);
-      }
-      return assetLoader;
-    };
-
     var TestAssetLoaderFactoryWithLongRunningTypes = {
       create: function(type, callback) {
         fakeSoundLoader.callback = callback;
         return fakeSoundLoader;
       }
     };
+
+    var imageLoader = {
+      load: function(levelSpec, objectName, callback) {
+        this.complete = callback;
+      }
+    }
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
       assetLoaderFactory: TestAssetLoaderFactoryWithLongRunningTypes,
-      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
-    gameSpec.registerLoader('image', SpriteLoader);
+    gameSpec.registerLoader('image', imageLoader);
     gameSpec.load("newLevel", callback);
-    Assert.ok(!callback.called);
+    assert.ok(!callback.called);
 
-    assetLoader.complete();
-    Assert.ok(!callback.called);
+    imageLoader.complete();
+    assert.ok(!callback.called);
 
     fakeSoundLoader.callback();
-    Assert.ok(callback.called);
+    assert.ok(callback.called);
   });
   
   it("allows access to the game objects", function() {
@@ -215,7 +182,7 @@ describe("GameSpec", function() {
     });
 
     gameSpec.load("levelOne", function(level) {
-      Assert.equal(2, level.gameObject('gameObject').property);
+      assert.equal(2, level.gameObject('gameObject').property);
     });
 
   });
@@ -233,7 +200,7 @@ describe("GameSpec", function() {
 
     gameSpec.load("levelOne", function(level) {
       level.addGameObject("key", {"object_id" : 2});
-      Assert.equal(2, level.gameObject('key').object_id);
+      assert.equal(2, level.gameObject('key').object_id);
     });
   });
   
@@ -254,47 +221,32 @@ describe("GameSpec", function() {
         }
       }
     };
-
-    // Just do the load without actually waiting for the 
-    // on load
-    var testAssetLoader = function(config) {
-      var AssetLoader = require('../src/asset_loader.js');
-
-      var TestAssetLoader = function(config) {
-        var loader = AssetLoader(config);
-        this.load = function() {
-          var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
-
-          config.object.asset = element.get(0);
-          config.onComplete(config.object, element.get(0));
-        };
-      };
-
-      return new TestAssetLoader(config);
-    };
-
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
       assetLoaderFactory: TestAssetLoaderFactory,
-      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
-    gameSpec.registerLoader('image', SpriteLoader);
+    var imageLoader = {
+      load: function(levelSpec, objectName, callback) {
+        callback(objectName, objectName);
+      }
+    };
+
+    gameSpec.registerLoader('image', imageLoader);
     var Pipeline = require("../src/object_pipeline/display_visible_objects");
     var displayStub = sandbox.stub(Pipeline, "displayVisibleObjects");
 
     gameSpec.load("newLevel", function(level) {
       var firstParam = displayStub.args[0][0]
-      Assert.equal('screen', firstParam);
+      assert.equal('screen', firstParam);
 
       var levelSpec = displayStub.args[0][1];
-      Assert.ok(levelSpec['gameObject_1']);
-//      Assert.equal(gameSpec['gameObject_1'], levelSpec['gameObject_1']);
+      assert.ok(levelSpec['gameObject_1']);
 
       var level = displayStub.args[0][2];
-      Assert.ok(level.gameObject('gameObject_1'));
-      Assert.ok(level.gameObject('gameObject_2'));
+      assert.equal('gameObject_1', level.gameObject('gameObject_1'));
+      assert.equal('gameObject_2', level.gameObject('gameObject_2'));
     });
   });
 
@@ -321,7 +273,7 @@ describe("GameSpec", function() {
 
     gameSpec.load("newLevel", function(level) {
       var gameObject = level.gameObject("gameObject_1");
-      Assert.ifError(gameObject.x);
+      assert.ifError(gameObject.x);
     });
   });
 });
