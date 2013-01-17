@@ -26,3 +26,5 @@ var Level = function(imageAssets, soundAssets) {
   };
 };
 
+module.exports = Level;
+
