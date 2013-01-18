@@ -3,6 +3,11 @@ var AssetLoader = function(config) {
     var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
 
     element.bind(config.loadEvent, function() {
+      // TEMP!
+      if (config.assets) {
+        config.assets.add(config.objectName, element);
+      }
+
       config.object.asset = element.get(0);
       config.onComplete(config.object, element.get(0));
     });

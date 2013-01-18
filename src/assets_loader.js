@@ -7,12 +7,10 @@ module.exports = function(configuration) {
       jquery = configuration.jquery || require('jquery'),
       loadEvent = configuration.loadEvent,
       loadingComplete = configuration.completeCallback,
-      
       Assets = require('./assets'),
       assets = new Assets();
   
   function onAssetLoaded(object, asset) {
-    var sortedAssets;
     object.asset = asset; // This needs to be killed
    
     // race condition?
