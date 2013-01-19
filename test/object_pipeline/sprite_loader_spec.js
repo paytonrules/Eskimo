@@ -7,11 +7,11 @@ describe("SpriteLoaderSpec", function() {
     sandbox.restore();
   });
 
-  it("adds image assets for any images in level", function() {
+  it("adds sprite assets for any sprites in level", function() {
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
-          "image" : {
+          "sprite" : {
             "src" : "background.jpg"
           }
         }
@@ -37,7 +37,7 @@ describe("SpriteLoaderSpec", function() {
 
     assert.equal(assetConfiguration.objectName, 'objectName');
     assert.equal(assetConfiguration.object, 'levelSpec');
-    assert.equal(assetConfiguration.tagName, 'image');
+    assert.equal(assetConfiguration.tagName, 'sprite');
     assert.equal(assetConfiguration.htmlTagName, 'img');
     assert.equal(assetConfiguration.loadEvent, 'load');
     assert.equal(assetConfiguration.jquery, require('jquery'));

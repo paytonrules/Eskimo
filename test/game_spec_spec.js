@@ -2,23 +2,11 @@ describe("GameSpec", function() {
   var sandbox = require('sinon').sandbox.create(),
       GameSpec = require('../src/game_spec'),
       assert = require('assert'),
+      _ = require('underscore'),
       TestAssetLoaderFactory = require('../src/test_helpers/test_asset_loader_factory'),
+      audioTag = require('./spec_helper').audioTag,
+      AssetLoader = require('../src/asset_loader'),
       window;
-
-  function addAudioTagToTheDOM() {
-    var dom = require('jsdom').jsdom(),
-        define = require('../node_modules/jsdom/lib/jsdom/level2/html').define;
-
-    window = dom.createWindow();
-    require("jquery").create(window);
-
-    define("HTMLAudioElement", {
-      tagName: 'AUDIO',
-      attributes: [
-        'src'
-      ]
-    });
-  }
 
   beforeEach(function() {
     sandbox.restore();
@@ -53,7 +41,6 @@ describe("GameSpec", function() {
   
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory
     });
     gameSpec.registerLoader('customObject', customObjectLoader);
 
@@ -76,7 +63,6 @@ describe("GameSpec", function() {
 
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory,
       screen: 'screen'
     });
 
@@ -87,7 +73,7 @@ describe("GameSpec", function() {
   });
 
   it("creates a jukebox from the sounds on the objects in the level", function() {
-    addAudioTagToTheDOM();
+    audioTag.addToDom();
     var gameDescription = {
       "newLevel": {
         "gameObject" : {
@@ -98,14 +84,27 @@ describe("GameSpec", function() {
       }
     };
     
+    var testAssetLoader = function(configure) {
+      var jquery = configure.jquery,
+          jquerySpy = sandbox.spy(jquery),
+          myConfigure = _.extend({jquery: jquerySpy}, _.omit(configure, 'jquery')),
+          assetLoader = AssetLoader(myConfigure);
+
+      return {
+        load: function() {
+          assetLoader.load();
+          jquerySpy.returnValues[0].trigger('canplaythrough');
+        }
+      };
+    };
+
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory, 
+      assetLoader: testAssetLoader, 
       screen: 'screen'
     });
 
     gameSpec.load("newLevel", function(level) {
-      addAudioTagToTheDOM();
       var jukebox = level.getJukebox();
 
       assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
@@ -130,26 +129,34 @@ describe("GameSpec", function() {
         }
       }
     };
+ 
+    var testAssetLoader = function(configure) {
+      var jquery = configure.jquery,
+          jquerySpy = sandbox.spy(jquery),
+          myConfigure = _.extend({jquery: jquerySpy}, _.omit(configure, 'jquery')),
+          assetLoader = AssetLoader(myConfigure);
 
-    var callback = sandbox.stub();
-    var fakeSoundLoader = {load: function() {}};
+      testAssetLoader.complete = function() {
+        jquerySpy.returnValues[0].trigger('canplaythrough');
+      };
 
-    var TestAssetLoaderFactoryWithLongRunningTypes = {
-      create: function(type, callback) {
-        fakeSoundLoader.callback = callback;
-        return fakeSoundLoader;
-      }
+      return {
+        load: function() {
+          assetLoader.load();
+        }
+      };
     };
 
+    var callback = sandbox.stub();
     var imageLoader = {
       load: function(levelSpec, objectName, callback) {
         this.complete = callback;
       }
-    }
+    };
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactoryWithLongRunningTypes,
+      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
@@ -160,7 +167,7 @@ describe("GameSpec", function() {
     imageLoader.complete();
     assert.ok(!callback.called);
 
-    fakeSoundLoader.callback();
+    testAssetLoader.complete();
     assert.ok(callback.called);
   });
   
@@ -177,7 +184,6 @@ describe("GameSpec", function() {
      
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory, 
       screen: 'screen'
     });
 
@@ -194,7 +200,6 @@ describe("GameSpec", function() {
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory, 
       screen: 'screen'
     });
 
@@ -223,7 +228,6 @@ describe("GameSpec", function() {
     };
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory,
       screen: 'screen'
     });
 
@@ -262,7 +266,6 @@ describe("GameSpec", function() {
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoaderFactory: TestAssetLoaderFactory,
       screen: 'screen'
     });
 

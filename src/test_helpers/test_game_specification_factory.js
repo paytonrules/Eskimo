@@ -73,7 +73,6 @@ module.exports = {
     var spec = new GameSpec({
       assetDefinition: assetDefinition,
       screen: screen,
-      assetLoaderFactory: TestAssetLoaderFactory,
       assetLoader: TestAssetLoader
     });
 

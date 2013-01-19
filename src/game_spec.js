@@ -6,8 +6,7 @@ var GameSpec = function(configuration) {
   var soundAssets,
       registeredLoaders = {},
       soundsComplete = false,
-      AssetLoaderFactory = configuration.assetLoaderFactory || require('./asset_loader_factory'),
-      AssetLoader = configuration.assetLoader || require('./asset_loader'),
+      AssetLoader = configuration.assetLoader,
       assetDefinition = configuration.assetDefinition,
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       screen = configuration.screen;
@@ -45,16 +44,37 @@ var GameSpec = function(configuration) {
     }
   }
 
-  function completeSoundLoading(levelSpec, level, onComplete, objects) {
+  function completeSoundsLoading(levelSpec, level, onComplete, objects) {
     soundsComplete = true;
     level.setSoundAssets(objects);
     checkAssetsComplete(levelSpec, level, onComplete);
   }
 
+  function completeSoundLoading(levelSpec, level, onComplete, objectName, object, soundAsset) {
+    var totalSounds = _(levelSpec).values().filter(function(value) {return value['sound'];}).length;
+    // NOTE - you dont want jquery here
+    // check do images do this?  I thought they stored elements
+    //
+    var jquery = require('jquery');
+    soundAssets.add(objectName, jquery(soundAsset));
+    if (soundAssets.size() === totalSounds) {
+      completeSoundsLoading(levelSpec, level, onComplete, soundAssets);
+    }
+  }
+
   function loadSoundAssets(levelSpec, level, onComplete) {
-    var soundAssetLoader = AssetLoaderFactory.create('sound',
-                                   _.bind(completeSoundLoading, this, levelSpec, level, onComplete) );
-    soundAssetLoader.load(levelSpec);
+    for(var objectName in levelSpec) {
+      if (levelSpec[objectName]['sound']) {
+        AssetLoader({htmlTagName: 'audio',
+                     objectName: objectName,
+                     object: levelSpec[objectName],
+                     loadEvent: 'canplaythrough',
+                     tagName: 'sound',
+                     jquery: require('jquery'),
+                     onComplete: _.bind(completeSoundLoading, this, levelSpec, level, onComplete, objectName)
+        }).load();
+      }
+    }
   }
 
   // Should make this a collection
@@ -82,6 +102,8 @@ var GameSpec = function(configuration) {
   this.load = function(levelName, onComplete) {
     var jquery = require('jquery'),
         level = new Level(new Assets(), new Assets());
+
+    soundAssets = new Assets();
     
     soundsComplete = false;
 

@@ -9,7 +9,7 @@ var SpriteLoader = {
         AssetLoader({
           objectName: objectName,
           object: levelSpec[objectName], 
-          tagName: 'image',
+          tagName: 'sprite', 
           htmlTagName: 'img',
           loadEvent: 'load',
           jquery: require('jquery'),

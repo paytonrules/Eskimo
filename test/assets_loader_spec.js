@@ -3,20 +3,12 @@ describe("AssetsLoader", function() {
       Assert = require('assert'),
       Assets = require('../src/assets'),
       sandbox = require('sinon').sandbox.create(),
-      window,
+      jquery,
       jquerySpy;
 
-  function prepareHTML5() {
-    var dom = require('jsdom').jsdom(),
-        define = require('../node_modules/jsdom/lib/jsdom/level2/html').define;
-    window = dom.createWindow();
-
-    require("jquery").create(window);
-    jquerySpy = sandbox.spy(window, 'jQuery');
-  }
-
   beforeEach(function() {
-    prepareHTML5();
+    jquery = require('jquery');
+    jquerySpy = sandbox.spy(jquery);
   });
 
   afterEach(function() {
@@ -43,7 +35,7 @@ describe("AssetsLoader", function() {
                                         jquery: jquerySpy,
                                         loadEvent: 'loadEvent',
                                         completeCallback: function(assets) {
-                                          Assert.equal(1, assets.size())
+                                          Assert.equal(1, assets.size());
                                           Assert.equal('background.jpg', 
                                                       assets.get('gameObject').src);
                                           Assert.equal('IMG', assets.get('gameObject').tagName);

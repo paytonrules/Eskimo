@@ -11,14 +11,13 @@
     "node": ">=0.6.5"
   },
   "dependencies" : {
-    "jquery" : "*",
-    "underscore" : "*" 
+    "jquery" : "1.8.3",
+    "underscore" : "1.4.3" 
   },
   "devDependencies" : {
     "mocha" : "*",
     "should" : "*",
-    "jsdom" : "*",
-    "html5" : "*",
+    "jsdom" : "0.2.15",
     "sinon" : "*",
     "canvas" : "*"
   },

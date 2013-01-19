@@ -8,27 +8,24 @@ module.exports = function(config) {
       var returnValue = config.jquery(element);
       returnValues.push(returnValue);
       return returnValue;
-    }
+    };
   })(),
       newConfig = _.clone(config),
       _assetLoader,
       originalLoad;
   
   newConfig.jquery = spiedJQuery;
-  assetLoader = AssetLoader(newConfig);
-  var originalLoad = _assetLoader.load;
+  _assetLoader = AssetLoader(newConfig);
+  originalLoad = _assetLoader.load;
 
   _assetLoader.load = function() {
     originalLoad();
     _.each(returnValues, function(returnValue) {
       returnValue.trigger(config.loadEvent);
-      for(var obj in level) {
-        // NOTE this only works with test objects
-        // Certainly a better way
-        if (level[obj].asset === returnValue[0] && level[obj].testAsset) {
-          returnValue[0].width = level[obj].testAsset.width;
-          returnValue[0].height = level[obj].testAsset.height;
-        }
+
+      if (config.object.asset === returnValue[0] && config.object.testAsset) {
+        config.object.asset.width = object.testAsset.width;
+        config.object.asset.height = object.testAsset.height;
       }
     });
   };
