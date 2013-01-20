@@ -242,15 +242,15 @@ describe("GameSpec", function() {
     var displayStub = sandbox.stub(Pipeline, "displayVisibleObjects");
 
     gameSpec.load("newLevel", function(level) {
-      var firstParam = displayStub.args[0][0]
+      var firstParam = displayStub.args[0][0];
       assert.equal('screen', firstParam);
 
       var levelSpec = displayStub.args[0][1];
-      assert.ok(levelSpec['gameObject_1']);
+      assert.ok(levelSpec.gameObject_1);
 
-      var level = displayStub.args[0][2];
-      assert.equal('gameObject_1', level.gameObject('gameObject_1'));
-      assert.equal('gameObject_2', level.gameObject('gameObject_2'));
+      var passedInLevel = displayStub.args[0][2];
+      assert.equal('gameObject_1', passedInLevel.gameObject('gameObject_1'));
+      assert.equal('gameObject_2', passedInLevel.gameObject('gameObject_2'));
     });
   });
 

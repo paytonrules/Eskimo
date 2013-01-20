@@ -3,23 +3,19 @@ var Assets = require('./assets'),
     Level = require('./level');
 
 var GameSpec = function(configuration) {
-  var soundAssets,
-      registeredLoaders = {},
-      soundsComplete = false,
+  var registeredLoaders = {},
       AssetLoader = configuration.assetLoader,
       assetDefinition = configuration.assetDefinition,
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       screen = configuration.screen;
 
   function checkAssetsComplete(levelSpec, level, onComplete) {
-    if (soundsComplete) {
-      ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
-      onComplete( level );
-    }
+    ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
+    onComplete( level );
   }
 
   function loadAssets(levelSpec, level, onComplete) {
-    var totalAssets = _(levelSpec).values().filter(function(value) {return !value['sound'];}).length,
+    var totalAssets = _.keys(levelSpec).length,
         assetsLoaded = 0,
         addToLevel = function(objectName, gameObject) {
           level.addGameObject(objectName, gameObject);
@@ -37,6 +33,16 @@ var GameSpec = function(configuration) {
         var typeForObject = _(levelSpec[objectName]).keys()[0];
         if (registeredLoaders[typeForObject]) {
           registeredLoaders[typeForObject].load(levelSpec, objectName, addToLevel);
+        } else if (typeForObject === "sound") {
+
+          AssetLoader({htmlTagName: 'audio',
+                      objectName: objectName,
+                      object: levelSpec[objectName],
+                      loadEvent: 'canplaythrough',
+                      tagName: 'sound',
+                      jquery: require('jquery'),
+                      onComplete: _.bind(completeSoundLoading, this, level, addToLevel, objectName)
+          }).load();
         } else { 
           addToLevel(objectName, levelSpec[objectName][typeForObject]);
         }
@@ -44,45 +50,11 @@ var GameSpec = function(configuration) {
     }
   }
 
-  function completeSoundsLoading(levelSpec, level, onComplete, objects) {
-    soundsComplete = true;
-    level.setSoundAssets(objects);
-    checkAssetsComplete(levelSpec, level, onComplete);
+  function completeSoundLoading(level, addToLevel, objectName, object, soundAsset) {
+    level.addSoundAsset(objectName, object);
+    addToLevel(objectName, object);
   }
 
-  function completeSoundLoading(levelSpec, level, onComplete, objectName, object, soundAsset) {
-    var totalSounds = _(levelSpec).values().filter(function(value) {return value['sound'];}).length;
-    // NOTE - you dont want jquery here
-    // check do images do this?  I thought they stored elements
-    //
-    var jquery = require('jquery');
-    soundAssets.add(objectName, jquery(soundAsset));
-    if (soundAssets.size() === totalSounds) {
-      completeSoundsLoading(levelSpec, level, onComplete, soundAssets);
-    }
-  }
-
-  function loadSoundAssets(levelSpec, level, onComplete) {
-    for(var objectName in levelSpec) {
-      if (levelSpec[objectName]['sound']) {
-        AssetLoader({htmlTagName: 'audio',
-                     objectName: objectName,
-                     object: levelSpec[objectName],
-                     loadEvent: 'canplaythrough',
-                     tagName: 'sound',
-                     jquery: require('jquery'),
-                     onComplete: _.bind(completeSoundLoading, this, levelSpec, level, onComplete, objectName)
-        }).load();
-      }
-    }
-  }
-
-  // Should make this a collection
-  function loadObjectsInLevel(levelSpec, level, onComplete) {
-    loadAssets(levelSpec, level, onComplete);
-    loadSoundAssets(levelSpec, level, onComplete);
-  }
-  
   this.getAssetDefinition = function() {
     return assetDefinition;
   };
@@ -101,18 +73,14 @@ var GameSpec = function(configuration) {
 
   this.load = function(levelName, onComplete) {
     var jquery = require('jquery'),
-        level = new Level(new Assets(), new Assets());
-
-    soundAssets = new Assets();
-    
-    soundsComplete = false;
+        level = new Level();
 
     if (assetDefinition[levelName]) {
-      loadObjectsInLevel(jquery.extend(true, {}, assetDefinition[levelName]), level, onComplete);
+      loadAssets(jquery.extend(true, {}, assetDefinition[levelName]), level, onComplete);
     } else {
       onComplete(level);
     }
-  }
-}
+  };
+};
 
 module.exports = GameSpec;
