@@ -4,7 +4,6 @@ var Assets = require('./assets'),
 
 var GameSpec = function(configuration) {
   var registeredLoaders = {},
-      AssetLoader = configuration.assetLoader,
       assetDefinition = configuration.assetDefinition,
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       screen = configuration.screen;
@@ -33,17 +32,7 @@ var GameSpec = function(configuration) {
         var typeForObject = _(levelSpec[objectName]).keys()[0];
         if (registeredLoaders[typeForObject]) {
           registeredLoaders[typeForObject].load(levelSpec, objectName, level, addToLevel);
-        } else if (typeForObject === "sound") {
-
-          AssetLoader({htmlTagName: 'audio',
-                      objectName: objectName,
-                      object: levelSpec[objectName],
-                      loadEvent: 'canplaythrough',
-                      tagName: 'sound',
-                      jquery: require('jquery'),
-                      onComplete: _.bind(completeSoundLoading, this, level, addToLevel, objectName)
-          }).load();
-        } else { 
+       } else { 
           addToLevel(objectName, levelSpec[objectName][typeForObject]);
         }
       }

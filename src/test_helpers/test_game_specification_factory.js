@@ -1,7 +1,7 @@
-var GameSpec = require('../game_spec');
-var TestAssetLoaderFactory = require('./test_asset_loader_factory');
-var TestAssetLoader = require('./test_asset_loader');
-var _ = require('underscore');
+var GameSpec = require('../game_spec'),
+    TestAssetLoader = require('./test_asset_loader'),
+    SoundLoader = require('../object_pipeline/sound_loader'),
+    _ = require('underscore');
 
 module.exports = {
   create: function(assetDefinition, screen) {
@@ -72,10 +72,12 @@ module.exports = {
 
     var spec = new GameSpec({
       assetDefinition: assetDefinition,
-      screen: screen,
-      assetLoader: TestAssetLoader
+      screen: screen
     });
+    
+    var gameSpec = new ProxiedGameSpec(spec);
+    gameSpec.registerLoader('sound', SoundLoader.create(TestAssetLoader));
 
-    return new ProxiedGameSpec(spec);
+    return gameSpec;
   }
 };

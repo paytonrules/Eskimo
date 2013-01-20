@@ -3,9 +3,9 @@ describe("GameSpec", function() {
       GameSpec = require('../src/game_spec'),
       assert = require('assert'),
       _ = require('underscore'),
-      TestAssetLoaderFactory = require('../src/test_helpers/test_asset_loader_factory'),
       audioTag = require('./spec_helper').audioTag,
       AssetLoader = require('../src/asset_loader'),
+      SoundLoader = require('../src/object_pipeline/sound_loader'),
       window;
 
   beforeEach(function() {
@@ -95,9 +95,9 @@ describe("GameSpec", function() {
 
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoader: testAssetLoader, 
       screen: 'screen'
     });
+    gameSpec.registerLoader('sound', SoundLoader.create(testAssetLoader));
 
     gameSpec.load("newLevel", function(level) {
       var jukebox = level.getJukebox();
@@ -151,11 +151,11 @@ describe("GameSpec", function() {
     
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
-      assetLoader: testAssetLoader,
       screen: 'screen'
     });
 
     gameSpec.registerLoader('image', imageLoader);
+    gameSpec.registerLoader('sound', SoundLoader.create(testAssetLoader));
     gameSpec.load("newLevel", callback);
     assert.ok(!callback.called);
 
