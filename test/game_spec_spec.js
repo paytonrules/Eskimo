@@ -12,7 +12,7 @@ describe("GameSpec", function() {
     sandbox.restore();
   });
 
-  it("loads no jukebox when the definition passed in is empty", function(done) {
+  it("gives back an empty level if the asset definition is empty", function(done) {
     var gameSpec = new GameSpec({
       assetDefinition: {},
       screen: 'screen'
@@ -35,18 +35,16 @@ describe("GameSpec", function() {
 
     var customObjectLoader = {
       load: function(levelSpec, objectName, level, callback) {
-        callback(objectName, {levelSpec: levelSpec, objectName: objectName});
+        callback(objectName, {levelSpec: levelSpec, objectName: objectName, level: level});
       }
     };
   
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription
-    });
+    var gameSpec = new GameSpec({ assetDefinition: gameDescription });
     gameSpec.registerLoader('customObject', customObjectLoader);
 
     gameSpec.load("newLevel", function(level) {
-      assert.deepEqual(gameDescription.newLevel, level.gameObject('gameObject').levelSpec);
-      assert.equal('gameObject', level.gameObject('gameObject').objectName);
+      var loadedObject = level.gameObject('gameObject');
+      assert.strictEqual(loadedObject.level, level);
     });
   });
 
@@ -61,14 +59,11 @@ describe("GameSpec", function() {
       }
     };
 
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
-      screen: 'screen'
-    });
+    var gameSpec = new GameSpec({ assetDefinition: gameDescription });
 
     gameSpec.load("newLevel", function(level)  {
       var asset = level.gameObject('gameObject');
-      assert.equal('prop.thing', asset.prop);
+      assert.equal(asset.prop, 'prop.thing');
     });
   });
 
@@ -171,6 +166,7 @@ describe("GameSpec", function() {
     assert.ok(callback.called);
   });
   
+  //two level tests
   it("allows access to the game objects", function() {
     var gameDescription = {
       "levelOne": {
@@ -182,9 +178,7 @@ describe("GameSpec", function() {
       }
     };
      
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
-      screen: 'screen'
+    var gameSpec = new GameSpec({ assetDefinition: gameDescription, screen: 'screen'
     });
 
     gameSpec.load("levelOne", function(level) {
