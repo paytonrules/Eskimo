@@ -19,6 +19,20 @@ describe("GameSpec", function() {
     });
   });
 
+  it("gives back an empty level if there is a matching level, but it is empty", function(done) {
+    var gameSpec = new GameSpec({
+      assetDefinition: {
+        'monkey' : {}
+      },
+      screen: 'screen'
+    });
+
+    gameSpec.load("monkey", function(level) {
+      assert.equal(0, level.getJukebox().assets.size());
+      done();
+    });
+  });
+
   it("uses an associated loader to create a level object, if one exists", function() {
     var gameDescription = {
       "newLevel": {
@@ -111,8 +125,6 @@ describe("GameSpec", function() {
     assert.ok(callback.called);
   });
   
-  //two level tests
- 
   it("puts all the visible images on the screen after loading", function() {
     var gameDescription = {
       "newLevel": {

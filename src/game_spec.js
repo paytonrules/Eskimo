@@ -8,7 +8,7 @@ var GameSpec = function(configuration) {
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       screen = configuration.screen;
 
-  function checkAssetsComplete(levelSpec, level, onComplete) {
+  function onAssetsComplete(levelSpec, level, onComplete) {
     ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
     onComplete( level );
   }
@@ -20,21 +20,17 @@ var GameSpec = function(configuration) {
           level.addGameObject(objectName, gameObject);
           assetsLoaded++;
           if (assetsLoaded === totalAssets) {
-            checkAssetsComplete(levelSpec, level, onComplete);
+            onAssetsComplete(levelSpec, level, onComplete);
           }
         };
 
-    // Note this if statement isn't tested except by the test Game Spec object
-    if (totalAssets <= 0) {
-      checkAssetsComplete(levelSpec, level, onComplete);
-    } else {
-      for(var objectName in levelSpec) {
-        var typeForObject = _(levelSpec[objectName]).keys()[0];
-        if (registeredLoaders[typeForObject]) {
-          registeredLoaders[typeForObject].load(levelSpec, objectName, level, addToLevel);
-       } else { 
-          addToLevel(objectName, levelSpec[objectName][typeForObject]);
-        }
+    for(var objectName in levelSpec) {
+      var typeForObject = _(levelSpec[objectName]).keys()[0];
+
+      if (registeredLoaders[typeForObject]) {
+        registeredLoaders[typeForObject].load(levelSpec, objectName, level, addToLevel);
+      } else { 
+        addToLevel(objectName, levelSpec[objectName][typeForObject]);
       }
     }
   }
@@ -43,7 +39,7 @@ var GameSpec = function(configuration) {
     var jquery = require('jquery'),
         level = new Level();
 
-    if (assetDefinition[levelName]) {
+    if (assetDefinition[levelName] && _(assetDefinition[levelName]).keys().length > 0) {
       loadAssets(jquery.extend(true, {}, assetDefinition[levelName]), level, onComplete);
     } else {
       onComplete(level);
@@ -66,7 +62,6 @@ var GameSpec = function(configuration) {
   this.registerLoader = function(type, loader) {
     registeredLoaders[type] = loader;
   };
-
 };
 
 module.exports = GameSpec;
