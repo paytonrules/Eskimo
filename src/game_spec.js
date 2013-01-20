@@ -55,6 +55,7 @@ var GameSpec = function(configuration) {
     addToLevel(objectName, object);
   }
 
+  // These getters are used by the test proxy
   this.getAssetDefinition = function() {
     return assetDefinition;
   };
