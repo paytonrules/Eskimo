@@ -1,12 +1,7 @@
 describe("GameSpec", function() {
   var sandbox = require('sinon').sandbox.create(),
       GameSpec = require('../src/game_spec'),
-      assert = require('assert'),
-      _ = require('underscore'),
-      audioTag = require('./spec_helper').audioTag,
-      AssetLoader = require('../src/asset_loader'),
-      SoundLoader = require('../src/object_pipeline/sound_loader'),
-      window;
+      assert = require('assert');
 
   beforeEach(function() {
     sandbox.restore();
