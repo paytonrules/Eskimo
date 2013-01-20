@@ -39,10 +39,16 @@ var GameSpec = function(configuration) {
     }
   }
 
-  function completeSoundLoading(level, addToLevel, objectName, object, soundAsset) {
-    level.addSoundAsset(objectName, object);
-    addToLevel(objectName, object);
-  }
+  this.load = function(levelName, onComplete) {
+    var jquery = require('jquery'),
+        level = new Level();
+
+    if (assetDefinition[levelName]) {
+      loadAssets(jquery.extend(true, {}, assetDefinition[levelName]), level, onComplete);
+    } else {
+      onComplete(level);
+    }
+  };
 
   // These getters are used by the test proxy
   this.getAssetDefinition = function() {
@@ -61,16 +67,6 @@ var GameSpec = function(configuration) {
     registeredLoaders[type] = loader;
   };
 
-  this.load = function(levelName, onComplete) {
-    var jquery = require('jquery'),
-        level = new Level();
-
-    if (assetDefinition[levelName]) {
-      loadAssets(jquery.extend(true, {}, assetDefinition[levelName]), level, onComplete);
-    } else {
-      onComplete(level);
-    }
-  };
 };
 
 module.exports = GameSpec;

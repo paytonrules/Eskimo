@@ -3,9 +3,10 @@ var _ = require('underscore');
 
 module.exports = function(config) {
   var returnValues = [],
+      jquery = config.jquery || require('jquery'),
       spiedJQuery = (function() {
     return function(element) {
-      var returnValue = config.jquery(element);
+      var returnValue = jquery(element);
       returnValues.push(returnValue);
       return returnValue;
     };

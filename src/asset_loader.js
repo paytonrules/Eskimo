@@ -1,9 +1,10 @@
 var AssetLoader = function(config) {
+  var jquery = config.jquery || require('jquery');
+
   this.load = function() {
-    var element = config.jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName]['src'] + "'>");
+    var element = jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName].src + "'>");
 
     element.bind(config.loadEvent, function() {
-      // TEMP!
       if (config.assets) {
         config.assets.add(config.objectName, element);
       }
@@ -11,9 +12,9 @@ var AssetLoader = function(config) {
       config.object.asset = element.get(0);
       config.onComplete(config.object, element.get(0));
     });
-  }
-}
+  };
+};
 
 module.exports = function(config) {
   return new AssetLoader(config);
-}
+};

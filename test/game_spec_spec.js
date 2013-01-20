@@ -67,45 +67,6 @@ describe("GameSpec", function() {
     });
   });
 
-  it("creates a jukebox from the sounds on the objects in the level", function() {
-    audioTag.addToDom();
-    var gameDescription = {
-      "newLevel": {
-        "gameObject" : {
-          "sound": {
-            "src": "sound.mp3"
-          }
-        }
-      }
-    };
-    
-    var testAssetLoader = function(configure) {
-      var jquery = configure.jquery,
-          jquerySpy = sandbox.spy(jquery),
-          myConfigure = _.extend({jquery: jquerySpy}, _.omit(configure, 'jquery')),
-          assetLoader = AssetLoader(myConfigure);
-
-      return {
-        load: function() {
-          assetLoader.load();
-          jquerySpy.returnValues[0].trigger('canplaythrough');
-        }
-      };
-    };
-
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
-      screen: 'screen'
-    });
-    gameSpec.registerLoader('sound', SoundLoader.create(testAssetLoader));
-
-    gameSpec.load("newLevel", function(level) {
-      var jukebox = level.getJukebox();
-
-      assert.equal('sound.mp3', jukebox.assets.get('gameObject').src);
-    });
-  });
-
   it("doesnt fire the complete callback until all assets and sounds are finished", function() {
     var Pipeline = require("../src/object_pipeline/display_visible_objects");
     sandbox.stub(Pipeline, 'displayVisibleObjects');
@@ -125,84 +86,38 @@ describe("GameSpec", function() {
       }
     };
  
-    var testAssetLoader = function(configure) {
-      var jquery = configure.jquery,
-          jquerySpy = sandbox.spy(jquery),
-          myConfigure = _.extend({jquery: jquerySpy}, _.omit(configure, 'jquery')),
-          assetLoader = AssetLoader(myConfigure);
-
-      testAssetLoader.complete = function() {
-        jquerySpy.returnValues[0].trigger('canplaythrough');
-      };
-
-      return {
-        load: function() {
-          assetLoader.load();
-        }
-      };
-    };
-
     var callback = sandbox.stub();
     var imageLoader = {
       load: function(levelSpec, objectName, level, callback) {
         this.complete = callback;
       }
     };
-    
+
+    var soundLoader = {
+       load: function(levelSpec, objectName, level, callback) {
+        this.complete = callback;
+      }
+    };
+   
     var gameSpec = new GameSpec({
       assetDefinition: gameDescription, 
       screen: 'screen'
     });
 
     gameSpec.registerLoader('image', imageLoader);
-    gameSpec.registerLoader('sound', SoundLoader.create(testAssetLoader));
+    gameSpec.registerLoader('sound', soundLoader);
     gameSpec.load("newLevel", callback);
     assert.ok(!callback.called);
 
     imageLoader.complete();
     assert.ok(!callback.called);
 
-    testAssetLoader.complete();
+    soundLoader.complete();
     assert.ok(callback.called);
   });
   
   //two level tests
-  it("allows access to the game objects", function() {
-    var gameDescription = {
-      "levelOne": {
-        "gameObject" : {
-          "type" : { 
-            "property" : 2
-          }
-        }
-      }
-    };
-     
-    var gameSpec = new GameSpec({ assetDefinition: gameDescription, screen: 'screen'
-    });
-
-    gameSpec.load("levelOne", function(level) {
-      assert.equal(2, level.gameObject('gameObject').property);
-    });
-
-  });
-
-  it("allows adding a game object at any time", function() {
-    var gameDescription = {
-      "levelOne" : {}
-    };
-    
-    var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
-      screen: 'screen'
-    });
-
-    gameSpec.load("levelOne", function(level) {
-      level.addGameObject("key", {"object_id" : 2});
-      assert.equal(2, level.gameObject('key').object_id);
-    });
-  });
-  
+ 
   it("puts all the visible images on the screen after loading", function() {
     var gameDescription = {
       "newLevel": {

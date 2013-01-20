@@ -40,7 +40,6 @@ describe("SpriteLoaderSpec", function() {
     assert.equal(assetConfiguration.tagName, 'sprite');
     assert.equal(assetConfiguration.htmlTagName, 'img');
     assert.equal(assetConfiguration.loadEvent, 'load');
-    assert.equal(assetConfiguration.jquery, require('jquery'));
   });
 
   it("uses the complete callback to send a sprite object back to the client", function() {

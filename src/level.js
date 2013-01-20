@@ -1,5 +1,3 @@
-// The tests for this are in game_spec_spec.js
-// TODO: fix
 var Level = function() {
   var Jukebox = require('./jukebox'),
       Assets = require('./assets'),

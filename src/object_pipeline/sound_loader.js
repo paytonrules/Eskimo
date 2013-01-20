@@ -13,8 +13,7 @@ var SoundLoader = {
           object: levelSpec[objectName],
           loadEvent: 'canplaythrough',
           tagName: 'sound',
-          jquery: require('jquery'),
-          onComplete: complete //_.bind(completeSoundLoading, this, level, addToLevel, objectName)
+          onComplete: complete
         }).load();
       }
     };

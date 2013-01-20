@@ -12,7 +12,6 @@ var SpriteLoader = {
           tagName: 'sprite', 
           htmlTagName: 'img',
           loadEvent: 'load',
-          jquery: require('jquery'),
           onComplete: _.bind(this.complete, this, objectName, levelSpec, callback)
         }).load();
       },
