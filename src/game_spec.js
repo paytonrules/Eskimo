@@ -32,7 +32,7 @@ var GameSpec = function(configuration) {
       for(var objectName in levelSpec) {
         var typeForObject = _(levelSpec[objectName]).keys()[0];
         if (registeredLoaders[typeForObject]) {
-          registeredLoaders[typeForObject].load(levelSpec, objectName, addToLevel);
+          registeredLoaders[typeForObject].load(levelSpec, objectName, level, addToLevel);
         } else if (typeForObject === "sound") {
 
           AssetLoader({htmlTagName: 'audio',

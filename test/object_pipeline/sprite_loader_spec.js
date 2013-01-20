@@ -32,7 +32,7 @@ describe("SpriteLoaderSpec", function() {
         spriteLoader = SpriteLoader.create(assetLoader),
         assetConfiguration;
   
-    spriteLoader.load({'objectName' : 'levelSpec'}, 'objectName', 'callback');
+    spriteLoader.load({'objectName' : 'levelSpec'}, 'objectName', 'level', 'callback');
     assetConfiguration = assetLoader.args[0][0];
 
     assert.equal(assetConfiguration.objectName, 'objectName');
@@ -52,6 +52,7 @@ describe("SpriteLoaderSpec", function() {
 
     spriteLoader.load({'objectName' : 'levelSpec'}, 
                       'objectName', 
+                      'level',
                       callback);
 
     assetConfiguration = assetLoader.args[0][0];

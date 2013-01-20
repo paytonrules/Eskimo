@@ -4,7 +4,7 @@ var _ = require('underscore'),
 var SpriteLoader = {
   create: function(AssetLoader) {
     return {
-      load: function(levelSpec, objectName, callback) {
+      load: function(levelSpec, objectName, level, callback) {
 
         AssetLoader({
           objectName: objectName,

@@ -34,18 +34,18 @@ describe("GameSpec", function() {
     };
 
     var customObjectLoader = {
-      load: function(levelSpec, objectName, callback) {
+      load: function(levelSpec, objectName, level, callback) {
         callback(objectName, {levelSpec: levelSpec, objectName: objectName});
       }
     };
   
     var gameSpec = new GameSpec({
-      assetDefinition: gameDescription, 
+      assetDefinition: gameDescription
     });
     gameSpec.registerLoader('customObject', customObjectLoader);
 
     gameSpec.load("newLevel", function(level) {
-      assert.deepEqual(gameDescription['newLevel'], level.gameObject('gameObject').levelSpec);
+      assert.deepEqual(gameDescription.newLevel, level.gameObject('gameObject').levelSpec);
       assert.equal('gameObject', level.gameObject('gameObject').objectName);
     });
   });
@@ -149,7 +149,7 @@ describe("GameSpec", function() {
 
     var callback = sandbox.stub();
     var imageLoader = {
-      load: function(levelSpec, objectName, callback) {
+      load: function(levelSpec, objectName, level, callback) {
         this.complete = callback;
       }
     };
@@ -232,7 +232,7 @@ describe("GameSpec", function() {
     });
 
     var imageLoader = {
-      load: function(levelSpec, objectName, callback) {
+      load: function(levelSpec, objectName, level, callback) {
         callback(objectName, objectName);
       }
     };
