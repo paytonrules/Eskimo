@@ -1,13 +1,27 @@
 describe("TestGameSpecFactory", function() {
   var TestGameSpecFactory =  require("../../src/test_helpers/test_game_specification_factory"),
       assert = require('assert'),
-      audioTag = require('../spec_helper').audioTag;
+      audioTag = require('../spec_helper').audioTag,
+      sandbox = require('sinon').sandbox.create();
 
-  it("creates a game spec with a dummy asset loader", function() {
+  afterEach(function() {
+    sandbox.restore();
+  });
+
+  it("creates a game spec with an asset definition and screen", function() {
     var gameSpec = TestGameSpecFactory.create("asset definition", "screen");
 
     assert.equal("asset definition", gameSpec.getAssetDefinition());
     assert.equal("screen", gameSpec.getScreen());
+  });
+
+  it("registers the default loaders with a test asset loader", function() {
+    var DefaultLoaders = require("../../src/object_pipeline/register_default_loaders");
+    sandbox.stub(DefaultLoaders, "register");
+
+    TestGameSpecFactory.create("", "");
+
+    assert.ok(DefaultLoaders.register.called);
   });
 
   it("proxies load through a singleton level, so tests can access the level", function() {

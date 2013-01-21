@@ -1,6 +1,7 @@
 var GameSpec = require('../game_spec'),
     TestAssetLoader = require('./test_asset_loader'),
     SoundLoader = require('../object_pipeline/sound_loader'),
+    DefaultLoaders = require('../object_pipeline/register_default_loaders'),
     _ = require('underscore');
 
 module.exports = {
@@ -76,7 +77,7 @@ module.exports = {
     });
     
     var gameSpec = new ProxiedGameSpec(spec);
-    gameSpec.registerLoader('sound', SoundLoader.create(TestAssetLoader));
+    DefaultLoaders.register(gameSpec, TestAssetLoader);
 
     return gameSpec;
   }
