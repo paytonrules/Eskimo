@@ -9,11 +9,9 @@ describe("SpriteLoaderSpec", function() {
 
   it("adds sprite assets for any sprites in level", function() {
     var gameDescription = {
-      "newLevel": {
-        "gameObject" : {
-          "sprite" : {
-            "src" : "background.jpg"
-          }
+      "gameObject" : {
+        "sprite" : {
+          "src" : "background.jpg"
         }
       }
     },
@@ -21,7 +19,7 @@ describe("SpriteLoaderSpec", function() {
         assetLoader = sandbox.stub().returns(loader), 
         spriteLoader = SpriteLoader.create(assetLoader);
 
-    spriteLoader.load({});
+    spriteLoader.load(gameDescription, 'gameObject');
 
     assert.ok(loader.load.called);
   });
@@ -32,12 +30,11 @@ describe("SpriteLoaderSpec", function() {
         spriteLoader = SpriteLoader.create(assetLoader),
         assetConfiguration;
   
-    spriteLoader.load({'objectName' : 'levelSpec'}, 'objectName', 'level', 'callback');
+    spriteLoader.load({'objectName' : {'sprite': 'spriteSpec'}}, 'objectName', 'level', 'callback');
     assetConfiguration = assetLoader.args[0][0];
 
     assert.equal(assetConfiguration.objectName, 'objectName');
-    assert.equal(assetConfiguration.object, 'levelSpec');
-    assert.equal(assetConfiguration.tagName, 'sprite');
+    assert.equal(assetConfiguration.object, 'spriteSpec');
     assert.equal(assetConfiguration.htmlTagName, 'img');
     assert.equal(assetConfiguration.loadEvent, 'load');
   });

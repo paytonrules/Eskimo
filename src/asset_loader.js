@@ -1,8 +1,9 @@
+// TODO - where the hell did asset loader tests go?
 var AssetLoader = function(config) {
   var jquery = config.jquery || require('jquery');
 
   this.load = function() {
-    var element = jquery("<" + config.htmlTagName + " src='" + config.object[config.tagName].src + "'>");
+    var element = jquery("<" + config.htmlTagName + " src='" + config.object.src + "'>");
 
     element.bind(config.loadEvent, function() {
       config.object.asset = element.get(0);

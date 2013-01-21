@@ -25,8 +25,8 @@ module.exports = function(config) {
       returnValue.trigger(config.loadEvent);
 
       if (config.object.asset === returnValue[0] && config.object.testAsset) {
-        config.object.asset.width = object.testAsset.width;
-        config.object.asset.height = object.testAsset.height;
+        config.object.asset.width = config.object.testAsset.width;
+        config.object.asset.height = config.object.testAsset.height;
       }
     });
   };

@@ -14,14 +14,13 @@ describe("SoundLoader", function() {
         assetLoader = function(config) {
           assert.equal(config.htmlTagName, 'audio');
           assert.equal(config.loadEvent, 'canplaythrough');
-          assert.equal(config.tagName, 'sound');
           assert.equal(config.objectName, 'name');
           assert.equal(config.object, 'obj');
           return loader;
         },
         soundLoader = SoundLoader.create(assetLoader);
 
-    soundLoader.load({'name' : 'obj'}, 'name');
+    soundLoader.load({'name' : {'sound' : 'obj'}}, 'name');
     
     assert.ok(loader.load.called);
   });
@@ -62,7 +61,7 @@ describe("SoundLoader", function() {
         level = { addSoundAsset: sandbox.stub() },
         callback = sandbox.stub();
 
-    soundLoader.load({'name' : 'obj'}, 'name', level, callback);
+    soundLoader.load({'name' : { 'sound' : 'obj'}}, 'name', level, callback);
 
     assert.ok(callback.calledWith('name', 'obj'));
   });

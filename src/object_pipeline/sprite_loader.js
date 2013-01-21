@@ -8,8 +8,7 @@ var SpriteLoader = {
 
         AssetLoader({
           objectName: objectName,
-          object: levelSpec[objectName], 
-          tagName: 'sprite', 
+          object: levelSpec[objectName].sprite, 
           htmlTagName: 'img',
           loadEvent: 'load',
           onComplete: _.bind(this.complete, this, objectName, levelSpec, callback)
@@ -17,7 +16,7 @@ var SpriteLoader = {
       },
 
       complete: function(objectName, levelSpec, callback) {
-        callback(objectName, Sprite(objectName, levelSpec[objectName]));
+        callback(objectName, Sprite(objectName, levelSpec[objectName].sprite));
       }
     };
   }

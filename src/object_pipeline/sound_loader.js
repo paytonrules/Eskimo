@@ -4,15 +4,14 @@ var SoundLoader = {
       load: function(levelSpec, objectName, level, callback) {
         var complete = function(object, asset) {
           level.addSoundAsset(objectName, object);
-          callback(objectName, levelSpec[objectName]);
+          callback(objectName, object);
         };
       
         AssetLoader({
           htmlTagName: 'audio',
           objectName: objectName,
-          object: levelSpec[objectName],
+          object: levelSpec[objectName].sound,
           loadEvent: 'canplaythrough',
-          tagName: 'sound',
           onComplete: complete
         }).load();
       }
