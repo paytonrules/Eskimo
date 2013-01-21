@@ -16,14 +16,14 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
   it("puts any visible objects on the screen", function() {
     var levelSpec = {
       "object_1" : {
-        "image" : {
+        "sprite" : {
           asset: "asset",
           src: 'fake',
           visible: true
         }
       },
       "object_2" : {
-        "image" : {
+        "sprite" : {
           asset: "asset",
           src: 'also fake',
           visible: true
@@ -31,8 +31,8 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
       }
     };
     var level = new Level();
-    level.addGameObject("object_1", Sprite("object_1", levelSpec['object_1']['image']));
-    level.addGameObject("object_2", Sprite("object_2", levelSpec['object_2']['image']));
+    level.addGameObject("object_1", Sprite("object_1", levelSpec.object_1.sprite));
+    level.addGameObject("object_2", Sprite("object_2", levelSpec.object_2.sprite));
 
     ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
 
@@ -46,19 +46,19 @@ describe("Eskimo.ObjectPipeLine.DisplayVisibleObjects", function() {
   it("only puts them if they are visibile (duh)", function() {
     var levelSpec = {
       'object_1' : {
-        'image' : {
+        'sprite' : {
           asset: 'asset'
         }
       },
       'object_2' : {
-        'image' : {
+        'sprite' : {
           visible: true
         }
       }
     };
     var level = new Level();
-    level.addGameObject('object_1', Sprite('object_1', levelSpec['object_1']['image']));
-    level.addGameObject('object_2', Sprite('object_2', levelSpec['object_2']['image']));
+    level.addGameObject('object_1', Sprite('object_1', levelSpec.object_1.sprite));
+    level.addGameObject('object_2', Sprite('object_2', levelSpec.object_2.sprite));
 
     ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
 
