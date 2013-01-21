@@ -8,20 +8,21 @@ var GameSpec = function(configuration) {
       ObjectPipeline = require('./object_pipeline/display_visible_objects'),
       screen = configuration.screen;
 
-  function onAssetsComplete(levelSpec, level, onComplete) {
-    ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
-    onComplete( level );
-  }
-
   function loadAssets(levelSpec, level, onComplete) {
     var totalAssets = _.keys(levelSpec).length,
         assetsLoaded = 0,
+
         addToLevel = function(objectName, gameObject) {
           level.addGameObject(objectName, gameObject);
           assetsLoaded++;
           if (assetsLoaded === totalAssets) {
             onAssetsComplete(levelSpec, level, onComplete);
           }
+        },
+
+        onAssetsComplete = function () {
+          ObjectPipeline.displayVisibleObjects(screen, levelSpec, level);
+          onComplete( level );
         };
 
     for(var objectName in levelSpec) {
