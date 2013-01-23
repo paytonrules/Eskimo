@@ -1,23 +1,20 @@
-var _ = require('underscore'),
-    Sprite = require('../sprite');
-
-var SpriteLoader = {
+var SpriteSheet = require('../sprite_sheet');
+module.exports = {
   create: function(AssetLoader) {
     return {
       load: function(levelSpec, objectName, level, callback) {
+
         var complete = function(object, asset) {
-          callback(objectName, Sprite(objectName, object));
+          callback(SpriteSheet(object, objectName));
         };
-        
+
         AssetLoader({
-          object: levelSpec[objectName].sprite, 
           htmlTagName: 'img',
           loadEvent: 'load',
+          object: levelSpec[objectName].sprite_sheet,
           onComplete: complete
         }).load();
       }
     };
   }
 };
-
-module.exports = SpriteLoader;

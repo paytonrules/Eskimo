@@ -33,7 +33,6 @@ describe("SpriteLoaderSpec", function() {
     spriteLoader.load({'objectName' : {'sprite': 'spriteSpec'}}, 'objectName', 'level', 'callback');
     assetConfiguration = assetLoader.args[0][0];
 
-    assert.equal(assetConfiguration.objectName, 'objectName');
     assert.equal(assetConfiguration.object, 'spriteSpec');
     assert.equal(assetConfiguration.htmlTagName, 'img');
     assert.equal(assetConfiguration.loadEvent, 'load');

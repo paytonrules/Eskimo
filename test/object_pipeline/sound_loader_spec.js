@@ -14,7 +14,6 @@ describe("SoundLoader", function() {
         assetLoader = function(config) {
           assert.equal(config.htmlTagName, 'audio');
           assert.equal(config.loadEvent, 'canplaythrough');
-          assert.equal(config.objectName, 'name');
           assert.equal(config.object, 'obj');
           return loader;
         },

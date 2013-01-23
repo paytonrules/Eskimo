@@ -9,7 +9,6 @@ var SoundLoader = {
       
         AssetLoader({
           htmlTagName: 'audio',
-          objectName: objectName,
           object: levelSpec[objectName].sound,
           loadEvent: 'canplaythrough',
           onComplete: complete
