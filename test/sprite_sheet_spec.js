@@ -133,4 +133,18 @@ describe("SpriteSheet", function() {
     assert.ifError(sheet.intersects(nonIntersectingRect));
   });
 
+  it("provides a height and width based on index", function() {
+    var sheet = SpriteSheet({ location: { x: 10, y:200 },
+                              map: [ {},
+                              {
+                                width: 10,
+                                height: 20
+                              }] });
+
+    sheet.index = 1;
+    
+    assert.equal(sheet.width(), 10);
+    assert.equal(sheet.height(), 20);
+  });
+
 });

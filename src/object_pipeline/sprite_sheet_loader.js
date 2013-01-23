@@ -5,7 +5,7 @@ module.exports = {
       load: function(levelSpec, objectName, level, callback) {
 
         var complete = function(object, asset) {
-          callback(SpriteSheet(object, objectName));
+          callback(objectName, SpriteSheet(object, objectName));
         };
 
         AssetLoader({

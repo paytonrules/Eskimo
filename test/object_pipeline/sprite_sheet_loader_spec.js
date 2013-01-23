@@ -27,6 +27,6 @@ describe("SpriteSheetLoader", function() {
 
     spriteSheetLoader.load(levelSpec, "SpriteSheet", null, loadingComplete);
 
-    assert.ok(loadingComplete.calledWith(isSpriteSheet));
+    assert.ok(loadingComplete.calledWith('SpriteSheet', isSpriteSheet));
   });
 });

@@ -36,5 +36,14 @@ module.exports = function(configuration) {
   SpriteSheet.prototype.bottom = function() {
     return this.location.y + this.map[this.index].height;
   };
+
+  SpriteSheet.prototype.width = function() {
+    return this.map[this.index].width;
+  };
+  
+  SpriteSheet.prototype.height = function() {
+    return this.map[this.index].height;
+  };
+
   return new SpriteSheet(configuration, name);
 };
