@@ -23,6 +23,11 @@ module.exports = function(config) {
     originalLoad();
     _.each(returnValues, function(returnValue) {
       returnValue.trigger(config.loadEvent);
+
+      if (config.object.asset === returnValue[0] && config.object.testAsset) {
+        config.object.asset.width = config.object.testAsset.width;
+        config.object.asset.height = config.object.testAsset.height;
+      }
     });
   };
 
