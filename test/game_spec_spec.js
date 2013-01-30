@@ -57,6 +57,15 @@ describe("GameSpec", function() {
     });
   });
 
+  it("allows you to retrieve a loader by its name", function() {
+    var gameSpec =  new GameSpec({ assetDefinition: {} }),
+        tempLoader = {};
+
+    gameSpec.registerLoader('testLoader', tempLoader);
+
+    assert.strictEqual(tempLoader, gameSpec.getLoaderFor('testLoader'));
+  });
+
   it("just adds the blob to the level if the type isn't registered", function() {
     var gameDescription = {
       "newLevel": {

@@ -63,6 +63,14 @@ var GameSpec = function(configuration) {
   this.registerLoader = function(type, loader) {
     registeredLoaders[type] = loader;
   };
+
+  this.registeredLoader = function(type) {
+    return registeredLoaders[type];
+  };
+
+  this.getLoaderFor = function(type) {
+    return registeredLoaders[type];
+  };
 };
 
 module.exports = GameSpec;
