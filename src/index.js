@@ -3,5 +3,7 @@ module.exports.Sprite = require("./sprite");
 module.exports.Jukebox = require("./jukebox");
 module.exports.Keyboard = require("./key-codes");
 module.exports.Screen = require("./screen");
+module.exports.AssetLoader = require("./asset_loader");
 module.exports.TestGameSpecFactory = require("./test_helpers/test_game_specification_factory");
+module.exports.TestAssetLoader = require("./test_helpers/test_asset_loader");
 module.exports.SpriteLoader = require("./object_pipeline/sprite_loader");
