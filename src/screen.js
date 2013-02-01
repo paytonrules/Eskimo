@@ -22,9 +22,9 @@ module.exports = function(canvas) {
 
   this.put = put;
 
-  this.remove = function(imageName) {
-    imageList = _(imageList).reject(function(image) {
-      return (imageName === image.name)
+  this.remove = function(image) {
+    imageList = _(imageList).reject(function(currentImage) {
+      return (currentImage === image);
     });
   };
 
