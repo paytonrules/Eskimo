@@ -6,11 +6,11 @@ module.exports = function(canvas) {
   function clearScreen() {
     context.fillStyle = module.exports.BACKGROUND_COLOR;
     context.fillRect(0, 0, canvas.width(), canvas.height());
-  };
+  }
 
   function put(image) {
     imageList.push(image);
-  };
+  }
 
   this.width = function() {
     return canvas.width();
@@ -20,7 +20,9 @@ module.exports = function(canvas) {
     return canvas.height();
   };
 
-  this.put = put;
+  this.put = function(image) {
+    imageList.push(image);
+  };
 
   this.remove = function(image) {
     imageList = _(imageList).reject(function(currentImage) {
