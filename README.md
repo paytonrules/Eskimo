@@ -37,7 +37,7 @@ My youngest son is named Quinn, this framework is nicknamed after our nickname f
 
 #### Contributing #### 
 
-  * Fork and issue a pull request.  I warn you - if there's no tests I'm not gonna take it.
+  * Fork and issue a pull request.  I warn you - if there are no tests I'm not gonna take it.
 
 #### License ####
 
